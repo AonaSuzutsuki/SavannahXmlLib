@@ -3,13 +3,31 @@
 namespace SavannahXmlLib.XmlWrapper
 {
 
+    /// <summary>
+    /// 
+    /// </summary>
     public class AttributeInfo
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public string Name { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
         public string Value { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public bool IsEmpty => string.IsNullOrEmpty(Name);
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
         public override bool Equals(object obj)
         {
             return obj is AttributeInfo info &&
@@ -17,6 +35,10 @@ namespace SavannahXmlLib.XmlWrapper
                    Value == info.Value;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public override int GetHashCode()
         {
             var hashCode = -244751520;
@@ -25,6 +47,10 @@ namespace SavannahXmlLib.XmlWrapper
             return hashCode;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
             return $"{Name}=\"{Value}\"";

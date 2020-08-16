@@ -10,20 +10,37 @@ using CommonExtensionLib.Extensions;
 
 namespace SavannahXmlLib.XmlWrapper
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class CommonXmlReader
     {
         private readonly XmlDocument document = new XmlDocument();
 
+        /// <summary>
+        /// 
+        /// </summary>
         public CommonXmlNode Root { get; private set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public string Declaration { get; private set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="xmlPath"></param>
         public CommonXmlReader(string xmlPath)
         {
             using var fs = new FileStream(xmlPath, FileMode.Open, FileAccess.Read, FileShare.Read);
             Initialize(fs);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="stream"></param>
         public CommonXmlReader(Stream stream)
         {
             Initialize(stream);
@@ -38,6 +55,13 @@ namespace SavannahXmlLib.XmlWrapper
             Declaration = declaration.InnerText;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="xpath"></param>
+        /// <param name="isContaisNoValue"></param>
+        /// <returns></returns>
         public IList<string> GetAttributes(string name, string xpath, bool isContaisNoValue = true)
         {
             var nodeList = GetNodes(ConvertXmlNode(document.SelectNodes(xpath)));
@@ -52,6 +76,13 @@ namespace SavannahXmlLib.XmlWrapper
             return cond.Invoke();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="xpath"></param>
+        /// <param name="enableLineBreak"></param>
+        /// <param name="isRemoveSpace"></param>
+        /// <returns></returns>
         public IList<string> GetValues(string xpath, bool enableLineBreak = true, bool isRemoveSpace = true)
         {
             var nodeList = GetNodes(ConvertXmlNode(document.SelectNodes(xpath)), isRemoveSpace);
@@ -60,12 +91,23 @@ namespace SavannahXmlLib.XmlWrapper
                     where !string.IsNullOrEmpty(text) select text).ToList();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="xpath"></param>
+        /// <returns></returns>
         public CommonXmlNode GetNode(string xpath)
         {
             var node = document.SelectSingleNode(xpath);
             return node == null ? null : GetNode(node);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="node"></param>
+        /// <param name="isRemoveSpace"></param>
+        /// <returns></returns>
         public CommonXmlNode GetNode(XmlNode node, bool isRemoveSpace = true)
         {
             return new CommonXmlNode
@@ -78,12 +120,24 @@ namespace SavannahXmlLib.XmlWrapper
             };
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="xpath"></param>
+        /// <param name="isRemoveSpace"></param>
+        /// <returns></returns>
         public CommonXmlNode[] GetNodes(string xpath, bool isRemoveSpace = true)
         {
             var nodeList = ConvertXmlNode(document.SelectNodes(xpath));
             return GetNodes(nodeList, isRemoveSpace);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="nodeList"></param>
+        /// <param name="isRemoveSpace"></param>
+        /// <returns></returns>
         public CommonXmlNode[] GetNodes(XmlNode[] nodeList, bool isRemoveSpace = true)
         {
             var list = from node in nodeList
@@ -98,6 +152,11 @@ namespace SavannahXmlLib.XmlWrapper
             return list.ToArray();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="isRemoveSpace"></param>
+        /// <returns></returns>
         public CommonXmlNode GetAllNodes(bool isRemoveSpace = true)
         {
             var nodeList = document.SelectSingleNode("/*");

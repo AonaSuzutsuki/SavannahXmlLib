@@ -36,7 +36,7 @@ namespace SavannahXmlLibTests.XmlWrapper
                                 Value = "attr"
                             }
                         },
-                        PrioritizeInneXml = "Value"
+                        PrioritizeInnerXml = "Value"
                     }
                 }
             };
@@ -70,7 +70,7 @@ namespace SavannahXmlLibTests.XmlWrapper
                             new CommonXmlNode
                             {
                                 NodeType = XmlNodeType.Text,
-                                PrioritizeInneXml = "Value"
+                                PrioritizeInnerXml = "Value"
                             }
                         }
                     }
