@@ -11,13 +11,15 @@ namespace SavannahXmlLib.XmlWrapper
     /// </summary>
     public class CommonXmlWriter
     {
+        public const string Utf8Declaration = "version=\"1.0\"";
+
         private readonly XmlDocument xDocument = new XmlDocument();
         private readonly XmlProcessingInstruction xDeclaration;
 
         /// <summary>
         /// Initialize the class.
         /// </summary>
-        public CommonXmlWriter() : this("version=\"1.0\"")
+        public CommonXmlWriter() : this(Utf8Declaration)
         {
         }
 
