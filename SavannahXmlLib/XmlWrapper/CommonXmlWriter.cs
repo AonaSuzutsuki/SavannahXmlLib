@@ -75,7 +75,7 @@ namespace SavannahXmlLib.XmlWrapper
                 if (root.Attributes.Any())
                     foreach (AttributeInfo attributeInfo in root.Attributes)
                         elem.SetAttribute(attributeInfo.Name, attributeInfo.Value);
-                if (!string.IsNullOrEmpty(root.InnerText))
+                if (!string.IsNullOrEmpty(root.InnerText) && !root.ChildNodes.Any())
                     elem.InnerText = root.InnerText;
 
                 if (root.PrioritizeInnerXml != null)

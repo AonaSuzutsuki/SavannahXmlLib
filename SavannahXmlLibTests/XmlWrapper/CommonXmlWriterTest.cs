@@ -132,5 +132,53 @@ namespace SavannahXmlLibTests.XmlWrapper
 
             Assert.AreEqual(exp, xml);
         }
+
+        [Test]
+        public void WriteTest2()
+        {
+            var root = new CommonXmlNode
+            {
+                TagName = "root",
+                InnerText = "aaaaa",
+                ChildNodes = new[]
+                {
+                    new CommonXmlNode
+                    {
+                        TagName = "#text",
+                        NodeType = XmlNodeType.Text,
+                        InnerText = "bbbbb"
+                    }
+                }
+            };
+
+            var exp = new CommonXmlNode
+            {
+                TagName = "root",
+                InnerText = "bbbbb",
+                ChildNodes = new[]
+                {
+                    new CommonXmlNode
+                    {
+                        TagName = "#text",
+                        NodeType = XmlNodeType.Text,
+                        InnerText = "bbbbb"
+                    }
+                }
+            };
+
+            var writer = new CommonXmlWriter("version=\"1.0\" encoding=\"UTF-8\"");
+            using var ms = new MemoryStream();
+            writer.Write(ms, root);
+            ms.Seek(0, SeekOrigin.Begin);
+
+            using var sr = new StreamReader(ms);
+            var xml = sr.ReadToEnd();
+            ms.Seek(0, SeekOrigin.Begin);
+
+            var reader = new CommonXmlReader(ms);
+            var act = reader.GetAllNodes();
+
+            Assert.AreEqual(exp, act);
+        }
     }
 }
