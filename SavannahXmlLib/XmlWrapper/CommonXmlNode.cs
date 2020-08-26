@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using CommonCoreLib.Bool;
+using CommonExtensionLib.Extensions;
 
 namespace SavannahXmlLib.XmlWrapper
 {
@@ -267,6 +268,26 @@ namespace SavannahXmlLib.XmlWrapper
             return converted;
         }
 
+        public void ResolvePrioritizeInnerXml(CommonXmlNode node = null)
+        {
+            node ??= this;
+
+            if (!string.IsNullOrEmpty(PrioritizeInnerXml))
+            {
+                using var ms = CommonXmlWriter.ResolvePrioritizeInnerXml(node);
+                var cNode = CommonXmlReader.ResolvePrioritizeInnerXml(ms);
+                node.ChildNodes = cNode;
+            }
+            else
+            {
+                if (!node.ChildNodes.Any())
+                    return;
+                foreach (var nodeChildNode in node.ChildNodes)
+                {
+                    ResolvePrioritizeInnerXml(nodeChildNode);
+                }
+            }
+        }
         #endregion
 
         #region Static Methods

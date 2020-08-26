@@ -171,6 +171,13 @@ namespace SavannahXmlLib.XmlWrapper
             return root;
         }
 
+        public static IEnumerable<CommonXmlNode> ResolvePrioritizeInnerXml(Stream stream)
+        {
+            var reader = new CommonXmlReader(stream);
+            var _node = reader.GetAllNodes();
+            return _node.ChildNodes;
+        }
+
         private static string RemoveSpace(string text, bool isAddLine = false)
         {
             var sb = new StringBuilder();
