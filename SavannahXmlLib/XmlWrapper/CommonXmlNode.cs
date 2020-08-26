@@ -44,6 +44,9 @@ namespace SavannahXmlLib.XmlWrapper
     public class CommonXmlNode
     {
         #region Properties
+
+        public int IndentSize { get; set; } = 2;
+
         /// <summary>
         /// The type of this node.
         /// </summary>
@@ -221,7 +224,7 @@ namespace SavannahXmlLib.XmlWrapper
         /// <param name="node"></param>
         /// <param name="space"></param>
         /// <returns></returns>
-        public static string ToString(CommonXmlNode node, int space = 0)
+        public string ToString(CommonXmlNode node, int space = 0)
         {
             var spaceText = MakeSpace(space);
 
@@ -234,7 +237,7 @@ namespace SavannahXmlLib.XmlWrapper
                 if (node.ChildNodes.Any())
                 {
                     sb.Append($"{spaceText}<{node.TagName}{attr}>\n");
-                    space += 4;
+                    space += IndentSize;
                     foreach (var childNode in node.ChildNodes)
                     {
                         sb.Append($"{ToString(childNode, space)}\n");
@@ -249,12 +252,21 @@ namespace SavannahXmlLib.XmlWrapper
             }
             else
             {
-                sb.Append($"{spaceText}{node.InnerText}");
+                sb.Append(ResolveInnerText(node, spaceText));
             }
             
 
             return sb.ToString();
         }
+
+        private string ResolveInnerText(CommonXmlNode node, string spaceText)
+        {
+            var text = node.InnerText.UnifiedBreakLine();
+            var lines = text.Split('\n');
+            var converted = string.Join("\n", lines.Select(x => $"{spaceText}{x}"));
+            return converted;
+        }
+
         #endregion
 
         #region Static Methods
@@ -348,14 +360,14 @@ namespace SavannahXmlLib.XmlWrapper
                 return false;
 
             var element = (CommonXmlNode)obj;
-            var boolcollector = new BoolCollector();
+            var collector = new BoolCollector();
 
-            boolcollector.ChangeBool(TagName, TagName == element.TagName);
-            boolcollector.ChangeBool(Attributes, Attributes.SequenceEqual(element.Attributes));
-            boolcollector.ChangeBool(ChildNodes, ChildNodes.SequenceEqual(element.ChildNodes));
-            boolcollector.ChangeBool(InnerText, InnerText.Equals(element.InnerText));
+            collector.ChangeBool(TagName, TagName == element.TagName);
+            collector.ChangeBool(Attributes, Attributes.SequenceEqual(element.Attributes));
+            collector.ChangeBool(ChildNodes, ChildNodes.SequenceEqual(element.ChildNodes));
+            collector.ChangeBool(InnerText, InnerText.Equals(element.InnerText));
 
-            return boolcollector.Value;
+            return collector.Value;
         }
 
         /// <summary>
