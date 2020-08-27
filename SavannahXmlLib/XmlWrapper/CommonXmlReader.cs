@@ -64,7 +64,7 @@ namespace SavannahXmlLib.XmlWrapper
         /// <returns></returns>
         public IList<string> GetAttributes(string name, string xpath, bool isContaisNoValue = true)
         {
-            var nodeList = GetNodes(ConvertXmlNode(document.SelectNodes(xpath)));
+            var nodeList = ConvertXmlNodes(ConvertXmlNode(document.SelectNodes(xpath)));
             var cond = Conditions.If<IList<string>>(() => isContaisNoValue)
                 .Then(() => (from node in nodeList
                              let attr = node.GetAttribute(name).Value
@@ -85,7 +85,7 @@ namespace SavannahXmlLib.XmlWrapper
         /// <returns></returns>
         public IList<string> GetValues(string xpath, bool isRemoveSpace = true)
         {
-            var nodeList = GetNodes(ConvertXmlNode(document.SelectNodes(xpath)), isRemoveSpace);
+            var nodeList = ConvertXmlNodes(ConvertXmlNode(document.SelectNodes(xpath)), isRemoveSpace);
             return (from node in nodeList
                     let text = node.InnerText
                     where !string.IsNullOrEmpty(text) select text).ToList();
@@ -99,7 +99,7 @@ namespace SavannahXmlLib.XmlWrapper
         public CommonXmlNode GetNode(string xpath)
         {
             var node = document.SelectSingleNode(xpath);
-            return node == null ? null : GetNode(node);
+            return node == null ? null : ConvertXmlNode(node);
         }
 
         /// <summary>
@@ -108,7 +108,7 @@ namespace SavannahXmlLib.XmlWrapper
         /// <param name="node"></param>
         /// <param name="isRemoveSpace"></param>
         /// <returns></returns>
-        public CommonXmlNode GetNode(XmlNode node, bool isRemoveSpace = true)
+        public CommonXmlNode ConvertXmlNode(XmlNode node, bool isRemoveSpace = true)
         {
             return new CommonXmlNode
             {
@@ -129,7 +129,7 @@ namespace SavannahXmlLib.XmlWrapper
         public CommonXmlNode[] GetNodes(string xpath, bool isRemoveSpace = true)
         {
             var nodeList = ConvertXmlNode(document.SelectNodes(xpath));
-            return GetNodes(nodeList, isRemoveSpace);
+            return nodeList == null ? null : ConvertXmlNodes(nodeList, isRemoveSpace);
         }
 
         /// <summary>
@@ -138,7 +138,7 @@ namespace SavannahXmlLib.XmlWrapper
         /// <param name="nodeList"></param>
         /// <param name="isRemoveSpace"></param>
         /// <returns></returns>
-        public CommonXmlNode[] GetNodes(XmlNode[] nodeList, bool isRemoveSpace = true)
+        public CommonXmlNode[] ConvertXmlNodes(XmlNode[] nodeList, bool isRemoveSpace = true)
         {
             var list = from node in nodeList
                        select new CommonXmlNode
