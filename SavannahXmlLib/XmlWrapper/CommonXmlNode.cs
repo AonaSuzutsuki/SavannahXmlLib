@@ -36,7 +36,12 @@ namespace SavannahXmlLib.XmlWrapper
         /// <summary>
         /// Text
         /// </summary>
-        Text
+        Text,
+
+        /// <summary>
+        /// Comment
+        /// </summary>
+        Comment
     }
 
     /// <summary>
@@ -251,9 +256,15 @@ namespace SavannahXmlLib.XmlWrapper
                     sb.Append($"{spaceText}<{node.TagName}{attr} />");
                 }
             }
-            else
+            else if (node.NodeType == XmlNodeType.Text)
             {
                 sb.Append(ResolveInnerText(node, spaceText));
+            }
+            else
+            {
+                sb.Append($"{spaceText}<!--\n");
+                sb.Append(ResolveInnerText(node, MakeSpace(space + IndentSize)));
+                sb.Append($"\n{spaceText}-->");
             }
             
 

@@ -31,24 +31,32 @@ namespace SavannahXmlLib.XmlWrapper
         /// Initialize CommonXmlReader with the specified file.
         /// </summary>
         /// <param name="xmlPath">File path to be parsed</param>
-        public CommonXmlReader(string xmlPath)
+        /// <param name="ignoreComments">Whether to ignore the comments.</param>
+        public CommonXmlReader(string xmlPath, bool ignoreComments = true)
         {
             using var fs = new FileStream(xmlPath, FileMode.Open, FileAccess.Read, FileShare.Read);
-            Initialize(fs);
+            Initialize(fs, ignoreComments);
         }
 
         /// <summary>
         /// Initialize CommonXmlReader with the specified Stream.
         /// </summary>
         /// <param name="stream">Stream to be parsed</param>
-        public CommonXmlReader(Stream stream)
+        /// <param name="ignoreComments">Whether to ignore the comments.</param>
+        public CommonXmlReader(Stream stream, bool ignoreComments = true)
         {
-            Initialize(stream);
+            Initialize(stream, ignoreComments);
         }
 
-        private void Initialize(Stream stream)
+        private void Initialize(Stream stream, bool ignoreComments)
         {
-            document.Load(stream);
+            var readerSettings = new XmlReaderSettings
+            {
+                IgnoreComments = ignoreComments
+            };
+            using var reader = XmlReader.Create(stream, readerSettings);
+
+            document.Load(reader);
             var declaration = document.ChildNodes
                                 .OfType<XmlDeclaration>()
                                 .FirstOrDefault();
@@ -295,16 +303,29 @@ namespace SavannahXmlLib.XmlWrapper
                     list.Add(commonXmlNode);
                 }
 
-                if (n is XmlText)
+                if (n is XmlCharacterData)
                 {
-                    var node = (XmlText) n;
-                    var commonXmlNode = new CommonXmlNode
+                    var node = (XmlCharacterData)n;
+                    if (node.NodeType == System.Xml.XmlNodeType.Comment)
                     {
-                        NodeType = XmlNodeType.Text,
-                        TagName = node.Name,
-                        InnerText = ResolveInnerText(node, isRemoveSpace).Text,
-                    };
-                    list.Add(commonXmlNode);
+                        var commonXmlNode = new CommonXmlNode
+                        {
+                            NodeType = XmlNodeType.Comment,
+                            TagName = node.Name,
+                            InnerText = ResolveInnerText(node, isRemoveSpace).Text,
+                        };
+                        list.Add(commonXmlNode);
+                    }
+                    else
+                    {
+                        var commonXmlNode = new CommonXmlNode
+                        {
+                            NodeType = XmlNodeType.Text,
+                            TagName = node.Name,
+                            InnerText = ResolveInnerText(node, isRemoveSpace).Text,
+                        };
+                        list.Add(commonXmlNode);
+                    }
                 }
             }
             return list;

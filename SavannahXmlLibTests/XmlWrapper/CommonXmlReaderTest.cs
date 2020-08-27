@@ -9,9 +9,9 @@ namespace SavannahXmlLibTests.XmlWrapper
     [TestFixture]
     public class CommonXmlReaderTest
     {
-        public static string GetTestPath()
+        public static string GetTestPath(string filename = "Test.xml")
         {
-            return $"{AppDomain.CurrentDomain.BaseDirectory}/TestData/Test.xml".UnifiedSystemPathSeparator();
+            return $"{AppDomain.CurrentDomain.BaseDirectory}/TestData/{filename}".UnifiedSystemPathSeparator();
         }
 
         [Test]
@@ -332,6 +332,73 @@ namespace SavannahXmlLibTests.XmlWrapper
 
             var reader = new CommonXmlReader(GetTestPath());
             var node = reader.GetAllNodes();
+
+            Assert.AreEqual(exp, node);
+        }
+
+        [Test]
+        public void CommentTest()
+        {
+            var exp = new CommonXmlNode
+            {
+                TagName = "root",
+                ChildNodes = new []
+                {
+                    new CommonXmlNode
+                    {
+                        TagName = "#comment",
+                        InnerText = "Comment Test\nNew"
+                    },
+                    new CommonXmlNode
+                    {
+                        TagName = "value",
+                        InnerText = "test",
+                        ChildNodes = new []
+                        {
+                            new CommonXmlNode
+                            {
+                                TagName = "#text",
+                                InnerText = "test"
+                            }
+                        }
+                    },
+                }
+            };
+
+            var reader = new CommonXmlReader(GetTestPath("Comment.xml"), false);
+            var node = reader.GetAllNodes();
+            Console.WriteLine(node);
+
+            Assert.AreEqual(exp, node);
+        }
+
+        [Test]
+        public void CommentIgnoreTest()
+        {
+            var exp = new CommonXmlNode
+            {
+                TagName = "root",
+                ChildNodes = new[]
+                {
+                    new CommonXmlNode
+                    {
+                        TagName = "value",
+                        InnerText = "test",
+                        ChildNodes = new []
+                        {
+                            new CommonXmlNode
+                            {
+                                TagName = "#text",
+                                InnerText = "test"
+                            }
+                        }
+                    },
+                }
+            };
+
+            var reader = new CommonXmlReader(GetTestPath("Comment.xml"));
+            var node = reader.GetAllNodes();
+            Console.WriteLine(node);
 
             Assert.AreEqual(exp, node);
         }
