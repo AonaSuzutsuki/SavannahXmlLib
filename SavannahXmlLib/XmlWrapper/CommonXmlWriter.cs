@@ -58,6 +58,11 @@ namespace SavannahXmlLib.XmlWrapper
             stream.Write(data, 0, data.Length);
         }
 
+        /// <summary>
+        /// Convert PrioritizeInnerXml To regular XML text.
+        /// </summary>
+        /// <param name="node">Target node</param>
+        /// <returns>Stream written regular XML text.</returns>
         public static Stream ConvertInnerXmlToXmlText(CommonXmlNode node)
         {
             var xml = node.PrioritizeInnerXml;

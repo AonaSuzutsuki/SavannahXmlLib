@@ -20,17 +20,17 @@ namespace SavannahXmlLib.XmlWrapper
         /// <summary>
         /// 
         /// </summary>
-        public CommonXmlNode Root { get; private set; }
+        //public CommonXmlNode Root { get; private set; }
 
         /// <summary>
-        /// 
+        /// Get the xml declaration.
         /// </summary>
         public string Declaration { get; private set; }
 
         /// <summary>
-        /// 
+        /// Initialize CommonXmlReader with the specified file.
         /// </summary>
-        /// <param name="xmlPath"></param>
+        /// <param name="xmlPath">File path to be parsed</param>
         public CommonXmlReader(string xmlPath)
         {
             using var fs = new FileStream(xmlPath, FileMode.Open, FileAccess.Read, FileShare.Read);
@@ -38,9 +38,9 @@ namespace SavannahXmlLib.XmlWrapper
         }
 
         /// <summary>
-        /// 
+        /// Initialize CommonXmlReader with the specified Stream.
         /// </summary>
-        /// <param name="stream"></param>
+        /// <param name="stream">Stream to be parsed</param>
         public CommonXmlReader(Stream stream)
         {
             Initialize(stream);
@@ -56,11 +56,11 @@ namespace SavannahXmlLib.XmlWrapper
         }
 
         /// <summary>
-        /// 
+        /// Get values of an attribute from the specified XPath.
         /// </summary>
-        /// <param name="name"></param>
-        /// <param name="xpath"></param>
-        /// <param name="isContaisNoValue"></param>
+        /// <param name="name">Attributes name.</param>
+        /// <param name="xpath">XPath indicating the location of the attribute to be retrieved.</param>
+        /// <param name="isContaisNoValue">Whether to include an empty value.</param>
         /// <returns></returns>
         public IList<string> GetAttributes(string name, string xpath, bool isContaisNoValue = true)
         {
@@ -77,12 +77,11 @@ namespace SavannahXmlLib.XmlWrapper
         }
 
         /// <summary>
-        /// 
+        /// Get values from the specified XPath.
         /// </summary>
-        /// <param name="xpath"></param>
-        /// <param name="enableLineBreak"></param>
-        /// <param name="isRemoveSpace"></param>
-        /// <returns></returns>
+        /// <param name="xpath">XPath indicating the location of the value to be retrieved.</param>
+        /// <param name="isRemoveSpace">Whether to clear indentation blanks.</param>
+        /// <returns>Values</returns>
         public IList<string> GetValues(string xpath, bool isRemoveSpace = true)
         {
             var nodeList = ConvertXmlNodes(ConvertXmlNode(document.SelectNodes(xpath)), isRemoveSpace);
@@ -92,10 +91,10 @@ namespace SavannahXmlLib.XmlWrapper
         }
 
         /// <summary>
-        /// 
+        /// Get the node.
         /// </summary>
-        /// <param name="xpath"></param>
-        /// <returns></returns>
+        /// <param name="xpath">XPath indicating the location of the node to be retrieved.</param>
+        /// <returns>The node found. null is returned if not found.</returns>
         public CommonXmlNode GetNode(string xpath)
         {
             var node = document.SelectSingleNode(xpath);
@@ -103,11 +102,11 @@ namespace SavannahXmlLib.XmlWrapper
         }
 
         /// <summary>
-        /// 
+        /// Convert the XmlNode object to the CommonXmlNode object.
         /// </summary>
-        /// <param name="node"></param>
-        /// <param name="isRemoveSpace"></param>
-        /// <returns></returns>
+        /// <param name="node">XmlNode object.</param>
+        /// <param name="isRemoveSpace">Whether to clear indentation blanks.</param>
+        /// <returns>The node.</returns>
         public CommonXmlNode ConvertXmlNode(XmlNode node, bool isRemoveSpace = true)
         {
             return new CommonXmlNode
@@ -121,11 +120,11 @@ namespace SavannahXmlLib.XmlWrapper
         }
 
         /// <summary>
-        /// 
+        /// Get the node array.
         /// </summary>
-        /// <param name="xpath"></param>
-        /// <param name="isRemoveSpace"></param>
-        /// <returns></returns>
+        /// <param name="xpath">XPath indicating the location of the nodes to be retrieved.</param>
+        /// <param name="isRemoveSpace">Whether to clear indentation blanks.</param>
+        /// <returns>Nodes found. null is returned if not found.</returns>
         public CommonXmlNode[] GetNodes(string xpath, bool isRemoveSpace = true)
         {
             var nodeList = ConvertXmlNode(document.SelectNodes(xpath));
@@ -133,11 +132,11 @@ namespace SavannahXmlLib.XmlWrapper
         }
 
         /// <summary>
-        /// 
+        /// Convert the XmlNode array to the CommonXmlNode array.
         /// </summary>
-        /// <param name="nodeList"></param>
-        /// <param name="isRemoveSpace"></param>
-        /// <returns></returns>
+        /// <param name="nodeList">The target XmlNode array.</param>
+        /// <param name="isRemoveSpace">Whether to clear indentation blanks.</param>
+        /// <returns>The converted CommonXmlNode object array</returns>
         public CommonXmlNode[] ConvertXmlNodes(XmlNode[] nodeList, bool isRemoveSpace = true)
         {
             var list = from node in nodeList
@@ -153,10 +152,10 @@ namespace SavannahXmlLib.XmlWrapper
         }
 
         /// <summary>
-        /// 
+        /// Get all nodes including the root.
         /// </summary>
-        /// <param name="isRemoveSpace"></param>
-        /// <returns></returns>
+        /// <param name="isRemoveSpace">Whether to clear indentation blanks.</param>
+        /// <returns>The root node.</returns>
         public CommonXmlNode GetAllNodes(bool isRemoveSpace = true)
         {
             var nodeList = document.SelectSingleNode("/*");
@@ -171,6 +170,11 @@ namespace SavannahXmlLib.XmlWrapper
             return root;
         }
 
+        /// <summary>
+        /// Parse XML from the Stream and returns all nodes but the root.
+        /// </summary>
+        /// <param name="stream">Target stream.</param>
+        /// <returns>Enumerable xml nodes.</returns>
         public static IEnumerable<CommonXmlNode> GetChildNodesFromStream(Stream stream)
         {
             var reader = new CommonXmlReader(stream);

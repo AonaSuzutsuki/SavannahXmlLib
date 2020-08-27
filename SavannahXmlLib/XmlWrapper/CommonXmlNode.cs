@@ -16,7 +16,7 @@ namespace SavannahXmlLib.XmlWrapper
         /// Convert enumerable AttributeInfo class to semi colon separated string.
         /// </summary>
         /// <param name="attributeInfos">Enumerable AttributeInfo class</param>
-        /// <returns></returns>
+        /// <returns>The semi colon separated string.</returns>
         public static string ToAttributesText(this IEnumerable<AttributeInfo> attributeInfos)
         {
             return string.Join(", ", attributeInfos);
@@ -162,7 +162,7 @@ namespace SavannahXmlLib.XmlWrapper
         /// <param name="tagName">The name of the tag to add</param>
         /// <param name="attributeInfos">Enumerable attribute info to add</param>
         /// <param name="commonXmlNodes">Enumerable xml node to add</param>
-        /// <returns></returns>
+        /// <returns>The node of the created tag.</returns>
         public CommonXmlNode CreateChildElement(string tagName, IEnumerable<AttributeInfo> attributeInfos = null
             , IEnumerable<CommonXmlNode> commonXmlNodes = null)
         {
@@ -177,7 +177,7 @@ namespace SavannahXmlLib.XmlWrapper
         /// <param name="tagName">The name of the tag to add</param>
         /// <param name="attributeInfos">Enumerable attribute info to add</param>
         /// <param name="innerXml">The inner xml to add</param>
-        /// <returns></returns>
+        /// <returns>The node of the created tag.</returns>
         public CommonXmlNode CreateChildElement(string tagName, IEnumerable<AttributeInfo> attributeInfos
             , string innerXml)
         {
@@ -187,11 +187,9 @@ namespace SavannahXmlLib.XmlWrapper
         }
 
         /// <summary>
-        /// Create and add the child element to this node.
+        /// Add the child element to this node.
         /// </summary>
         /// <param name="node">The node to add</param>
-        /// <returns></returns>
-        public CommonXmlNode CreateChildElement(CommonXmlNode node)
         public void AddChildElement(CommonXmlNode node)
         {
             childNodes.Add(node);
@@ -200,17 +198,17 @@ namespace SavannahXmlLib.XmlWrapper
         /// <summary>
         /// Return xml string with tags.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>String in XML format.</returns>
         public override string ToString()
         {
             return ToString(this);
         }
 
         /// <summary>
-        /// 
+        /// Returns a string in XML format from a collection of nodes.
         /// </summary>
-        /// <param name="commonXmlNodes"></param>
-        /// <returns></returns>
+        /// <param name="commonXmlNodes">Enumerable xml nodes.</param>
+        /// <returns>String in XML format.</returns>
         public string ToString(IEnumerable<CommonXmlNode> commonXmlNodes)
         {
             var sb = new StringBuilder();
@@ -222,11 +220,11 @@ namespace SavannahXmlLib.XmlWrapper
         }
 
         /// <summary>
-        /// 
+        /// Generate a string in XML format with child elements from a node.
         /// </summary>
-        /// <param name="node"></param>
-        /// <param name="space"></param>
-        /// <returns></returns>
+        /// <param name="node">Target node.</param>
+        /// <param name="space">Indent space size</param>
+        /// <returns>String in XML format.</returns>
         public string ToString(CommonXmlNode node, int space = 0)
         {
             var spaceText = MakeSpace(space);
@@ -270,6 +268,10 @@ namespace SavannahXmlLib.XmlWrapper
             return converted;
         }
 
+        /// <summary>
+        /// Resolve all PrioritizeInnerXml elements including child elements.
+        /// </summary>
+        /// <param name="node">Target node. The current node is specified if it is null.</param>
         public void ResolvePrioritizeInnerXml(CommonXmlNode node = null)
         {
             node ??= this;
@@ -295,10 +297,10 @@ namespace SavannahXmlLib.XmlWrapper
 
         #region Static Methods
         /// <summary>
-        /// 
+        /// Generate space text.
         /// </summary>
-        /// <param name="count"></param>
-        /// <returns></returns>
+        /// <param name="count">The number of spaces to generate</param>
+        /// <returns>Space text.</returns>
         public static string MakeSpace(int count)
         {
             var sb = new StringBuilder();
@@ -311,10 +313,10 @@ namespace SavannahXmlLib.XmlWrapper
         }
 
         /// <summary>
-        /// 
+        /// Generate the root node.
         /// </summary>
-        /// <param name="tagName"></param>
-        /// <returns></returns>
+        /// <param name="tagName">Tag name of root.</param>
+        /// <returns>Root node.</returns>
         public static CommonXmlNode CreateRoot(string tagName)
         {
             var root = new CommonXmlNode
@@ -325,12 +327,12 @@ namespace SavannahXmlLib.XmlWrapper
         }
 
         /// <summary>
-        /// 
+        /// Generate the xml node.
         /// </summary>
-        /// <param name="tagName"></param>
-        /// <param name="attributeInfos"></param>
-        /// <param name="commonXmlNodes"></param>
-        /// <returns></returns>
+        /// <param name="tagName">Tag name.</param>
+        /// <param name="attributeInfos">Enumerable attribute infos</param>
+        /// <param name="commonXmlNodes">Enumerable children nodes.</param>
+        /// <returns>Xml node.</returns>
         public static CommonXmlNode CreateElement(string tagName, IEnumerable<AttributeInfo> attributeInfos = null
             , IEnumerable<CommonXmlNode> commonXmlNodes = null)
         {
@@ -350,12 +352,12 @@ namespace SavannahXmlLib.XmlWrapper
         }
 
         /// <summary>
-        /// 
+        /// Generate the xml node.
         /// </summary>
-        /// <param name="tagName"></param>
-        /// <param name="attributeInfos"></param>
-        /// <param name="innerXml"></param>
-        /// <returns></returns>
+        /// <param name="tagName">Tag name.</param>
+        /// <param name="attributeInfos">Enumerable attribute infos</param>
+        /// <param name="innerXml">Internal XML represented in text format.</param>
+        /// <returns>Xml node.</returns>
         public static CommonXmlNode CreateElement(string tagName, IEnumerable<AttributeInfo> attributeInfos,
             string innerXml)
         {
@@ -374,10 +376,10 @@ namespace SavannahXmlLib.XmlWrapper
 
         #region Equals
         /// <summary>
-        /// 
+        /// Evaluate the equivalence of objects.
         /// </summary>
-        /// <param name="obj"></param>
-        /// <returns></returns>
+        /// <param name="obj">Target object.</param>
+        /// <returns>Object equivalence.</returns>
         public override bool Equals(object obj)
         {
             if (obj == null || GetType() != obj.GetType())
@@ -395,9 +397,9 @@ namespace SavannahXmlLib.XmlWrapper
         }
 
         /// <summary>
-        /// 
+        /// Get hash code
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Hash value.</returns>
         public override int GetHashCode()
         {
             var hashCode = 2061855513;
