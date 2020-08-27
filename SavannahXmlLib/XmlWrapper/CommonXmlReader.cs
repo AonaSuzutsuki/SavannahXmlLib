@@ -10,37 +10,69 @@ using CommonExtensionLib.Extensions;
 
 namespace SavannahXmlLib.XmlWrapper
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class CommonXmlReader
     {
         private readonly XmlDocument document = new XmlDocument();
 
-        public CommonXmlNode Root { get; private set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        //public CommonXmlNode Root { get; private set; }
 
+        /// <summary>
+        /// Get the xml declaration.
+        /// </summary>
         public string Declaration { get; private set; }
 
-        public CommonXmlReader(string xmlPath)
+        /// <summary>
+        /// Initialize CommonXmlReader with the specified file.
+        /// </summary>
+        /// <param name="xmlPath">File path to be parsed</param>
+        /// <param name="ignoreComments">Whether to ignore the comments.</param>
+        public CommonXmlReader(string xmlPath, bool ignoreComments = true)
         {
             using var fs = new FileStream(xmlPath, FileMode.Open, FileAccess.Read, FileShare.Read);
-            Initialize(fs);
+            Initialize(fs, ignoreComments);
         }
 
-        public CommonXmlReader(Stream stream)
+        /// <summary>
+        /// Initialize CommonXmlReader with the specified Stream.
+        /// </summary>
+        /// <param name="stream">Stream to be parsed</param>
+        /// <param name="ignoreComments">Whether to ignore the comments.</param>
+        public CommonXmlReader(Stream stream, bool ignoreComments = true)
         {
-            Initialize(stream);
+            Initialize(stream, ignoreComments);
         }
 
-        private void Initialize(Stream stream)
+        private void Initialize(Stream stream, bool ignoreComments)
         {
-            document.Load(stream);
+            var readerSettings = new XmlReaderSettings
+            {
+                IgnoreComments = ignoreComments
+            };
+            using var reader = XmlReader.Create(stream, readerSettings);
+
+            document.Load(reader);
             var declaration = document.ChildNodes
                                 .OfType<XmlDeclaration>()
                                 .FirstOrDefault();
             Declaration = declaration.InnerText;
         }
 
+        /// <summary>
+        /// Get values of an attribute from the specified XPath.
+        /// </summary>
+        /// <param name="name">Attributes name.</param>
+        /// <param name="xpath">XPath indicating the location of the attribute to be retrieved.</param>
+        /// <param name="isContaisNoValue">Whether to include an empty value.</param>
+        /// <returns></returns>
         public IList<string> GetAttributes(string name, string xpath, bool isContaisNoValue = true)
         {
-            var nodeList = GetNodes(ConvertXmlNode(document.SelectNodes(xpath)));
+            var nodeList = ConvertXmlNodes(ConvertXmlNode(document.SelectNodes(xpath)));
             var cond = Conditions.If<IList<string>>(() => isContaisNoValue)
                 .Then(() => (from node in nodeList
                              let attr = node.GetAttribute(name).Value
@@ -52,21 +84,38 @@ namespace SavannahXmlLib.XmlWrapper
             return cond.Invoke();
         }
 
-        public IList<string> GetValues(string xpath, bool enableLineBreak = true, bool isRemoveSpace = true)
+        /// <summary>
+        /// Get values from the specified XPath.
+        /// </summary>
+        /// <param name="xpath">XPath indicating the location of the value to be retrieved.</param>
+        /// <param name="isRemoveSpace">Whether to clear indentation blanks.</param>
+        /// <returns>Values</returns>
+        public IList<string> GetValues(string xpath, bool isRemoveSpace = true)
         {
-            var nodeList = GetNodes(ConvertXmlNode(document.SelectNodes(xpath)), isRemoveSpace);
+            var nodeList = ConvertXmlNodes(ConvertXmlNode(document.SelectNodes(xpath)), isRemoveSpace);
             return (from node in nodeList
                     let text = node.InnerText
                     where !string.IsNullOrEmpty(text) select text).ToList();
         }
 
+        /// <summary>
+        /// Get the node.
+        /// </summary>
+        /// <param name="xpath">XPath indicating the location of the node to be retrieved.</param>
+        /// <returns>The node found. null is returned if not found.</returns>
         public CommonXmlNode GetNode(string xpath)
         {
             var node = document.SelectSingleNode(xpath);
-            return node == null ? null : GetNode(node);
+            return node == null ? null : ConvertXmlNode(node);
         }
 
-        public CommonXmlNode GetNode(XmlNode node, bool isRemoveSpace = true)
+        /// <summary>
+        /// Convert the XmlNode object to the CommonXmlNode object.
+        /// </summary>
+        /// <param name="node">XmlNode object.</param>
+        /// <param name="isRemoveSpace">Whether to clear indentation blanks.</param>
+        /// <returns>The node.</returns>
+        public CommonXmlNode ConvertXmlNode(XmlNode node, bool isRemoveSpace = true)
         {
             return new CommonXmlNode
             {
@@ -78,13 +127,25 @@ namespace SavannahXmlLib.XmlWrapper
             };
         }
 
+        /// <summary>
+        /// Get the node array.
+        /// </summary>
+        /// <param name="xpath">XPath indicating the location of the nodes to be retrieved.</param>
+        /// <param name="isRemoveSpace">Whether to clear indentation blanks.</param>
+        /// <returns>Nodes found. null is returned if not found.</returns>
         public CommonXmlNode[] GetNodes(string xpath, bool isRemoveSpace = true)
         {
             var nodeList = ConvertXmlNode(document.SelectNodes(xpath));
-            return GetNodes(nodeList, isRemoveSpace);
+            return nodeList == null ? null : ConvertXmlNodes(nodeList, isRemoveSpace);
         }
 
-        public CommonXmlNode[] GetNodes(XmlNode[] nodeList, bool isRemoveSpace = true)
+        /// <summary>
+        /// Convert the XmlNode array to the CommonXmlNode array.
+        /// </summary>
+        /// <param name="nodeList">The target XmlNode array.</param>
+        /// <param name="isRemoveSpace">Whether to clear indentation blanks.</param>
+        /// <returns>The converted CommonXmlNode object array</returns>
+        public CommonXmlNode[] ConvertXmlNodes(XmlNode[] nodeList, bool isRemoveSpace = true)
         {
             var list = from node in nodeList
                        select new CommonXmlNode
@@ -98,6 +159,11 @@ namespace SavannahXmlLib.XmlWrapper
             return list.ToArray();
         }
 
+        /// <summary>
+        /// Get all nodes including the root.
+        /// </summary>
+        /// <param name="isRemoveSpace">Whether to clear indentation blanks.</param>
+        /// <returns>The root node.</returns>
         public CommonXmlNode GetAllNodes(bool isRemoveSpace = true)
         {
             var nodeList = document.SelectSingleNode("/*");
@@ -112,19 +178,26 @@ namespace SavannahXmlLib.XmlWrapper
             return root;
         }
 
+        /// <summary>
+        /// Parse XML from the Stream and returns all nodes but the root.
+        /// </summary>
+        /// <param name="stream">Target stream.</param>
+        /// <returns>Enumerable xml nodes.</returns>
+        public static IEnumerable<CommonXmlNode> GetChildNodesFromStream(Stream stream)
+        {
+            var reader = new CommonXmlReader(stream);
+            var _node = reader.GetAllNodes();
+            return _node.ChildNodes;
+        }
+
         private static string RemoveSpace(string text, bool isAddLine = false)
         {
             var sb = new StringBuilder();
 
             text = text.UnifiedBreakLine().TrimStart('\n');
-            //if (text[0] == '\n')
-            //    text = text.Substring(1, text.Length - 1);
-            //if (text[text.Length - 1] == '\n')
-            //    text = text.Substring(0, text.Length - 1);
-            //text = text.TrimStart('\n');
             var spaceLength = GetSpaceLength(text);
 
-            var expression = spaceLength > 0 ? $"^( {{0,{spaceLength.ToString()}}})(?<text>.*)$" : "^ *(?<text>.*)$";
+            var expression = spaceLength > 0 ? $"^( {{0,{spaceLength}}})(?<text>.*)$" : "^ *(?<text>.*)$";
             var reg = new Regex(expression);
             using var sr = new StringReader(text);
             while (sr.Peek() > -1)
@@ -230,16 +303,29 @@ namespace SavannahXmlLib.XmlWrapper
                     list.Add(commonXmlNode);
                 }
 
-                if (n is XmlText)
+                if (n is XmlCharacterData)
                 {
-                    var node = (XmlText) n;
-                    var commonXmlNode = new CommonXmlNode
+                    var node = (XmlCharacterData)n;
+                    if (node.NodeType == System.Xml.XmlNodeType.Comment)
                     {
-                        NodeType = XmlNodeType.Text,
-                        TagName = node.Name,
-                        InnerText = ResolveInnerText(node, isRemoveSpace).Text,
-                    };
-                    list.Add(commonXmlNode);
+                        var commonXmlNode = new CommonXmlNode
+                        {
+                            NodeType = XmlNodeType.Comment,
+                            TagName = node.Name,
+                            InnerText = ResolveInnerText(node, isRemoveSpace).Text,
+                        };
+                        list.Add(commonXmlNode);
+                    }
+                    else
+                    {
+                        var commonXmlNode = new CommonXmlNode
+                        {
+                            NodeType = XmlNodeType.Text,
+                            TagName = node.Name,
+                            InnerText = ResolveInnerText(node, isRemoveSpace).Text,
+                        };
+                        list.Add(commonXmlNode);
+                    }
                 }
             }
             return list;

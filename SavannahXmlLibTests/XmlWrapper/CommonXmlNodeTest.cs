@@ -36,7 +36,7 @@ namespace SavannahXmlLibTests.XmlWrapper
                                 Value = "attr"
                             }
                         },
-                        PrioritizeInneXml = "Value"
+                        PrioritizeInnerXml = "Value"
                     }
                 }
             };
@@ -70,7 +70,7 @@ namespace SavannahXmlLibTests.XmlWrapper
                             new CommonXmlNode
                             {
                                 NodeType = XmlNodeType.Text,
-                                PrioritizeInneXml = "Value"
+                                PrioritizeInnerXml = "Value"
                             }
                         }
                     }
@@ -78,6 +78,75 @@ namespace SavannahXmlLibTests.XmlWrapper
             };
 
             var act = commonXmlNode2.ToString();
+        }
+
+        [Test]
+        public void WriteTestPrioritizeInnerXml()
+        {
+            var root = new CommonXmlNode
+            {
+                TagName = "root",
+                ChildNodes = new[]
+                {
+                    new CommonXmlNode
+                    {
+                        TagName = "cov",
+                        PrioritizeInnerXml = "<test>test<br />aaaa<br />bbb</test>"
+                    }
+                }
+            };
+
+            var exp = new CommonXmlNode
+            {
+                TagName = "root",
+                ChildNodes = new[]
+                {
+                    new CommonXmlNode
+                    {
+                        TagName = "cov",
+                        ChildNodes = new []
+                        {
+                            new CommonXmlNode
+                            {
+                                TagName = "test",
+                                ChildNodes = new []
+                                {
+                                    new CommonXmlNode
+                                    {
+                                        TagName = "#text",
+                                        NodeType = XmlNodeType.Text,
+                                        InnerText = "test"
+                                    },
+                                    new CommonXmlNode
+                                    {
+                                        TagName = "br"
+                                    },
+                                    new CommonXmlNode
+                                    {
+                                        TagName = "#text",
+                                        NodeType = XmlNodeType.Text,
+                                        InnerText = "aaaa"
+                                    },
+                                    new CommonXmlNode
+                                    {
+                                        TagName = "br"
+                                    },
+                                    new CommonXmlNode
+                                    {
+                                        TagName = "#text",
+                                        NodeType = XmlNodeType.Text,
+                                        InnerText = "bbb"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            };
+
+            root.ResolvePrioritizeInnerXml();
+
+            Assert.AreEqual(exp, root);
         }
     }
 }
