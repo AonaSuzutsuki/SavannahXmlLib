@@ -274,11 +274,12 @@ namespace SavannahXmlLib.XmlWrapper
         {
             node ??= this;
 
-            if (!string.IsNullOrEmpty(PrioritizeInnerXml))
+            if (!string.IsNullOrEmpty(node.PrioritizeInnerXml))
             {
-                using var ms = CommonXmlWriter.ResolvePrioritizeInnerXml(node);
-                var cNode = CommonXmlReader.ResolvePrioritizeInnerXml(ms);
+                using var ms = CommonXmlWriter.ConvertInnerXmlToXmlText(node);
+                var cNode = CommonXmlReader.GetChildNodesFromStream(ms);
                 node.ChildNodes = cNode;
+                node.PrioritizeInnerXml = null;
             }
             else
             {

@@ -335,7 +335,7 @@ namespace SavannahXmlLibTests.XmlWrapper
         }
 
         [Test]
-        public void WriteTest4()
+        public void WriteTestPrioritizeInnerXml()
         {
             var root = new CommonXmlNode
             {
@@ -384,6 +384,81 @@ namespace SavannahXmlLibTests.XmlWrapper
             };
 
             root.PrioritizeInnerXml = "<test>test<br />aaaa<br />bbb</test>";
+
+            var writer = new CommonXmlWriter("version=\"1.0\" encoding=\"UTF-8\"");
+            using var ms = new MemoryStream();
+            writer.Write(ms, root);
+            ms.Seek(0, SeekOrigin.Begin);
+
+            var reader = new CommonXmlReader(ms);
+            var act = reader.GetAllNodes();
+
+            Assert.AreEqual(exp, act);
+        }
+
+        [Test]
+        public void WriteTestPrioritizeInnerXml2()
+        {
+            var root = new CommonXmlNode
+            {
+                TagName = "root",
+                ChildNodes = new []
+                {
+                    new CommonXmlNode
+                    {
+                        TagName = "cov",
+                        PrioritizeInnerXml = "<test>test<br />aaaa<br />bbb</test>"
+                    }
+                }
+            };
+
+            var exp = new CommonXmlNode
+            {
+                TagName = "root",
+                ChildNodes = new[]
+                {
+                    new CommonXmlNode
+                    {
+                        TagName = "cov",
+                        ChildNodes = new []
+                        {
+                            new CommonXmlNode
+                            {
+                                TagName = "test",
+                                ChildNodes = new []
+                                {
+                                    new CommonXmlNode
+                                    {
+                                        TagName = "#text",
+                                        NodeType = XmlNodeType.Text,
+                                        InnerText = "test"
+                                    },
+                                    new CommonXmlNode
+                                    {
+                                        TagName = "br"
+                                    },
+                                    new CommonXmlNode
+                                    {
+                                        TagName = "#text",
+                                        NodeType = XmlNodeType.Text,
+                                        InnerText = "aaaa"
+                                    },
+                                    new CommonXmlNode
+                                    {
+                                        TagName = "br"
+                                    },
+                                    new CommonXmlNode
+                                    {
+                                        TagName = "#text",
+                                        NodeType = XmlNodeType.Text,
+                                        InnerText = "bbb"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            };
 
             var writer = new CommonXmlWriter("version=\"1.0\" encoding=\"UTF-8\"");
             using var ms = new MemoryStream();

@@ -58,7 +58,7 @@ namespace SavannahXmlLib.XmlWrapper
             stream.Write(data, 0, data.Length);
         }
 
-        public static Stream ResolvePrioritizeInnerXml(CommonXmlNode node)
+        public static Stream ConvertInnerXmlToXmlText(CommonXmlNode node)
         {
             var xml = node.PrioritizeInnerXml;
             var xDocument = new XmlDocument();

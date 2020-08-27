@@ -171,7 +171,7 @@ namespace SavannahXmlLib.XmlWrapper
             return root;
         }
 
-        public static IEnumerable<CommonXmlNode> ResolvePrioritizeInnerXml(Stream stream)
+        public static IEnumerable<CommonXmlNode> GetChildNodesFromStream(Stream stream)
         {
             var reader = new CommonXmlReader(stream);
             var _node = reader.GetAllNodes();
