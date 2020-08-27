@@ -233,5 +233,35 @@ namespace SavannahXmlLibTests.XmlWrapper
 
             //Assert.AreEqual(exp, root);
         }
+
+        [Test]
+        public void WritePrioritizeInnerXmlSpaceTest3()
+        {
+            var root = new CommonXmlNode
+            {
+                TagName = "root",
+                PrioritizeInnerXml = "aaa\n   b\nccc"
+            };
+
+            var exp = new CommonXmlNode
+            {
+                TagName = "root",
+                ChildNodes = new[]
+                {
+                    new CommonXmlNode
+                    {
+                        TagName = CommonXmlNode.TextTagName,
+                        NodeType = XmlNodeType.Text,
+                        InnerText = "test\n  test2\ntest3"
+                    }
+                }
+            };
+
+            root.ResolvePrioritizeInnerXml(false);
+
+            Console.WriteLine(root);
+
+            //Assert.AreEqual(exp, root);
+        }
     }
 }
