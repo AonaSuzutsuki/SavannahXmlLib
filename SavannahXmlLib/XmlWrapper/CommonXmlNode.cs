@@ -34,6 +34,13 @@ namespace SavannahXmlLib.XmlWrapper
     /// </summary>
     public class CommonXmlNode
     {
+        #region Constants
+
+        public const string TextTagName = "#text";
+        public const string CommentTagName = "#comment";
+
+        #endregion
+
         #region Properties
 
         public int IndentSize { get; set; } = 2;
