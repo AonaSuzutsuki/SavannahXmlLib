@@ -183,14 +183,9 @@ namespace SavannahXmlLib.XmlWrapper
             var sb = new StringBuilder();
 
             text = text.UnifiedBreakLine().TrimStart('\n');
-            //if (text[0] == '\n')
-            //    text = text.Substring(1, text.Length - 1);
-            //if (text[text.Length - 1] == '\n')
-            //    text = text.Substring(0, text.Length - 1);
-            //text = text.TrimStart('\n');
             var spaceLength = GetSpaceLength(text);
 
-            var expression = spaceLength > 0 ? $"^( {{0,{spaceLength.ToString()}}})(?<text>.*)$" : "^ *(?<text>.*)$";
+            var expression = spaceLength > 0 ? $"^( {{0,{spaceLength}}})(?<text>.*)$" : "^ *(?<text>.*)$";
             var reg = new Regex(expression);
             using var sr = new StringReader(text);
             while (sr.Peek() > -1)
