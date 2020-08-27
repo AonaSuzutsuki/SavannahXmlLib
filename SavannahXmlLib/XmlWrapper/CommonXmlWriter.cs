@@ -18,6 +18,11 @@ namespace SavannahXmlLib.XmlWrapper
         private readonly XmlProcessingInstruction xDeclaration;
 
         /// <summary>
+        /// Whether to ignore the comments for PrioritizeInnerXml.
+        /// </summary>
+        public bool IgnoreComments { get; set; } = true;
+
+        /// <summary>
         /// Initialize the class.
         /// </summary>
         public CommonXmlWriter() : this(Utf8Declaration)
@@ -51,7 +56,7 @@ namespace SavannahXmlLib.XmlWrapper
         /// <param name="root">The root of the XML to be written</param>
         public void Write(Stream stream, CommonXmlNode root)
         {
-            root.ResolvePrioritizeInnerXml();
+            root.ResolvePrioritizeInnerXml(IgnoreComments);
             var xml = root.ToString();
             var declaration = xDeclaration.OuterXml;
             var data = Encoding.UTF8.GetBytes($"{declaration}\n{xml}\n");
@@ -65,7 +70,11 @@ namespace SavannahXmlLib.XmlWrapper
         /// <returns>Stream written regular XML text.</returns>
         public static Stream ConvertInnerXmlToXmlText(CommonXmlNode node)
         {
-            var xml = node.PrioritizeInnerXml;
+            var lines = node.PrioritizeInnerXml.UnifiedBreakLine().Split('\n');
+            var spaceText = CommonXmlNode.MakeSpace(node.IndentSize);
+            var converted = string.Join("\n", lines.Select(x => $"{spaceText}{x}"));
+
+            var xml = $"\n{converted}\n";
             var xDocument = new XmlDocument();
             var xDeclaration = xDocument.CreateProcessingInstruction("xml", Utf8Declaration);
             var elem = xDocument.CreateElement("root");
@@ -74,7 +83,15 @@ namespace SavannahXmlLib.XmlWrapper
             xDocument.AppendChild(elem);
 
             var ms = new MemoryStream();
-            xDocument.Save(ms);
+            var writer = new XmlTextWriter(ms, Encoding.Unicode)
+            {
+                Formatting = Formatting.Indented,
+                Indentation = 2,
+                IndentChar = ' '
+            };
+            xDocument.WriteContentTo(writer);
+            writer.Flush();
+            ms.Flush();
             ms.Position = 0;
 
             return ms;

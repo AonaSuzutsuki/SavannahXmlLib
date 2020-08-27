@@ -81,7 +81,7 @@ namespace SavannahXmlLibTests.XmlWrapper
         }
 
         [Test]
-        public void WriteTestPrioritizeInnerXml()
+        public void PrioritizeInnerXmlTest()
         {
             var root = new CommonXmlNode
             {
@@ -147,6 +147,91 @@ namespace SavannahXmlLibTests.XmlWrapper
             root.ResolvePrioritizeInnerXml();
 
             Assert.AreEqual(exp, root);
+        }
+
+        [Test]
+        public void PrioritizeInnerXmlCommentTest()
+        {
+            var root = new CommonXmlNode
+            {
+                TagName = "root",
+                PrioritizeInnerXml = "<!--\n  more\n  more2\n-->"
+            };
+
+            var exp = new CommonXmlNode
+            {
+                TagName = "root",
+                ChildNodes = new []
+                {
+                    new CommonXmlNode
+                    {
+                        TagName = CommonXmlNode.CommentTagName,
+                        InnerText = "more\nmore2"
+                    }
+                }
+            };
+
+            root.ResolvePrioritizeInnerXml(false);
+
+            Assert.AreEqual(exp, root);
+        }
+
+        [Test]
+        public void PrioritizeInnerXmlSpaceTest()
+        {
+            var root = new CommonXmlNode
+            {
+                TagName = "root",
+                PrioritizeInnerXml = "test\n  test2\ntest3"
+            };
+
+            var exp = new CommonXmlNode
+            {
+                TagName = "root",
+                ChildNodes = new[]
+                {
+                    new CommonXmlNode
+                    {
+                        TagName = CommonXmlNode.TextTagName,
+                        NodeType = XmlNodeType.Text,
+                        InnerText = "test\n  test2\ntest3"
+                    }
+                }
+            };
+
+            root.ResolvePrioritizeInnerXml(false);
+
+            Assert.AreEqual(exp, root);
+        }
+
+        [Test]
+        public void WritePrioritizeInnerXmlSpaceTest2()
+        {
+            var root = new CommonXmlNode
+            {
+                TagName = "root",
+                PrioritizeInnerXml = "aaa\n<br />\n       bbb\n<br />\nbbb\n<br />\ncccc\n<test>\n  <bbb />\n</test>\n"
+            };
+
+            var exp = new CommonXmlNode
+            {
+                TagName = "root",
+                ChildNodes = new[]
+                {
+                    new CommonXmlNode
+                    {
+                        TagName = CommonXmlNode.TextTagName,
+                        NodeType = XmlNodeType.Text,
+                        InnerText = "test\n  test2\ntest3"
+                    }
+                }
+            };
+
+            root.ResolvePrioritizeInnerXml(false);
+
+            Console.WriteLine(root);
+
+            //Assert.AreEqual(exp, root);
         }
     }
 }

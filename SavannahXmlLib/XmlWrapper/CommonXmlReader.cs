@@ -178,24 +178,39 @@ namespace SavannahXmlLib.XmlWrapper
             return root;
         }
 
+        private CommonXmlNode GetAllNodesForPriority()
+        {
+            var nodeList = document.SelectSingleNode("/*");
+            var root = new CommonXmlNode
+            {
+                NodeType = XmlNodeType.Tag,
+                TagName = nodeList.Name,
+                InnerText = ResolveInnerText(nodeList, true).Text,
+                Attributes = ConvertAttributeInfoArray(nodeList.Attributes),
+                ChildNodes = GetElements(nodeList.ChildNodes, true).ToArray()
+            };
+            return root;
+        }
+
         /// <summary>
         /// Parse XML from the Stream and returns all nodes but the root.
         /// </summary>
         /// <param name="stream">Target stream.</param>
+        /// <param name="ignoreComments">Whether to ignore the comments.</param>
         /// <returns>Enumerable xml nodes.</returns>
-        public static IEnumerable<CommonXmlNode> GetChildNodesFromStream(Stream stream)
+        public static IEnumerable<CommonXmlNode> GetChildNodesFromStream(Stream stream, bool ignoreComments)
         {
-            var reader = new CommonXmlReader(stream);
-            var _node = reader.GetAllNodes();
+            var reader = new CommonXmlReader(stream, ignoreComments);
+            var _node = reader.GetAllNodesForPriority();
             return _node.ChildNodes;
         }
 
-        private static string RemoveSpace(string text, bool isAddLine = false)
+        private static string RemoveSpace(string text, int space, bool isAddLine = false)
         {
             var sb = new StringBuilder();
 
             text = text.UnifiedBreakLine().TrimStart('\n');
-            var spaceLength = GetSpaceLength(text);
+            var spaceLength = space == 0 ? GetSpaceLength(text) : space;
 
             var expression = spaceLength > 0 ? $"^( {{0,{spaceLength}}})(?<text>.*)$" : "^ *(?<text>.*)$";
             var reg = new Regex(expression);
@@ -232,7 +247,7 @@ namespace SavannahXmlLib.XmlWrapper
             return 0;
         }
 
-        private CommonXmlText ResolveInnerText(XmlNode node, bool isRemoveSpace)
+        private CommonXmlText ResolveInnerText(XmlNode node, bool isRemoveSpace, int space = 0)
         {
             var xml = node.InnerXml;
             var xmlText = new CommonXmlText
@@ -243,7 +258,7 @@ namespace SavannahXmlLib.XmlWrapper
             if (xml.Contains("<") || xml.Contains(">"))
                 return xmlText;
 
-            xmlText.Text = Conditions.IfElse(isRemoveSpace, () => RemoveSpace(node.InnerText, true),
+            xmlText.Text = Conditions.IfElse(isRemoveSpace, () => RemoveSpace(node.InnerText, space, true),
                 () => node.InnerText).UnifiedBreakLine();
             return xmlText;
         }
@@ -286,6 +301,12 @@ namespace SavannahXmlLib.XmlWrapper
         private List<CommonXmlNode> GetElements(XmlNodeList nodeList, bool isRemoveSpace)
         {
             var list = new List<CommonXmlNode>();
+            if (nodeList.Count <= 0)
+                return list;
+
+            var first = nodeList[0];
+            var space = GetSpaceLength(first.InnerText.Replace("\n", ""));
+
             foreach (var n in nodeList)
             {
                 if (n is XmlElement)
@@ -322,7 +343,7 @@ namespace SavannahXmlLib.XmlWrapper
                         {
                             NodeType = XmlNodeType.Text,
                             TagName = node.Name,
-                            InnerText = ResolveInnerText(node, isRemoveSpace).Text,
+                            InnerText = ResolveInnerText(node, isRemoveSpace, space).Text,
                         };
                         list.Add(commonXmlNode);
                     }
