@@ -83,7 +83,7 @@ namespace SavannahXmlLib.XmlWrapper
         /// <param name="enableLineBreak"></param>
         /// <param name="isRemoveSpace"></param>
         /// <returns></returns>
-        public IList<string> GetValues(string xpath, bool enableLineBreak = true, bool isRemoveSpace = true)
+        public IList<string> GetValues(string xpath, bool isRemoveSpace = true)
         {
             var nodeList = GetNodes(ConvertXmlNode(document.SelectNodes(xpath)), isRemoveSpace);
             return (from node in nodeList
