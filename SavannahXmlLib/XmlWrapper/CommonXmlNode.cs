@@ -167,7 +167,8 @@ namespace SavannahXmlLib.XmlWrapper
             , IEnumerable<CommonXmlNode> commonXmlNodes = null)
         {
             var node = CreateElement(tagName, attributeInfos, commonXmlNodes);
-            return CreateChildElement(node);
+            AddChildElement(node);
+            return node;
         }
 
         /// <summary>
@@ -181,7 +182,8 @@ namespace SavannahXmlLib.XmlWrapper
             , string innerXml)
         {
             var node = CreateElement(tagName, attributeInfos, innerXml);
-            return CreateChildElement(node);
+            AddChildElement(node);
+            return node;
         }
 
         /// <summary>
@@ -190,9 +192,9 @@ namespace SavannahXmlLib.XmlWrapper
         /// <param name="node">The node to add</param>
         /// <returns></returns>
         public CommonXmlNode CreateChildElement(CommonXmlNode node)
+        public void AddChildElement(CommonXmlNode node)
         {
             childNodes.Add(node);
-            return node;
         }
 
         /// <summary>
