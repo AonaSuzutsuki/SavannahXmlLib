@@ -4,25 +4,10 @@ using System.Linq;
 using System.Text;
 using CommonCoreLib.Bool;
 using CommonExtensionLib.Extensions;
+using SavannahXmlLib.XmlWrapper;
 
 namespace SavannahXmlLib.XmlWrapper
 {
-    /// <summary>
-    /// Extended methods for CommonXmlNode class.
-    /// </summary>
-    public static class CommonXmlNodeExtension
-    {
-        /// <summary>
-        /// Convert enumerable AttributeInfo class to semi colon separated string.
-        /// </summary>
-        /// <param name="attributeInfos">Enumerable AttributeInfo class</param>
-        /// <returns>The semi colon separated string.</returns>
-        public static string ToAttributesText(this IEnumerable<AttributeInfo> attributeInfos)
-        {
-            return string.Join(", ", attributeInfos);
-        }
-    }
-
     /// <summary>
     /// XmlNode Type
     /// </summary>
@@ -237,7 +222,8 @@ namespace SavannahXmlLib.XmlWrapper
             var sb = new StringBuilder();
             if (node.NodeType == XmlNodeType.Tag)
             {
-                var attr = string.Join(" ", from x in node.Attributes select x.ToString());
+                //var attr = string.Join(" ", from x in node.Attributes select x.ToString());
+                var attr = node.Attributes.ToAttributesText(" ");
                 attr = string.IsNullOrEmpty(attr) ? attr : $" {attr}";
 
                 if (node.ChildNodes.Any())

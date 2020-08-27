@@ -4,7 +4,7 @@
         Comment Test
         New
     -->
-    <value>
+    <value attr="value" attr2="value2">
         test
     </value>    
 </root>

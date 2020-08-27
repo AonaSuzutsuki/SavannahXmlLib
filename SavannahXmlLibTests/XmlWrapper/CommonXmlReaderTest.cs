@@ -353,6 +353,19 @@ namespace SavannahXmlLibTests.XmlWrapper
                     {
                         TagName = "value",
                         InnerText = "test",
+                        Attributes = new []
+                        {
+                            new AttributeInfo
+                            {
+                                Name = "attr",
+                                Value = "value"
+                            },
+                            new AttributeInfo
+                            {
+                                Name = "attr2",
+                                Value = "value2"
+                            }
+                        },
                         ChildNodes = new []
                         {
                             new CommonXmlNode
@@ -367,7 +380,6 @@ namespace SavannahXmlLibTests.XmlWrapper
 
             var reader = new CommonXmlReader(GetTestPath("Comment.xml"), false);
             var node = reader.GetAllNodes();
-            Console.WriteLine(node);
 
             Assert.AreEqual(exp, node);
         }
@@ -384,6 +396,19 @@ namespace SavannahXmlLibTests.XmlWrapper
                     {
                         TagName = "value",
                         InnerText = "test",
+                        Attributes = new []
+                        {
+                            new AttributeInfo
+                            {
+                                Name = "attr",
+                                Value = "value"
+                            },
+                            new AttributeInfo
+                            {
+                                Name = "attr2",
+                                Value = "value2"
+                            }
+                        },
                         ChildNodes = new []
                         {
                             new CommonXmlNode
@@ -398,7 +423,6 @@ namespace SavannahXmlLibTests.XmlWrapper
 
             var reader = new CommonXmlReader(GetTestPath("Comment.xml"));
             var node = reader.GetAllNodes();
-            Console.WriteLine(node);
 
             Assert.AreEqual(exp, node);
         }
