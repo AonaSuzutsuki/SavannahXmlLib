@@ -251,7 +251,7 @@ namespace SavannahXmlLibTests.XmlWrapper
                     {
                         TagName = CommonXmlNode.TextTagName,
                         NodeType = XmlNodeType.Text,
-                        InnerText = "ccc"
+                        InnerText = "cccc"
                     },
                     new CommonXmlNode
                     {
@@ -311,18 +311,14 @@ namespace SavannahXmlLibTests.XmlWrapper
                     {
                         TagName = CommonXmlNode.TextTagName,
                         NodeType = XmlNodeType.Text,
-                        InnerText = "   b"
-                    },
-                    new CommonXmlNode
-                    {
-                        TagName = CommonXmlNode.TextTagName,
-                        NodeType = XmlNodeType.Text,
-                        InnerText = "ccc"
-                    },
+                        InnerText = "   b\nccc"
+                    }
                 }
             };
 
             root.ResolvePrioritizeInnerXml(false);
+
+            Console.WriteLine(root);
 
             Assert.AreEqual(exp, root);
         }
