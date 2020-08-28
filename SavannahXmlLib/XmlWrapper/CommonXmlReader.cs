@@ -18,11 +18,6 @@ namespace SavannahXmlLib.XmlWrapper
         private readonly XmlDocument document = new XmlDocument();
 
         /// <summary>
-        /// 
-        /// </summary>
-        //public CommonXmlNode Root { get; private set; }
-
-        /// <summary>
         /// Get the xml declaration.
         /// </summary>
         public string Declaration { get; private set; }
@@ -191,7 +186,7 @@ namespace SavannahXmlLib.XmlWrapper
                 TagName = nodeList.Name,
                 InnerText = ResolveInnerText(nodeList, true).Text,
                 Attributes = ConvertAttributeInfoArray(nodeList.Attributes),
-                ChildNodes = GetElements(nodeList.ChildNodes, true, 1, 2).ToArray()
+                ChildNodes = GetElements(nodeList.ChildNodes, true).ToArray()
             };
             return root;
         }
@@ -302,16 +297,13 @@ namespace SavannahXmlLib.XmlWrapper
                     }).ToArray();
         }
 
-        private List<CommonXmlNode> GetElements(XmlNodeList nodeList, bool isRemoveSpace, int hierarchy = 1, int space = -1)
+        private List<CommonXmlNode> GetElements(XmlNodeList nodeList, bool isRemoveSpace, int hierarchy = 1)
         {
             var list = new List<CommonXmlNode>();
             if (nodeList.Count <= 0)
                 return list;
 
-            if (space < 0)
-            {
-                space = 2 * hierarchy;
-            }
+            var space = 2 * hierarchy;
 
             foreach (var n in nodeList)
             {
