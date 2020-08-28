@@ -222,16 +222,54 @@ namespace SavannahXmlLibTests.XmlWrapper
                     {
                         TagName = CommonXmlNode.TextTagName,
                         NodeType = XmlNodeType.Text,
-                        InnerText = "test\n  test2\ntest3"
+                        InnerText = "aaa"
+                    },
+                    new CommonXmlNode
+                    {
+                        TagName = "br"
+                    },
+                    new CommonXmlNode
+                    {
+                        TagName = CommonXmlNode.TextTagName,
+                        NodeType = XmlNodeType.Text,
+                        InnerText = "       bbb"
+                    },
+                    new CommonXmlNode
+                    {
+                        TagName = "br"
+                    },
+                    new CommonXmlNode
+                    {
+                        TagName = CommonXmlNode.TextTagName,
+                        NodeType = XmlNodeType.Text,
+                        InnerText = "bbb"
+                    },
+                    new CommonXmlNode
+                    {
+                        TagName = "br"
+                    },new CommonXmlNode
+                    {
+                        TagName = CommonXmlNode.TextTagName,
+                        NodeType = XmlNodeType.Text,
+                        InnerText = "ccc"
+                    },
+                    new CommonXmlNode
+                    {
+                        TagName = "test",
+                        ChildNodes = new []
+                        {
+                            new CommonXmlNode
+                            {
+                                TagName = "bbb"
+                            }
+                        }
                     }
                 }
             };
 
             root.ResolvePrioritizeInnerXml(false);
 
-            Console.WriteLine(root);
-
-            //Assert.AreEqual(exp, root);
+            Assert.AreEqual(exp, root);
         }
 
         [Test]
@@ -240,7 +278,7 @@ namespace SavannahXmlLibTests.XmlWrapper
             var root = new CommonXmlNode
             {
                 TagName = "root",
-                PrioritizeInnerXml = "aaa\n   b\nccc"
+                PrioritizeInnerXml = "<test />\naaa\n<test>\n<br />\n</test>\n   b\nccc"
             };
 
             var exp = new CommonXmlNode
@@ -250,18 +288,43 @@ namespace SavannahXmlLibTests.XmlWrapper
                 {
                     new CommonXmlNode
                     {
+                        TagName = "test"
+                    },
+                    new CommonXmlNode
+                    {
                         TagName = CommonXmlNode.TextTagName,
                         NodeType = XmlNodeType.Text,
-                        InnerText = "test\n  test2\ntest3"
-                    }
+                        InnerText = "aaa"
+                    },
+                    new CommonXmlNode
+                    {
+                        TagName = "test",
+                        ChildNodes = new []
+                        {
+                            new CommonXmlNode
+                            {
+                                TagName = "br"
+                            },
+                        }
+                    },
+                    new CommonXmlNode
+                    {
+                        TagName = CommonXmlNode.TextTagName,
+                        NodeType = XmlNodeType.Text,
+                        InnerText = "   b"
+                    },
+                    new CommonXmlNode
+                    {
+                        TagName = CommonXmlNode.TextTagName,
+                        NodeType = XmlNodeType.Text,
+                        InnerText = "ccc"
+                    },
                 }
             };
 
             root.ResolvePrioritizeInnerXml(false);
 
-            Console.WriteLine(root);
-
-            //Assert.AreEqual(exp, root);
+            Assert.AreEqual(exp, root);
         }
     }
 }

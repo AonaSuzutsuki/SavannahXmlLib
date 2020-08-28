@@ -303,9 +303,9 @@ namespace SavannahXmlLib.XmlWrapper
             var list = new List<CommonXmlNode>();
             if (nodeList.Count <= 0)
                 return list;
-
-            var first = nodeList[0];
-            var space = GetSpaceLength(first.InnerText.Replace("\n", ""));
+            
+            var first = GetFirstTextNode(nodeList);
+            var space = first == null ? 0 : GetSpaceLength(first.InnerText.Replace("\n", ""));
 
             foreach (var n in nodeList)
             {
@@ -350,6 +350,19 @@ namespace SavannahXmlLib.XmlWrapper
                 }
             }
             return list;
+        }
+
+        private static XmlNode GetFirstTextNode(XmlNodeList nodeList)
+        {
+            foreach (var node in nodeList)
+            {
+                if (node is XmlCharacterData n)
+                {
+                    if (n.NodeType == System.Xml.XmlNodeType.Text)
+                        return n;
+                }
+            }
+            return null;
         }
     }
 }
