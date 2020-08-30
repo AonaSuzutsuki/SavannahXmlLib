@@ -2,6 +2,8 @@
 using NUnit.Framework;
 using SavannahXmlLib.XmlWrapper;
 using System.Collections.Generic;
+using System.IO;
+using System.Text;
 using CommonCoreLib.CommonPath;
 
 namespace SavannahXmlLibTests.XmlWrapper
@@ -85,7 +87,7 @@ namespace SavannahXmlLibTests.XmlWrapper
                     new CommonXmlNode
                     {
                         NodeType = XmlNodeType.Text,
-                        TagName = "#text",
+                        TagName = CommonXmlNode.TextTagName,
                         InnerText = "サーバー名を設定します。サーバーリストにはこの名前で表示されます。"
                     }
                 },
@@ -125,7 +127,7 @@ namespace SavannahXmlLibTests.XmlWrapper
                         new CommonXmlNode
                         {
                             NodeType = XmlNodeType.Text,
-                            TagName = "#text",
+                            TagName = CommonXmlNode.TextTagName,
                             InnerText = "サーバー名を設定します。サーバーリストにはこの名前で表示されます。"
                         }
                     },
@@ -153,7 +155,7 @@ namespace SavannahXmlLibTests.XmlWrapper
                         new CommonXmlNode
                         {
                             NodeType = XmlNodeType.Text,
-                            TagName = "#text",
+                            TagName = CommonXmlNode.TextTagName,
                             InnerText = "サーバー名を設定します。サーバーリストにはこの名前で表示されます。\n    test"
                         }
                     },
@@ -198,7 +200,7 @@ namespace SavannahXmlLibTests.XmlWrapper
                             new CommonXmlNode
                             {
                                 NodeType = XmlNodeType.Text,
-                                TagName = "#text",
+                                TagName = CommonXmlNode.TextTagName,
                                 InnerText = "サーバー名を設定します。サーバーリストにはこの名前で表示されます。"
                             }
                         },
@@ -226,7 +228,7 @@ namespace SavannahXmlLibTests.XmlWrapper
                             new CommonXmlNode
                             {
                                 NodeType = XmlNodeType.Text,
-                                TagName = "#text",
+                                TagName = CommonXmlNode.TextTagName,
                                 InnerText = "サーバー名を設定します。サーバーリストにはこの名前で表示されます。\n    test"
                             }
                         },
@@ -254,7 +256,7 @@ namespace SavannahXmlLibTests.XmlWrapper
                             new CommonXmlNode
                             {
                                 NodeType = XmlNodeType.Text,
-                                TagName = "#text",
+                                TagName = CommonXmlNode.TextTagName,
                                 InnerText = "サーバーの説明を設定します。"
                             }
                         },
@@ -282,7 +284,7 @@ namespace SavannahXmlLibTests.XmlWrapper
                             new CommonXmlNode
                             {
                                 NodeType = XmlNodeType.Text,
-                                TagName = "#text",
+                                TagName = CommonXmlNode.TextTagName,
                                 InnerText = "サーバーのウェブサイトを設定します。"
                             }
                         },
@@ -319,7 +321,7 @@ namespace SavannahXmlLibTests.XmlWrapper
                                     new CommonXmlNode
                                     {
                                         NodeType = XmlNodeType.Text,
-                                        TagName = "#text",
+                                        TagName = CommonXmlNode.TextTagName,
                                         InnerText = "Value"
                                     }
                                 },
@@ -346,7 +348,7 @@ namespace SavannahXmlLibTests.XmlWrapper
                 {
                     new CommonXmlNode
                     {
-                        TagName = "#comment",
+                        TagName = CommonXmlNode.CommentTagName,
                         InnerText = "Comment Test\nNew"
                     },
                     new CommonXmlNode
@@ -370,7 +372,8 @@ namespace SavannahXmlLibTests.XmlWrapper
                         {
                             new CommonXmlNode
                             {
-                                TagName = "#text",
+                                TagName = CommonXmlNode.TextTagName,
+                                NodeType = XmlNodeType.Text,
                                 InnerText = "test"
                             }
                         }
@@ -413,7 +416,8 @@ namespace SavannahXmlLibTests.XmlWrapper
                         {
                             new CommonXmlNode
                             {
-                                TagName = "#text",
+                                TagName = CommonXmlNode.TextTagName,
+                                NodeType = XmlNodeType.Text,
                                 InnerText = "test"
                             }
                         }
@@ -423,6 +427,47 @@ namespace SavannahXmlLibTests.XmlWrapper
 
             var reader = new CommonXmlReader(GetTestPath("Comment.xml"));
             var node = reader.GetAllNodes();
+
+            Assert.AreEqual(exp, node);
+        }
+
+        [Test]
+        public void WritePrioritizeInnerXmlSpaceTest()
+        {
+            var root = new CommonXmlNode
+            {
+                TagName = "root",
+                PrioritizeInnerXml = "       aaaaaa\naa\n  aaaa"
+            };
+
+            var exp = new CommonXmlNode
+            {
+                TagName = "root",
+                InnerText = "aaaaaa\naa\naaaa",
+                ChildNodes = new[]
+                {
+                    new CommonXmlNode
+                    {
+                        TagName = CommonXmlNode.TextTagName,
+                        NodeType = XmlNodeType.Text,
+                        InnerText = "       aaaaaa\naa\n  aaaa"
+                    },
+                }
+            };
+
+            root.ResolvePrioritizeInnerXml(false);
+
+            var xml = $"{CommonXmlConstants.Declaration}\n{root}";
+            var data = Encoding.UTF8.GetBytes(xml);
+            var stream = new MemoryStream();
+            stream.Write(data, 0, data.Length);
+            stream.Position = 0;
+
+            var reader = new CommonXmlReader(stream);
+            var node = reader.GetAllNodes();
+
+            //Console.WriteLine(root);
+            Console.WriteLine(node);
 
             Assert.AreEqual(exp, node);
         }

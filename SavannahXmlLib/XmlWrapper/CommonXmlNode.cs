@@ -34,6 +34,13 @@ namespace SavannahXmlLib.XmlWrapper
     /// </summary>
     public class CommonXmlNode
     {
+        #region Constants
+
+        public const string TextTagName = "#text";
+        public const string CommentTagName = "#comment";
+
+        #endregion
+
         #region Properties
 
         public int IndentSize { get; set; } = 2;
@@ -268,15 +275,16 @@ namespace SavannahXmlLib.XmlWrapper
         /// <summary>
         /// Resolve all PrioritizeInnerXml elements including child elements.
         /// </summary>
+        /// <param name="ignoreComments">Whether to ignore the comments.</param>
         /// <param name="node">Target node. The current node is specified if it is null.</param>
-        public void ResolvePrioritizeInnerXml(CommonXmlNode node = null)
+        public void ResolvePrioritizeInnerXml(bool ignoreComments = true, CommonXmlNode node = null)
         {
             node ??= this;
 
             if (!string.IsNullOrEmpty(node.PrioritizeInnerXml))
             {
                 using var ms = CommonXmlWriter.ConvertInnerXmlToXmlText(node);
-                var cNode = CommonXmlReader.GetChildNodesFromStream(ms);
+                var cNode = CommonXmlReader.GetChildNodesFromStream(ms, ignoreComments);
                 node.ChildNodes = cNode;
                 node.PrioritizeInnerXml = null;
             }
@@ -286,7 +294,7 @@ namespace SavannahXmlLib.XmlWrapper
                     return;
                 foreach (var nodeChildNode in node.ChildNodes)
                 {
-                    ResolvePrioritizeInnerXml(nodeChildNode);
+                    ResolvePrioritizeInnerXml(ignoreComments, nodeChildNode);
                 }
             }
         }

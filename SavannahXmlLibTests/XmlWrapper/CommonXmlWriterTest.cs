@@ -37,7 +37,7 @@ namespace SavannahXmlLibTests.XmlWrapper
                         {
                             new CommonXmlNode
                             {
-                                TagName = "#text",
+                                TagName = CommonXmlNode.TextTagName,
                                 NodeType = XmlNodeType.Text,
                                 InnerText = "サーバー名を設定します。サーバーリストにはこの名前で表示されます。"
                             }
@@ -63,7 +63,7 @@ namespace SavannahXmlLibTests.XmlWrapper
                         {
                             new CommonXmlNode
                             {
-                                TagName = "#text",
+                                TagName = CommonXmlNode.TextTagName,
                                 NodeType = XmlNodeType.Text,
                                 InnerText = "サーバー名を設定します。サーバーリストにはこの名前で表示されます。\n    test"
                             }
@@ -89,7 +89,7 @@ namespace SavannahXmlLibTests.XmlWrapper
                         {
                             new CommonXmlNode
                             {
-                                TagName = "#text",
+                                TagName = CommonXmlNode.TextTagName,
                                 NodeType = XmlNodeType.Text,
                                 InnerText = "サーバーの説明を設定します。"
                             }
@@ -115,7 +115,7 @@ namespace SavannahXmlLibTests.XmlWrapper
                         {
                             new CommonXmlNode
                             {
-                                TagName = "#text",
+                                TagName = CommonXmlNode.TextTagName,
                                 NodeType = XmlNodeType.Text,
                                 InnerText = "サーバーのウェブサイトを設定します。"
                             }
@@ -149,7 +149,7 @@ namespace SavannahXmlLibTests.XmlWrapper
                                 {
                                     new CommonXmlNode
                                     {
-                                        TagName = "#text",
+                                        TagName = CommonXmlNode.TextTagName,
                                         NodeType = XmlNodeType.Text,
                                         InnerText = "Value"
                                     }
@@ -184,7 +184,7 @@ namespace SavannahXmlLibTests.XmlWrapper
                 {
                     new CommonXmlNode
                     {
-                        TagName = "#text",
+                        TagName = CommonXmlNode.TextTagName,
                         NodeType = XmlNodeType.Text,
                         InnerText = "bbbbb"
                     }
@@ -199,7 +199,7 @@ namespace SavannahXmlLibTests.XmlWrapper
                 {
                     new CommonXmlNode
                     {
-                        TagName = "#text",
+                        TagName = CommonXmlNode.TextTagName,
                         NodeType = XmlNodeType.Text,
                         InnerText = "bbbbb"
                     }
@@ -243,7 +243,7 @@ namespace SavannahXmlLibTests.XmlWrapper
                                 {
                                     new CommonXmlNode
                                     {
-                                        TagName = "#text",
+                                        TagName = CommonXmlNode.TextTagName,
                                         NodeType = XmlNodeType.Text,
                                         InnerText = "bbbbb\naaaaa\nccccc"
                                     }
@@ -259,7 +259,7 @@ namespace SavannahXmlLibTests.XmlWrapper
                         {
                             new CommonXmlNode
                             {
-                                TagName = "#text",
+                                TagName = CommonXmlNode.TextTagName,
                                 NodeType = XmlNodeType.Text,
                                 InnerText = "bbbbb\naaaaa\nccccc"
                             },
@@ -293,7 +293,7 @@ namespace SavannahXmlLibTests.XmlWrapper
                                 {
                                     new CommonXmlNode
                                     {
-                                        TagName = "#text",
+                                        TagName = CommonXmlNode.TextTagName,
                                         NodeType = XmlNodeType.Text,
                                         InnerText = "bbbbb\naaaaa\nccccc"
                                     }
@@ -309,7 +309,7 @@ namespace SavannahXmlLibTests.XmlWrapper
                         {
                             new CommonXmlNode
                             {
-                                TagName = "#text",
+                                TagName = CommonXmlNode.TextTagName,
                                 NodeType = XmlNodeType.Text,
                                 InnerText = "bbbbb\naaaaa\nccccc"
                             },
@@ -354,7 +354,7 @@ namespace SavannahXmlLibTests.XmlWrapper
                         {
                             new CommonXmlNode
                             {
-                                TagName = "#text",
+                                TagName = CommonXmlNode.TextTagName,
                                 NodeType = XmlNodeType.Text,
                                 InnerText = "test"
                             },
@@ -364,7 +364,7 @@ namespace SavannahXmlLibTests.XmlWrapper
                             },
                             new CommonXmlNode
                             {
-                                TagName = "#text",
+                                TagName = CommonXmlNode.TextTagName,
                                 NodeType = XmlNodeType.Text,
                                 InnerText = "aaaa"
                             },
@@ -374,7 +374,7 @@ namespace SavannahXmlLibTests.XmlWrapper
                             },
                             new CommonXmlNode
                             {
-                                TagName = "#text",
+                                TagName = CommonXmlNode.TextTagName,
                                 NodeType = XmlNodeType.Text,
                                 InnerText = "bbb"
                             }
@@ -429,7 +429,7 @@ namespace SavannahXmlLibTests.XmlWrapper
                                 {
                                     new CommonXmlNode
                                     {
-                                        TagName = "#text",
+                                        TagName = CommonXmlNode.TextTagName,
                                         NodeType = XmlNodeType.Text,
                                         InnerText = "test"
                                     },
@@ -439,7 +439,7 @@ namespace SavannahXmlLibTests.XmlWrapper
                                     },
                                     new CommonXmlNode
                                     {
-                                        TagName = "#text",
+                                        TagName = CommonXmlNode.TextTagName,
                                         NodeType = XmlNodeType.Text,
                                         InnerText = "aaaa"
                                     },
@@ -449,7 +449,7 @@ namespace SavannahXmlLibTests.XmlWrapper
                                     },
                                     new CommonXmlNode
                                     {
-                                        TagName = "#text",
+                                        TagName = CommonXmlNode.TextTagName,
                                         NodeType = XmlNodeType.Text,
                                         InnerText = "bbb"
                                     }
