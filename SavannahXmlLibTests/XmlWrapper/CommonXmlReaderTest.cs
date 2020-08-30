@@ -457,7 +457,7 @@ namespace SavannahXmlLibTests.XmlWrapper
 
             root.ResolvePrioritizeInnerXml(false);
 
-            var xml = $"<?xml {CommonXmlWriter.Utf8Declaration} ?>\n{root}";
+            var xml = $"{CommonXmlConstants.Declaration}\n{root}";
             var data = Encoding.UTF8.GetBytes(xml);
             var stream = new MemoryStream();
             stream.Write(data, 0, data.Length);

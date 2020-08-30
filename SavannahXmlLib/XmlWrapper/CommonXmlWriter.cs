@@ -12,8 +12,6 @@ namespace SavannahXmlLib.XmlWrapper
     /// </summary>
     public class CommonXmlWriter
     {
-        public const string Utf8Declaration = "version=\"1.0\"";
-
         private readonly XmlDocument xDocument = new XmlDocument();
         private readonly XmlProcessingInstruction xDeclaration;
 
@@ -25,7 +23,7 @@ namespace SavannahXmlLib.XmlWrapper
         /// <summary>
         /// Initialize the class.
         /// </summary>
-        public CommonXmlWriter() : this(Utf8Declaration)
+        public CommonXmlWriter() : this(CommonXmlConstants.Utf8Declaration)
         {
         }
 
@@ -76,7 +74,7 @@ namespace SavannahXmlLib.XmlWrapper
 
             var xml = $"\n{converted}\n";
             var xDocument = new XmlDocument();
-            var xDeclaration = xDocument.CreateProcessingInstruction("xml", Utf8Declaration);
+            var xDeclaration = xDocument.CreateProcessingInstruction("xml", CommonXmlConstants.Utf8Declaration);
             var elem = xDocument.CreateElement("root");
             xDocument.AppendChild(xDeclaration);
             elem.InnerXml = xml;
