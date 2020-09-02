@@ -70,13 +70,23 @@ namespace SavannahXmlLib.XmlWrapper
         }
 
         /// <summary>
-        /// Adds the namespace.
+        /// Add the namespace.
         /// </summary>
         /// <param name="prefix">Prefix.</param>
         /// <param name="uri">URI.</param>
         public void AddNamespace(string prefix, string uri)
         {
             _xmlNamespaceManager.AddNamespace(prefix, uri);
+        }
+
+        /// <summary>
+        /// Remove the namespace.
+        /// </summary>
+        /// <param name="prefix">Prefix.</param>
+        /// <param name="uri">URI.</param>
+        public void RemoveNamespace(string prefix, string uri)
+        {
+            _xmlNamespaceManager.RemoveNamespace(prefix, uri);
         }
 
         /// <summary>
@@ -89,7 +99,7 @@ namespace SavannahXmlLib.XmlWrapper
         public IList<string> GetAttributes(string name, string xpath, bool isContaisNoValue = true)
         {
             var hierarchy = xpath.Count(c => c == '/');
-            var nodeList = ConvertXmlNodes(ConvertXmlNode(_document.SelectNodes(xpath)), hierarchy);
+            var nodeList = ConvertXmlNodes(ConvertXmlNode(_document.SelectNodes(xpath, _xmlNamespaceManager)), hierarchy);
             var cond = Conditions.If<IList<string>>(() => isContaisNoValue)
                 .Then(() => (from node in nodeList
                              let attr = node.GetAttribute(name).Value
@@ -110,10 +120,10 @@ namespace SavannahXmlLib.XmlWrapper
         public IList<string> GetValues(string xpath, bool isRemoveSpace = true)
         {
             var hierarchy = xpath.Count(c => c == '/');
-            var nodeList = ConvertXmlNodes(ConvertXmlNode(_document.SelectNodes(xpath)), hierarchy, isRemoveSpace);
+            var nodeList = ConvertXmlNodes(ConvertXmlNode(_document.SelectNodes(xpath, _xmlNamespaceManager)), hierarchy, isRemoveSpace);
             return (from node in nodeList
                     let text = node.InnerText
-                    where !string.IsNullOrEmpty(text) select text).ToList();
+                    where !string.IsNullOrEmpty(text) select text.Trim()).ToList();
         }
 
         /// <summary>
@@ -123,7 +133,7 @@ namespace SavannahXmlLib.XmlWrapper
         /// <returns>The node found. null is returned if not found.</returns>
         public CommonXmlNode GetNode(string xpath)
         {
-            var node = _document.SelectSingleNode(xpath);
+            var node = _document.SelectSingleNode(xpath, _xmlNamespaceManager);
             var hierarchy = xpath.Count(c => c == '/');
             return node == null ? null : ConvertXmlNode(node, hierarchy);
         }
@@ -154,7 +164,7 @@ namespace SavannahXmlLib.XmlWrapper
         /// <returns>Nodes found. null is returned if not found.</returns>
         public CommonXmlNode[] GetNodes(string xpath, bool isRemoveSpace = true)
         {
-            var nodeList = ConvertXmlNode(_document.SelectNodes(xpath));
+            var nodeList = ConvertXmlNode(_document.SelectNodes(xpath, _xmlNamespaceManager));
             var hierarchy = xpath.Count(c => c == '/');
             return nodeList == null ? null : ConvertXmlNodes(nodeList, hierarchy, isRemoveSpace);
         }
@@ -186,7 +196,7 @@ namespace SavannahXmlLib.XmlWrapper
         /// <returns>The root node.</returns>
         public CommonXmlNode GetAllNodes(bool isRemoveSpace = true)
         {
-            var nodeList = _document.SelectSingleNode("/*");
+            var nodeList = _document.SelectSingleNode("/*", _xmlNamespaceManager);
             var root = new CommonXmlNode
             {
                 NodeType = XmlNodeType.Tag,
@@ -200,7 +210,7 @@ namespace SavannahXmlLib.XmlWrapper
 
         private CommonXmlNode GetAllNodesForPriority()
         {
-            var nodeList = _document.SelectSingleNode("/*");
+            var nodeList = _document.SelectSingleNode("/*", _xmlNamespaceManager);
             var root = new CommonXmlNode
             {
                 NodeType = XmlNodeType.Tag,

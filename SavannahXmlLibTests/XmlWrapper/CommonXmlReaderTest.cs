@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using CommonCoreLib.CommonPath;
+using System.Linq;
 
 namespace SavannahXmlLibTests.XmlWrapper
 {
@@ -470,6 +471,22 @@ namespace SavannahXmlLibTests.XmlWrapper
             Console.WriteLine(node);
 
             Assert.AreEqual(exp, node);
+        }
+
+        [Test]
+        public void ReadNamespaceElement()
+        {
+            var reader = new CommonXmlReader(GetTestPath("Namespace.xml"));
+            reader.AddNamespace("ns", "http://schemas.microsoft.com/developer/msbuild/2003");
+            reader.AddNamespace("test", "http://schemas.microsoft.com/developer/msbuild/2003");
+
+            var value = reader.GetValues("/ns:Project/ns:PropertyGroup/ns:TargetFrameworkVersion")?.Last();
+            var exp = "v4.8";
+            Assert.AreEqual(exp, value);
+
+            var value2 = reader.GetValues("/ns:Project/ns:PropertyGroup/test:FileAlignment")?.Last();
+            var exp2 = "512";
+            Assert.AreEqual(exp2, value2);
         }
     }
 }
