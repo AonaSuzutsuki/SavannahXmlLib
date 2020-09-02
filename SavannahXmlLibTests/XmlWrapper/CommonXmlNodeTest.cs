@@ -318,8 +318,6 @@ namespace SavannahXmlLibTests.XmlWrapper
 
             root.ResolvePrioritizeInnerXml(false);
 
-            Console.WriteLine(root);
-
             Assert.AreEqual(exp, root);
         }
     }

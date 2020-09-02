@@ -467,9 +467,6 @@ namespace SavannahXmlLibTests.XmlWrapper
             var reader = new CommonXmlReader(stream);
             var node = reader.GetAllNodes();
 
-            //Console.WriteLine(root);
-            Console.WriteLine(node);
-
             Assert.AreEqual(exp, node);
         }
 
