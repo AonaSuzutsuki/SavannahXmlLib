@@ -192,6 +192,30 @@ namespace SavannahXmlLib.XmlWrapper
             childNodes.Add(node);
         }
 
+        public bool ContaintsElement(string tagName, ICollection<AttributeInfo> attributes)
+        {
+            var node = ContainsElement(this, tagName, attributes);
+            return node != null;
+        }
+
+        private CommonXmlNode ContainsElement(CommonXmlNode node, string tagName, ICollection<AttributeInfo> attributes)
+        {
+            var attrCout = attributes == null ? 0 : attributes.Count;
+            CommonXmlNode returnNode = null;
+            foreach (var child in node.ChildNodes)
+            {
+                if (child.TagName == tagName)
+                    if (child.attributes.Count == 0 && attrCout == 0)
+                        return child;
+                    else if (child.Attributes.SequenceEqual(attributes))
+                        return child;
+
+                returnNode = ContainsElement(child, tagName, attributes);
+            }
+
+            return returnNode;
+        }
+
         /// <summary>
         /// Return xml string with tags.
         /// </summary>

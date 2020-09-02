@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using NUnit.Framework;
 using SavannahXmlLib.XmlWrapper;
 
@@ -319,6 +320,71 @@ namespace SavannahXmlLibTests.XmlWrapper
             root.ResolvePrioritizeInnerXml(false);
 
             Assert.AreEqual(exp, root);
+        }
+
+        [Test]
+        public void ContainsTest()
+        {
+            var exp = new CommonXmlNode
+            {
+                TagName = "root",
+                ChildNodes = new[]
+                {
+                    new CommonXmlNode
+                    {
+                        TagName = "test"
+                    },
+                    new CommonXmlNode
+                    {
+                        TagName = CommonXmlNode.TextTagName,
+                        NodeType = XmlNodeType.Text,
+                        InnerText = "aaa"
+                    },
+                    new CommonXmlNode
+                    {
+                        TagName = "test",
+                        ChildNodes = new []
+                        {
+                            new CommonXmlNode
+                            {
+                                TagName = "br"
+                            },
+                        }
+                    },
+                    new CommonXmlNode
+                    {
+                        TagName = "test",
+                        ChildNodes = new []
+                        {
+                            new CommonXmlNode
+                            {
+                                TagName = "br",
+                                Attributes = new List<AttributeInfo>
+                                {
+                                    new AttributeInfo
+                                    {
+                                        Name = "attr",
+                                        Value = "value"
+                                    }
+                                }
+                            },
+                        }
+                    }
+                }
+            };
+
+            var contains = exp.ContaintsElement("br", null);
+            var contains2 = exp.ContaintsElement("br", new List<AttributeInfo>
+            {
+                new AttributeInfo
+                {
+                    Name = "attr",
+                    Value = "value"
+                }
+            });
+
+            Assert.AreEqual(true, contains);
+            Assert.AreEqual(true, contains2);
         }
     }
 }
