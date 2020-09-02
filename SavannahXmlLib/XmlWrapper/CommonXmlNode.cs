@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using CommonCoreLib.Bool;
@@ -214,6 +215,17 @@ namespace SavannahXmlLib.XmlWrapper
             }
 
             return returnNode;
+        }
+
+        public CommonXmlReader GetReader()
+        {
+            var innerXml = ToString();
+            var outterXml = $"{CommonXmlConstants.Declaration}\n{innerXml}";
+            var ms = new MemoryStream();
+
+            var reader = new CommonXmlReader()
+
+            return null;
         }
 
         /// <summary>

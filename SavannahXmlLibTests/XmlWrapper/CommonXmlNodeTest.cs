@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using NUnit.Framework;
 using SavannahXmlLib.XmlWrapper;
 
@@ -385,6 +386,61 @@ namespace SavannahXmlLibTests.XmlWrapper
 
             Assert.AreEqual(true, contains);
             Assert.AreEqual(true, contains2);
+        }
+
+        [Test]
+        public void SearchElementWithXPathTest()
+        {
+            var exp = new CommonXmlNode
+            {
+                TagName = "root",
+                ChildNodes = new[]
+                {
+                    new CommonXmlNode
+                    {
+                        TagName = "test"
+                    },
+                    new CommonXmlNode
+                    {
+                        TagName = CommonXmlNode.TextTagName,
+                        NodeType = XmlNodeType.Text,
+                        InnerText = "aaa"
+                    },
+                    new CommonXmlNode
+                    {
+                        TagName = "test",
+                        ChildNodes = new []
+                        {
+                            new CommonXmlNode
+                            {
+                                TagName = "br"
+                            },
+                        }
+                    },
+                    new CommonXmlNode
+                    {
+                        TagName = "test",
+                        ChildNodes = new []
+                        {
+                            new CommonXmlNode
+                            {
+                                TagName = "br",
+                                Attributes = new List<AttributeInfo>
+                                {
+                                    new AttributeInfo
+                                    {
+                                        Name = "attr",
+                                        Value = "value"
+                                    }
+                                }
+                            },
+                        }
+                    }
+                }
+            };
+
+            //exp.GetReader();
+            exp.ChildNodes.Last().GetReader();
         }
     }
 }
