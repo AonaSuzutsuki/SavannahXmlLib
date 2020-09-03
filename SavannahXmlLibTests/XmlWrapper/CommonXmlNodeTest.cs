@@ -391,7 +391,33 @@ namespace SavannahXmlLibTests.XmlWrapper
         [Test]
         public void SearchElementWithXPathTest()
         {
-            var exp = new CommonXmlNode
+            var textNode = new CommonXmlNode
+            {
+                TagName = CommonXmlNode.TextTagName,
+                NodeType = XmlNodeType.Text,
+                InnerText = "aaa"
+            };
+            var testNode = new CommonXmlNode
+            {
+                TagName = "test",
+                ChildNodes = new[]
+                {
+                    new CommonXmlNode
+                    {
+                        TagName = "br",
+                        Attributes = new List<AttributeInfo>
+                        {
+                            new AttributeInfo
+                            {
+                                Name = "attr",
+                                Value = "value"
+                            }
+                        }
+                    },
+                }
+            };
+
+            var root = new CommonXmlNode
             {
                 TagName = "root",
                 ChildNodes = new[]
@@ -400,12 +426,7 @@ namespace SavannahXmlLibTests.XmlWrapper
                     {
                         TagName = "test"
                     },
-                    new CommonXmlNode
-                    {
-                        TagName = CommonXmlNode.TextTagName,
-                        NodeType = XmlNodeType.Text,
-                        InnerText = "aaa"
-                    },
+                    textNode,
                     new CommonXmlNode
                     {
                         TagName = "test",
@@ -417,30 +438,18 @@ namespace SavannahXmlLibTests.XmlWrapper
                             },
                         }
                     },
-                    new CommonXmlNode
-                    {
-                        TagName = "test",
-                        ChildNodes = new []
-                        {
-                            new CommonXmlNode
-                            {
-                                TagName = "br",
-                                Attributes = new List<AttributeInfo>
-                                {
-                                    new AttributeInfo
-                                    {
-                                        Name = "attr",
-                                        Value = "value"
-                                    }
-                                }
-                            },
-                        }
-                    }
+                    testNode
                 }
             };
 
-            //exp.GetReader();
-            exp.ChildNodes.Last().GetReader();
+            var textReader = root.ChildNodes.ToArray()[1].GetReader();
+
+            Assert.IsNull(textReader);
+
+            var testReader = root.ChildNodes.ToArray()[3].GetReader();
+            var resultTestNode = testReader.GetNode("/test/br");
+
+            Assert.AreEqual(resultTestNode, testNode.ChildNodes.First());
         }
     }
 }

@@ -217,15 +217,26 @@ namespace SavannahXmlLib.XmlWrapper
             return returnNode;
         }
 
+        /// <summary>
+        /// Create a CommonXmlReader object from the current node.
+        /// </summary>
+        /// <returns>The CommonXmlReader object. Returns null for text and comment nodes.</returns>
         public CommonXmlReader GetReader()
         {
+            var type = NodeType;
+            if (type == XmlNodeType.Text || type == XmlNodeType.Comment)
+                return null;
+
             var innerXml = ToString();
             var outterXml = $"{CommonXmlConstants.Declaration}\n{innerXml}";
-            var ms = new MemoryStream();
 
-            var reader = new CommonXmlReader()
+            var data = Encoding.UTF8.GetBytes(outterXml);
+            using var ms = new MemoryStream();
+            ms.Write(data, 0, data.Length);
+            ms.Position = 0;
 
-            return null;
+            var reader = new CommonXmlReader(ms);
+            return reader;
         }
 
         /// <summary>
