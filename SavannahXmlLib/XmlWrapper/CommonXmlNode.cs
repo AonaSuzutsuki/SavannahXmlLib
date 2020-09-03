@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using CommonCoreLib.Bool;
@@ -190,6 +191,28 @@ namespace SavannahXmlLib.XmlWrapper
         public void AddChildElement(CommonXmlNode node)
         {
             childNodes.Add(node);
+        }
+
+        /// <summary>
+        /// Create a CommonXmlReader object from the current node.
+        /// </summary>
+        /// <returns>The CommonXmlReader object. Returns null for text and comment nodes.</returns>
+        public CommonXmlReader GetReader()
+        {
+            var type = NodeType;
+            if (type == XmlNodeType.Text || type == XmlNodeType.Comment)
+                return null;
+
+            var innerXml = ToString();
+            var outterXml = $"{CommonXmlConstants.Declaration}\n{innerXml}";
+
+            var data = Encoding.UTF8.GetBytes(outterXml);
+            using var ms = new MemoryStream();
+            ms.Write(data, 0, data.Length);
+            ms.Position = 0;
+
+            var reader = new CommonXmlReader(ms);
+            return reader;
         }
 
         /// <summary>

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using NUnit.Framework;
 using SavannahXmlLib.XmlWrapper;
 
@@ -319,6 +321,135 @@ namespace SavannahXmlLibTests.XmlWrapper
             root.ResolvePrioritizeInnerXml(false);
 
             Assert.AreEqual(exp, root);
+        }
+
+        [Test]
+        public void ContainsTest()
+        {
+            var exp = new CommonXmlNode
+            {
+                TagName = "root",
+                ChildNodes = new[]
+                {
+                    new CommonXmlNode
+                    {
+                        TagName = "test"
+                    },
+                    new CommonXmlNode
+                    {
+                        TagName = CommonXmlNode.TextTagName,
+                        NodeType = XmlNodeType.Text,
+                        InnerText = "aaa"
+                    },
+                    new CommonXmlNode
+                    {
+                        TagName = "test",
+                        ChildNodes = new []
+                        {
+                            new CommonXmlNode
+                            {
+                                TagName = "br"
+                            },
+                        }
+                    },
+                    new CommonXmlNode
+                    {
+                        TagName = "test",
+                        ChildNodes = new []
+                        {
+                            new CommonXmlNode
+                            {
+                                TagName = "br",
+                                Attributes = new List<AttributeInfo>
+                                {
+                                    new AttributeInfo
+                                    {
+                                        Name = "attr",
+                                        Value = "value"
+                                    }
+                                }
+                            },
+                        }
+                    }
+                }
+            };
+
+            var contains = exp.ContaintsElement("br", null);
+            var contains2 = exp.ContaintsElement("br", new List<AttributeInfo>
+            {
+                new AttributeInfo
+                {
+                    Name = "attr",
+                    Value = "value"
+                }
+            });
+
+            Assert.AreEqual(true, contains);
+            Assert.AreEqual(true, contains2);
+        }
+
+        [Test]
+        public void SearchElementWithXPathTest()
+        {
+            var textNode = new CommonXmlNode
+            {
+                TagName = CommonXmlNode.TextTagName,
+                NodeType = XmlNodeType.Text,
+                InnerText = "aaa"
+            };
+            var testNode = new CommonXmlNode
+            {
+                TagName = "test",
+                ChildNodes = new[]
+                {
+                    new CommonXmlNode
+                    {
+                        TagName = "br",
+                        Attributes = new List<AttributeInfo>
+                        {
+                            new AttributeInfo
+                            {
+                                Name = "attr",
+                                Value = "value"
+                            }
+                        }
+                    },
+                }
+            };
+
+            var root = new CommonXmlNode
+            {
+                TagName = "root",
+                ChildNodes = new[]
+                {
+                    new CommonXmlNode
+                    {
+                        TagName = "test"
+                    },
+                    textNode,
+                    new CommonXmlNode
+                    {
+                        TagName = "test",
+                        ChildNodes = new []
+                        {
+                            new CommonXmlNode
+                            {
+                                TagName = "br"
+                            },
+                        }
+                    },
+                    testNode
+                }
+            };
+
+            var textReader = root.ChildNodes.ToArray()[1].GetReader();
+
+            Assert.IsNull(textReader);
+
+            var testReader = root.ChildNodes.ToArray()[3].GetReader();
+            var resultTestNode = testReader.GetNode("/test/br");
+
+            Assert.AreEqual(resultTestNode, testNode.ChildNodes.First());
         }
     }
 }
