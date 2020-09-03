@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using CommonCoreLib.Bool;
@@ -34,6 +35,13 @@ namespace SavannahXmlLib.XmlWrapper
     /// </summary>
     public class CommonXmlNode
     {
+        #region Constants
+
+        public const string TextTagName = "#text";
+        public const string CommentTagName = "#comment";
+
+        #endregion
+
         #region Properties
 
         public int IndentSize { get; set; } = 2;
@@ -186,6 +194,28 @@ namespace SavannahXmlLib.XmlWrapper
         }
 
         /// <summary>
+        /// Create a CommonXmlReader object from the current node.
+        /// </summary>
+        /// <returns>The CommonXmlReader object. Returns null for text and comment nodes.</returns>
+        public CommonXmlReader GetReader()
+        {
+            var type = NodeType;
+            if (type == XmlNodeType.Text || type == XmlNodeType.Comment)
+                return null;
+
+            var innerXml = ToString();
+            var outterXml = $"{CommonXmlConstants.Declaration}\n{innerXml}";
+
+            var data = Encoding.UTF8.GetBytes(outterXml);
+            using var ms = new MemoryStream();
+            ms.Write(data, 0, data.Length);
+            ms.Position = 0;
+
+            var reader = new CommonXmlReader(ms);
+            return reader;
+        }
+
+        /// <summary>
         /// Return xml string with tags.
         /// </summary>
         /// <returns>String in XML format.</returns>
@@ -268,15 +298,16 @@ namespace SavannahXmlLib.XmlWrapper
         /// <summary>
         /// Resolve all PrioritizeInnerXml elements including child elements.
         /// </summary>
+        /// <param name="ignoreComments">Whether to ignore the comments.</param>
         /// <param name="node">Target node. The current node is specified if it is null.</param>
-        public void ResolvePrioritizeInnerXml(CommonXmlNode node = null)
+        public void ResolvePrioritizeInnerXml(bool ignoreComments = true, CommonXmlNode node = null)
         {
             node ??= this;
 
             if (!string.IsNullOrEmpty(node.PrioritizeInnerXml))
             {
                 using var ms = CommonXmlWriter.ConvertInnerXmlToXmlText(node);
-                var cNode = CommonXmlReader.GetChildNodesFromStream(ms);
+                var cNode = CommonXmlReader.GetChildNodesFromStream(ms, ignoreComments);
                 node.ChildNodes = cNode;
                 node.PrioritizeInnerXml = null;
             }
@@ -286,7 +317,7 @@ namespace SavannahXmlLib.XmlWrapper
                     return;
                 foreach (var nodeChildNode in node.ChildNodes)
                 {
-                    ResolvePrioritizeInnerXml(nodeChildNode);
+                    ResolvePrioritizeInnerXml(ignoreComments, nodeChildNode);
                 }
             }
         }
