@@ -31,8 +31,8 @@ namespace SavannahXmlLib.XmlWrapper
         /// <param name="ignoreComments">Whether to ignore the comments.</param>
         public CommonXmlReader(string xmlPath, bool ignoreComments = true)
         {
-            using var fs = new FileStream(xmlPath, FileMode.Open, FileAccess.Read, FileShare.Read);
-            var (xmlDocument, declaration) = Initialize(fs, ignoreComments);
+            using var stream = new FileStream(xmlPath, FileMode.Open, FileAccess.Read, FileShare.Read);
+            var (xmlDocument, declaration) = Initialize(stream, ignoreComments);
             _xmlNamespaceManager = new XmlNamespaceManager(xmlDocument.NameTable);
             _document = xmlDocument;
             Declaration = declaration;
@@ -124,6 +124,18 @@ namespace SavannahXmlLib.XmlWrapper
             return (from node in nodeList
                     let text = node.InnerText
                     where !string.IsNullOrEmpty(text) select text.Trim()).ToList();
+        }
+
+        /// <summary>
+        /// Get the value from the specified XPath.
+        /// </summary>
+        /// <param name="xpath">XPath indicating the location of the value to be retrieved.</param>
+        /// <param name="isRemoveSpace">Whether to clear indentation blanks.</param>
+        /// <returns>The value</returns>
+        public string GetValue(string xpath, bool isRemoveSpace = true)
+        {
+            var values = GetValues(xpath, isRemoveSpace);
+            return values.Any() ? values.First() : string.Empty;
         }
 
         /// <summary>
