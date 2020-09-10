@@ -210,7 +210,6 @@ namespace SavannahXmlLib.XmlWrapper
                 TagName = node.Name,
                 InnerText = ResolveInnerText(node, isRemoveSpace).Text,
                 Attributes = ConvertAttributeInfoArray(node.Attributes),
-                XmlNode = node,
                 ChildNodes = GetElements(node.ChildNodes, isRemoveSpace, hierarchy, table)
             };
             table?.Add(node, commonXmlNode);
@@ -376,8 +375,7 @@ namespace SavannahXmlLib.XmlWrapper
                         NodeType = XmlNodeType.Tag,
                         TagName = node.Name,
                         InnerText = ResolveInnerText(node, isRemoveSpace).Text,
-                        Attributes = ConvertAttributeInfoArray(node.Attributes),
-                        XmlNode = node
+                        Attributes = ConvertAttributeInfoArray(node.Attributes)
                     };
                     if (node.ChildNodes.Count > 0)
                         commonXmlNode.ChildNodes = GetElements(node.ChildNodes, isRemoveSpace, hierarchy + 1).ToArray();
@@ -394,8 +392,7 @@ namespace SavannahXmlLib.XmlWrapper
                         {
                             NodeType = XmlNodeType.Comment,
                             TagName = node.Name,
-                            InnerText = ResolveInnerText(node, isRemoveSpace).Text,
-                            XmlNode = node
+                            InnerText = ResolveInnerText(node, isRemoveSpace).Text
                         };
                         list.Add(commonXmlNode);
                         table?.Add(node, commonXmlNode);
@@ -406,8 +403,7 @@ namespace SavannahXmlLib.XmlWrapper
                         {
                             NodeType = XmlNodeType.Text,
                             TagName = node.Name,
-                            InnerText = ResolveInnerText(node, isRemoveSpace, space).Text,
-                            XmlNode = node
+                            InnerText = ResolveInnerText(node, isRemoveSpace, space).Text
                         };
                         list.Add(commonXmlNode);
                         table?.Add(node, commonXmlNode);

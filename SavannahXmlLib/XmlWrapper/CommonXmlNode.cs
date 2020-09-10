@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Xml;
 using CommonCoreLib.Bool;
 using CommonExtensionLib.Extensions;
 using SavannahXmlLib.XmlWrapper;
@@ -63,8 +64,8 @@ namespace SavannahXmlLib.XmlWrapper
         /// </summary>
         public IEnumerable<AttributeInfo> Attributes
         {
-            get => attributes;
-            set => attributes = new HashSet<AttributeInfo>(value);
+            get => _attributes;
+            set => _attributes = new HashSet<AttributeInfo>(value);
         }
 
         /// <summary>
@@ -72,8 +73,8 @@ namespace SavannahXmlLib.XmlWrapper
         /// </summary>
         public IEnumerable<CommonXmlNode> ChildNodes
         {
-            get => childNodes;
-            set => childNodes = ResolveChildrenParent(new List<CommonXmlNode>(value), this);
+            get => _childNodes;
+            set => _childNodes = ResolveChildrenParent(new List<CommonXmlNode>(value), this);
         }
 
         /// <summary>
@@ -94,8 +95,8 @@ namespace SavannahXmlLib.XmlWrapper
         #endregion
 
         #region Fields
-        private HashSet<AttributeInfo> attributes = new HashSet<AttributeInfo>();
-        private List<CommonXmlNode> childNodes = new List<CommonXmlNode>();
+        private HashSet<AttributeInfo> _attributes = new HashSet<AttributeInfo>();
+        private List<CommonXmlNode> _childNodes = new List<CommonXmlNode>();
         #endregion
 
         #region Member Methods
@@ -116,8 +117,8 @@ namespace SavannahXmlLib.XmlWrapper
         /// <param name="info">AttributeInfo to be added</param>
         public void AppendAttribute(AttributeInfo info)
         {
-            if (!attributes.Contains(info))
-                attributes.Add(info);
+            if (!_attributes.Contains(info))
+                _attributes.Add(info);
         }
 
         /// <summary>
@@ -127,7 +128,7 @@ namespace SavannahXmlLib.XmlWrapper
         /// <returns>The value of the attribute</returns>
         public AttributeInfo GetAttribute(string name)
         {
-            foreach (var attributeInfo in attributes)
+            foreach (var attributeInfo in _attributes)
             {
                 if (attributeInfo.Name == name)
                     return attributeInfo;
@@ -142,8 +143,8 @@ namespace SavannahXmlLib.XmlWrapper
         public void RemoveAttribute(string name)
         {
             var attr = GetAttribute(name);
-            if (attributes.Contains(attr))
-                attributes.Remove(attr);
+            if (_attributes.Contains(attr))
+                _attributes.Remove(attr);
         }
 
         /// <summary>
@@ -152,8 +153,8 @@ namespace SavannahXmlLib.XmlWrapper
         /// <param name="info">The AttributeInfo to be removed</param>
         public void RemoveAttribute(AttributeInfo info)
         {
-            if (attributes.Contains(info))
-                attributes.Remove(info);
+            if (_attributes.Contains(info))
+                _attributes.Remove(info);
         }
 
         /// <summary>
@@ -192,7 +193,7 @@ namespace SavannahXmlLib.XmlWrapper
         /// <param name="node">The node to add</param>
         public void AddChildElement(CommonXmlNode node)
         {
-            childNodes.Add(node);
+            _childNodes.Add(node);
         }
 
         /// <summary>
