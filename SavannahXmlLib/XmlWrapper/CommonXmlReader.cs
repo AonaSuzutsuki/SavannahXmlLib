@@ -296,7 +296,7 @@ namespace SavannahXmlLib.XmlWrapper
             return 0;
         }
 
-        private CommonXmlText ResolveInnerText(XmlNode node, bool isRemoveSpace, int space = 0)
+        private static CommonXmlText ResolveInnerText(XmlNode node, bool isRemoveSpace, int space = 0)
         {
             var xml = node.InnerXml;
             var xmlText = new CommonXmlText
@@ -312,7 +312,7 @@ namespace SavannahXmlLib.XmlWrapper
             return xmlText;
         }
 
-        private XmlNode[] ConvertXmlNode(XmlNodeList nodeList)
+        private static XmlNode[] ConvertXmlNode(XmlNodeList nodeList)
         {
             if (nodeList == null)
                 return null;
@@ -327,7 +327,7 @@ namespace SavannahXmlLib.XmlWrapper
             return list.ToArray();
         }
 
-        private AttributeInfo[] ConvertAttributeInfoArray(XmlAttributeCollection collection)
+        private static AttributeInfo[] ConvertAttributeInfoArray(XmlAttributeCollection collection)
         {
             if (collection == null)
                 return null;
@@ -347,7 +347,7 @@ namespace SavannahXmlLib.XmlWrapper
                     }).ToArray();
         }
 
-        private List<CommonXmlNode> GetElements(XmlNodeList nodeList, bool isRemoveSpace, int hierarchy = 1)
+        private static List<CommonXmlNode> GetElements(XmlNodeList nodeList, bool isRemoveSpace, int hierarchy = 1)
         {
             var list = new List<CommonXmlNode>();
             if (nodeList.Count <= 0)
