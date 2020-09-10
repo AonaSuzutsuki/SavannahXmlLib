@@ -73,7 +73,7 @@ namespace SavannahXmlLib.XmlWrapper
         public IEnumerable<CommonXmlNode> ChildNodes
         {
             get => childNodes;
-            set => childNodes = new List<CommonXmlNode>(value);
+            set => childNodes = ResolveChildrenParent(new List<CommonXmlNode>(value), this);
         }
 
         /// <summary>
@@ -401,6 +401,16 @@ namespace SavannahXmlLib.XmlWrapper
                 PrioritizeInnerXml = innerXml
             };
             return node;
+        }
+
+        private static List<CommonXmlNode> ResolveChildrenParent(List<CommonXmlNode> childNodes, CommonXmlNode parent)
+        {
+            foreach (var child in childNodes)
+            {
+                child.Parent = parent;
+            }
+
+            return childNodes;
         }
         #endregion
 
