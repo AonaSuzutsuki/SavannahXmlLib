@@ -56,6 +56,8 @@ namespace SavannahXmlLib.XmlWrapper
         /// </summary>
         public string TagName { get; set; }
 
+        public CommonXmlNode Parent { get; internal set; }
+
         /// <summary>
         /// Enumerable attributes of this node.
         /// </summary>
