@@ -98,8 +98,7 @@ namespace SavannahXmlLib.XmlWrapper
         /// <returns></returns>
         public IList<string> GetAttributes(string name, string xpath, bool isContaisNoValue = true)
         {
-            var hierarchy = xpath.Count(c => c == '/');
-            var nodeList = ConvertXmlNodes(ConvertXmlNode(_document.SelectNodes(xpath, _xmlNamespaceManager)), hierarchy);
+            var nodeList = ConvertXmlNodes(ConvertXmlNode(_document.SelectNodes(xpath, _xmlNamespaceManager)));
             var cond = Conditions.If<IList<string>>(() => isContaisNoValue)
                 .Then(() => (from node in nodeList
                              let attr = node.GetAttribute(name).Value
@@ -119,8 +118,7 @@ namespace SavannahXmlLib.XmlWrapper
         /// <returns>Values</returns>
         public IList<string> GetValues(string xpath, bool isRemoveSpace = true)
         {
-            var hierarchy = xpath.Count(c => c == '/');
-            var nodeList = ConvertXmlNodes(ConvertXmlNode(_document.SelectNodes(xpath, _xmlNamespaceManager)), hierarchy, isRemoveSpace);
+            var nodeList = ConvertXmlNodes(ConvertXmlNode(_document.SelectNodes(xpath, _xmlNamespaceManager)), isRemoveSpace);
             return (from node in nodeList
                     let text = node.InnerText
                     where !string.IsNullOrEmpty(text) select text.Trim()).ToList();
@@ -146,8 +144,7 @@ namespace SavannahXmlLib.XmlWrapper
         public CommonXmlNode GetNode(string xpath)
         {
             var node = _document.SelectSingleNode(xpath, _xmlNamespaceManager);
-            var hierarchy = xpath.Count(c => c == '/');
-            return node == null ? null : ConvertXmlNode(node, hierarchy);
+            return node == null ? null : ConvertXmlNode(node);
         }
 
         /// <summary>
@@ -156,8 +153,9 @@ namespace SavannahXmlLib.XmlWrapper
         /// <param name="node">XmlNode object.</param>
         /// <param name="isRemoveSpace">Whether to clear indentation blanks.</param>
         /// <returns>The node.</returns>
-        public CommonXmlNode ConvertXmlNode(XmlNode node, int hierarchy, bool isRemoveSpace = true)
+        public CommonXmlNode ConvertXmlNode(XmlNode node, bool isRemoveSpace = true)
         {
+            var hierarchy = GetHierarchyFromParent(node);
             return new CommonXmlNode
             {
                 NodeType = XmlNodeType.Tag,
@@ -176,9 +174,9 @@ namespace SavannahXmlLib.XmlWrapper
         /// <returns>Nodes found. null is returned if not found.</returns>
         public CommonXmlNode[] GetNodes(string xpath, bool isRemoveSpace = true)
         {
-            var nodeList = ConvertXmlNode(_document.SelectNodes(xpath, _xmlNamespaceManager));
-            var hierarchy = xpath.Count(c => c == '/');
-            return nodeList == null ? null : ConvertXmlNodes(nodeList, hierarchy, isRemoveSpace);
+            var nodes = _document.SelectNodes(xpath, _xmlNamespaceManager);
+            var nodeList = ConvertXmlNode(nodes);
+            return nodeList == null ? null : ConvertXmlNodes(nodeList, isRemoveSpace);
         }
 
         /// <summary>
@@ -187,9 +185,10 @@ namespace SavannahXmlLib.XmlWrapper
         /// <param name="nodeList">The target XmlNode array.</param>
         /// <param name="isRemoveSpace">Whether to clear indentation blanks.</param>
         /// <returns>The converted CommonXmlNode object array</returns>
-        public CommonXmlNode[] ConvertXmlNodes(XmlNode[] nodeList, int hierarchy, bool isRemoveSpace = true)
+        public CommonXmlNode[] ConvertXmlNodes(XmlNode[] nodeList, bool isRemoveSpace = true)
         {
             var list = from node in nodeList
+                       let hierarchy = GetHierarchyFromParent(node)
                        select new CommonXmlNode
                        {
                            NodeType = XmlNodeType.Tag,
@@ -245,6 +244,14 @@ namespace SavannahXmlLib.XmlWrapper
             var reader = new CommonXmlReader(stream, ignoreComments);
             var _node = reader.GetAllNodesForPriority();
             return _node.ChildNodes;
+        }
+
+        private static int GetHierarchyFromParent(XmlNode xmlNode, int hierarchy = 0)
+        {
+            if (xmlNode.ParentNode == null)
+                return hierarchy;
+
+            return GetHierarchyFromParent(xmlNode.ParentNode, hierarchy + 1);
         }
 
         private static string RemoveSpace(string text, int space, bool isAddLine = false)
