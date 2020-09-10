@@ -219,6 +219,19 @@ namespace SavannahXmlLib.XmlWrapper
             return root;
         }
 
+        /// <summary>
+        /// Parse XML from the Stream and returns all nodes but the root.
+        /// </summary>
+        /// <param name="stream">Target stream.</param>
+        /// <param name="ignoreComments">Whether to ignore the comments.</param>
+        /// <returns>Enumerable xml nodes.</returns>
+        public static IEnumerable<CommonXmlNode> GetChildNodesFromStream(Stream stream, bool ignoreComments)
+        {
+            var reader = new CommonXmlReader(stream, ignoreComments);
+            var _node = reader.GetAllNodesForPriority();
+            return _node.ChildNodes;
+        }
+
         private CommonXmlNode GetAllNodesForPriority()
         {
             var nodeList = _document.SelectSingleNode("/*", _xmlNamespaceManager);
@@ -231,19 +244,6 @@ namespace SavannahXmlLib.XmlWrapper
                 ChildNodes = GetElements(nodeList.ChildNodes, true).ToArray()
             };
             return root;
-        }
-
-        /// <summary>
-        /// Parse XML from the Stream and returns all nodes but the root.
-        /// </summary>
-        /// <param name="stream">Target stream.</param>
-        /// <param name="ignoreComments">Whether to ignore the comments.</param>
-        /// <returns>Enumerable xml nodes.</returns>
-        public static IEnumerable<CommonXmlNode> GetChildNodesFromStream(Stream stream, bool ignoreComments)
-        {
-            var reader = new CommonXmlReader(stream, ignoreComments);
-            var _node = reader.GetAllNodesForPriority();
-            return _node.ChildNodes;
         }
 
         private static int GetHierarchyFromParent(XmlNode xmlNode, int hierarchy = 0)
