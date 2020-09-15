@@ -74,7 +74,7 @@ namespace SavannahXmlLib.XmlWrapper
         public IEnumerable<CommonXmlNode> ChildNodes
         {
             get => _childNodes;
-            set => _childNodes = ResolveChildrenParent(new List<CommonXmlNode>(value), this);
+            set => _childNodes = ResolveChildrenParent(new LinkedList<CommonXmlNode>(value), this);
         }
 
         /// <summary>
@@ -96,7 +96,7 @@ namespace SavannahXmlLib.XmlWrapper
 
         #region Fields
         private HashSet<AttributeInfo> _attributes = new HashSet<AttributeInfo>();
-        private List<CommonXmlNode> _childNodes = new List<CommonXmlNode>();
+        private LinkedList<CommonXmlNode> _childNodes = new LinkedList<CommonXmlNode>();
         #endregion
 
         #region Member Methods
@@ -193,7 +193,27 @@ namespace SavannahXmlLib.XmlWrapper
         /// <param name="node">The node to add</param>
         public void AddChildElement(CommonXmlNode node)
         {
-            _childNodes.Add(node);
+            _childNodes.AddLast(node);
+            node.Parent = this;
+        }
+
+        public void RemoveChildElement(CommonXmlNode node)
+        {
+            _childNodes.Remove(node);
+        }
+
+        public void AddBeforeChildElement(CommonXmlNode node, CommonXmlNode newNode)
+        {
+            var listNode = _childNodes.Find(node);
+            _childNodes.AddBefore(listNode, newNode);
+            newNode.Parent = this;
+        }
+
+        public void AddAfterChildElement(CommonXmlNode node, CommonXmlNode newNode)
+        {
+            var listNode = _childNodes.Find(node);
+            _childNodes.AddAfter(listNode, newNode);
+            newNode.Parent = this;
         }
 
         /// <summary>
@@ -404,7 +424,7 @@ namespace SavannahXmlLib.XmlWrapper
             return node;
         }
 
-        private static List<CommonXmlNode> ResolveChildrenParent(List<CommonXmlNode> childNodes, CommonXmlNode parent)
+        private static LinkedList<CommonXmlNode> ResolveChildrenParent(LinkedList<CommonXmlNode> childNodes, CommonXmlNode parent)
         {
             foreach (var child in childNodes)
             {

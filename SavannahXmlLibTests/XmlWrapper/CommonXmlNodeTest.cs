@@ -386,5 +386,171 @@ namespace SavannahXmlLibTests.XmlWrapper
 
             Assert.AreEqual(resultTestNode, testNode.ChildNodes.First());
         }
+
+        [Test]
+        public void AddBeforeChildTest()
+        {
+            var textNode = new CommonXmlNode
+            {
+                TagName = CommonXmlNode.TextTagName,
+                NodeType = XmlNodeType.Text,
+                InnerText = "aaa"
+            };
+            var testNode = new CommonXmlNode
+            {
+                TagName = "test",
+                ChildNodes = new[]
+                {
+                    new CommonXmlNode
+                    {
+                        TagName = "br",
+                        Attributes = new List<AttributeInfo>
+                        {
+                            new AttributeInfo
+                            {
+                                Name = "attr",
+                                Value = "value"
+                            }
+                        }
+                    },
+                }
+            };
+
+            var root = new CommonXmlNode
+            {
+                TagName = "root",
+                ChildNodes = new[]
+                {
+                    new CommonXmlNode
+                    {
+                        TagName = "test"
+                    },
+                    textNode,
+                    new CommonXmlNode
+                    {
+                        TagName = "test",
+                        ChildNodes = new []
+                        {
+                            new CommonXmlNode
+                            {
+                                TagName = "br"
+                            },
+                        }
+                    }
+                }
+            };
+
+            var exp = new CommonXmlNode
+            {
+                TagName = "root",
+                ChildNodes = new[]
+                {
+                    new CommonXmlNode
+                    {
+                        TagName = "test"
+                    },
+                    testNode,
+                    textNode,
+                    new CommonXmlNode
+                    {
+                        TagName = "test",
+                        ChildNodes = new []
+                        {
+                            new CommonXmlNode
+                            {
+                                TagName = "br"
+                            },
+                        }
+                    }
+                }
+            };
+
+            root.AddBeforeChildElement(textNode, testNode);
+
+            Assert.AreEqual(exp, root);
+        }
+
+        [Test]
+        public void AddAfterChildTest()
+        {
+            var textNode = new CommonXmlNode
+            {
+                TagName = CommonXmlNode.TextTagName,
+                NodeType = XmlNodeType.Text,
+                InnerText = "aaa"
+            };
+            var testNode = new CommonXmlNode
+            {
+                TagName = "test",
+                ChildNodes = new[]
+                {
+                    new CommonXmlNode
+                    {
+                        TagName = "br",
+                        Attributes = new List<AttributeInfo>
+                        {
+                            new AttributeInfo
+                            {
+                                Name = "attr",
+                                Value = "value"
+                            }
+                        }
+                    },
+                }
+            };
+
+            var root = new CommonXmlNode
+            {
+                TagName = "root",
+                ChildNodes = new[]
+                {
+                    new CommonXmlNode
+                    {
+                        TagName = "test"
+                    },
+                    textNode,
+                    new CommonXmlNode
+                    {
+                        TagName = "test",
+                        ChildNodes = new []
+                        {
+                            new CommonXmlNode
+                            {
+                                TagName = "br"
+                            },
+                        }
+                    }
+                }
+            };
+
+            var exp = new CommonXmlNode
+            {
+                TagName = "root",
+                ChildNodes = new[]
+                {
+                    new CommonXmlNode
+                    {
+                        TagName = "test"
+                    },
+                    textNode,
+                    testNode,
+                    new CommonXmlNode
+                    {
+                        TagName = "test",
+                        ChildNodes = new []
+                        {
+                            new CommonXmlNode
+                            {
+                                TagName = "br"
+                            },
+                        }
+                    }
+                }
+            };
+
+            root.AddAfterChildElement(textNode, testNode);
+
+            Assert.AreEqual(exp, root);
+        }
     }
 }
