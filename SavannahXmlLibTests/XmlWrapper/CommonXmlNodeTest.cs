@@ -552,5 +552,42 @@ namespace SavannahXmlLibTests.XmlWrapper
 
             Assert.AreEqual(exp, root);
         }
+
+        [Test]
+        public void OutterXmlTest()
+        {
+            var commonXmlNode2 = new CommonXmlNode
+            {
+                TagName = "root",
+                ChildNodes = new CommonXmlNode[]
+                {
+                    new CommonXmlNode
+                    {
+                        NodeType = XmlNodeType.Tag,
+                        TagName = "ChildNode",
+                        Attributes = new AttributeInfo[]
+                        {
+                            new AttributeInfo
+                            {
+                                Name = "name",
+                                Value = "attr"
+                            }
+                        },
+                        ChildNodes = new CommonXmlNode[]
+                        {
+                            new CommonXmlNode
+                            {
+                                NodeType = XmlNodeType.Text,
+                                InnerText = "Value"
+                            }
+                        }
+                    }
+                }
+            };
+
+            commonXmlNode2.ResolvePrioritizeInnerXml();
+            var act = commonXmlNode2.ChildNodes.First().OutterXml;
+            Console.WriteLine(act);
+        }
     }
 }

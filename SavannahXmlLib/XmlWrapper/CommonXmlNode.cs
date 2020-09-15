@@ -87,6 +87,8 @@ namespace SavannahXmlLib.XmlWrapper
         /// </summary>
         public string InnerXml => ToString(ChildNodes);
 
+        public string OutterXml => GenerateOutterXml(this);
+
         /// <summary>
         /// The High priority InnerXml.
         /// Used to force Xml to be rewritten.
@@ -432,6 +434,18 @@ namespace SavannahXmlLib.XmlWrapper
             }
 
             return childNodes;
+        }
+
+        private static string GenerateOutterXml(CommonXmlNode node)
+        {
+            if (node.Parent == null)
+                return string.Empty;
+
+            var indent = MakeSpace(node.IndentSize);
+            var str = node.ToString();
+            var innerXml = string.Join("", node.ToString().Split('\n').Select(item => $"{indent}{item}\n"));
+            var attr = node.Parent.Attributes.ToAttributesText(" ");
+            return $"<{node.Parent.TagName}{attr}>\n{innerXml}</{node.Parent.TagName}>";
         }
         #endregion
 
