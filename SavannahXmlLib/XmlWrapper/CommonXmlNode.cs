@@ -331,10 +331,18 @@ namespace SavannahXmlLib.XmlWrapper
 
             if (!string.IsNullOrEmpty(node.PrioritizeInnerXml))
             {
-                using var ms = CommonXmlWriter.ConvertInnerXmlToXmlText(node);
-                var cNode = CommonXmlReader.GetChildNodesFromStream(ms, ignoreComments);
-                node.ChildNodes = cNode;
-                node.PrioritizeInnerXml = null;
+                if (node.NodeType == XmlNodeType.Tag)
+                {
+                    using var ms = CommonXmlWriter.ConvertInnerXmlToXmlText(node);
+                    var cNode = CommonXmlReader.GetChildNodesFromStream(ms, ignoreComments);
+                    node.ChildNodes = cNode;
+                    node.PrioritizeInnerXml = null;
+                }
+                else
+                {
+                    node.InnerText = node.PrioritizeInnerXml;
+                    node.PrioritizeInnerXml = null;
+                }
             }
             else
             {

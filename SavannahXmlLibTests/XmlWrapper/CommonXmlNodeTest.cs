@@ -94,6 +94,12 @@ namespace SavannahXmlLibTests.XmlWrapper
                     {
                         TagName = "cov",
                         PrioritizeInnerXml = "<test>test<br />aaaa<br />bbb</test>"
+                    },
+                    new CommonXmlNode
+                    {
+                        TagName = CommonXmlNode.TextTagName,
+                        NodeType = XmlNodeType.Text,
+                        PrioritizeInnerXml = "value"
                     }
                 }
             };
@@ -142,6 +148,12 @@ namespace SavannahXmlLibTests.XmlWrapper
                                 }
                             }
                         }
+                    },
+                    new CommonXmlNode
+                    {
+                        TagName = CommonXmlNode.TextTagName,
+                        NodeType = XmlNodeType.Text,
+                        InnerText = "value"
                     }
                 }
             };
