@@ -216,6 +216,8 @@ namespace SavannahXmlLib.XmlWrapper
         public void AddBeforeChildElement(CommonXmlNode node, CommonXmlNode newNode)
         {
             var listNode = _childNodes.Find(node);
+            if (listNode == null)
+                return;
             _childNodes.AddBefore(listNode, newNode);
             newNode.Parent = this;
         }
@@ -228,6 +230,8 @@ namespace SavannahXmlLib.XmlWrapper
         public void AddAfterChildElement(CommonXmlNode node, CommonXmlNode newNode)
         {
             var listNode = _childNodes.Find(node);
+            if (listNode == null)
+                return;
             _childNodes.AddAfter(listNode, newNode);
             newNode.Parent = this;
         }
