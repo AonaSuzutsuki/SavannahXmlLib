@@ -199,11 +199,20 @@ namespace SavannahXmlLib.XmlWrapper
             node.Parent = this;
         }
 
+        /// <summary>
+        /// Remove the element from children.
+        /// </summary>
+        /// <param name="node">The node to remove</param>
         public void RemoveChildElement(CommonXmlNode node)
         {
             _childNodes.Remove(node);
         }
 
+        /// <summary>
+        /// Add the child element to before 1st argument node.
+        /// </summary>
+        /// <param name="node">Nodes to search.</param>
+        /// <param name="newNode">Nodes to be added</param>
         public void AddBeforeChildElement(CommonXmlNode node, CommonXmlNode newNode)
         {
             var listNode = _childNodes.Find(node);
@@ -211,6 +220,11 @@ namespace SavannahXmlLib.XmlWrapper
             newNode.Parent = this;
         }
 
+        /// <summary>
+        /// Add the child element to after 1st argument node.
+        /// </summary>
+        /// <param name="node">Nodes to search.</param>
+        /// <param name="newNode">Nodes to be added</param>
         public void AddAfterChildElement(CommonXmlNode node, CommonXmlNode newNode)
         {
             var listNode = _childNodes.Find(node);
