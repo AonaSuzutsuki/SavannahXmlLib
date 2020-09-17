@@ -6,31 +6,11 @@ using System.Text;
 using System.Xml;
 using CommonCoreLib.Bool;
 using CommonExtensionLib.Extensions;
+using SavannahXmlLib.Extensions;
 using SavannahXmlLib.XmlWrapper;
 
 namespace SavannahXmlLib.XmlWrapper
 {
-    /// <summary>
-    /// XmlNode Type
-    /// </summary>
-    public enum XmlNodeType
-    {
-        /// <summary>
-        /// Tag
-        /// </summary>
-        Tag,
-
-        /// <summary>
-        /// Text
-        /// </summary>
-        Text,
-
-        /// <summary>
-        /// Comment
-        /// </summary>
-        Comment
-    }
-
     /// <summary>
     /// Represents an Xml node as a tree structure.
     /// </summary>
@@ -97,8 +77,14 @@ namespace SavannahXmlLib.XmlWrapper
         #endregion
 
         #region Fields
+#if DEBUG
+        private Guid _guid = Guid.NewGuid();
+#endif
         private HashSet<AttributeInfo> _attributes = new HashSet<AttributeInfo>();
         private LinkedList<CommonXmlNode> _childNodes = new LinkedList<CommonXmlNode>();
+        #endregion
+
+        #region Constructor
         #endregion
 
         #region Member Methods
@@ -205,7 +191,10 @@ namespace SavannahXmlLib.XmlWrapper
         /// <param name="node">The node to remove</param>
         public void RemoveChildElement(CommonXmlNode node)
         {
-            _childNodes.Remove(node);
+            var listNode = _childNodes.Find(node, new CommonXmlNodeCompare());
+            if (listNode == null)
+                return;
+            _childNodes.Remove(listNode);
         }
 
         /// <summary>
@@ -215,7 +204,7 @@ namespace SavannahXmlLib.XmlWrapper
         /// <param name="newNode">Nodes to be added</param>
         public void AddBeforeChildElement(CommonXmlNode node, CommonXmlNode newNode)
         {
-            var listNode = _childNodes.Find(node);
+            var listNode = _childNodes.Find(node, new CommonXmlNodeCompare());
             if (listNode == null)
                 return;
             _childNodes.AddBefore(listNode, newNode);
@@ -229,7 +218,7 @@ namespace SavannahXmlLib.XmlWrapper
         /// <param name="newNode">Nodes to be added</param>
         public void AddAfterChildElement(CommonXmlNode node, CommonXmlNode newNode)
         {
-            var listNode = _childNodes.Find(node);
+            var listNode = _childNodes.Find(node, new CommonXmlNodeCompare());
             if (listNode == null)
                 return;
             _childNodes.AddAfter(listNode, newNode);
@@ -485,6 +474,8 @@ namespace SavannahXmlLib.XmlWrapper
         {
             if (obj == null || GetType() != obj.GetType())
                 return false;
+            if (this == obj)
+                return true;
 
             var element = (CommonXmlNode)obj;
             var collector = new BoolCollector();

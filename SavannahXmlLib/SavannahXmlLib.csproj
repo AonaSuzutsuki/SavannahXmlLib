@@ -57,6 +57,12 @@
     <Compile Include="XmlWrapper\CommonXmlText.cs" />
     <Compile Include="XmlWrapper\CommonXmlWriter.cs" />
     <Compile Include="XmlWrapper\CommonXmlNodeExtension.cs" />
+    <Compile Include="Extensions\LinkedListExtensions.cs" />
+    <Compile Include="XmlWrapper\CommonXmlNodeCompare.cs" />
+    <Compile Include="XmlWrapper\XmlNodeType.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Extensions\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

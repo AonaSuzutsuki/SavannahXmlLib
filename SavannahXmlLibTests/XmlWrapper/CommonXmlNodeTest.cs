@@ -566,6 +566,62 @@ namespace SavannahXmlLibTests.XmlWrapper
         }
 
         [Test]
+        public void AddBeforeChildTest2()
+        {
+            var root = new CommonXmlNode
+            {
+                TagName = "root",
+                PrioritizeInnerXml = "<br />\naaaa\n<br />\nbbb\n<br />\nccc"
+            };
+            root.ResolvePrioritizeInnerXml();
+
+            var exp = new CommonXmlNode
+            {
+                TagName = "root",
+                ChildNodes = new[]
+                {
+                    new CommonXmlNode
+                    {
+                        TagName = "br"
+                    },
+                    new CommonXmlNode
+                    {
+                        TagName = "br"
+                    },
+                    new CommonXmlNode
+                    {
+                        NodeType = XmlNodeType.Text,
+                        TagName = CommonXmlNode.TextTagName,
+                        InnerText = "aaaa"
+                    },
+                    new CommonXmlNode
+                    {
+                        NodeType = XmlNodeType.Text,
+                        TagName = CommonXmlNode.TextTagName,
+                        InnerText = "bbb"
+                    },
+                    new CommonXmlNode
+                    {
+                        TagName = "br"
+                    },
+                    new CommonXmlNode
+                    {
+                        NodeType = XmlNodeType.Text,
+                        TagName = CommonXmlNode.TextTagName,
+                        InnerText = "ccc"
+                    }
+                }
+            };
+
+            var newNode = root.ChildNodes.ElementAt(2);
+            var target = root.ChildNodes.ElementAt(1);
+            root.RemoveChildElement(newNode);
+            root.AddBeforeChildElement(target, newNode);
+
+            Assert.AreEqual(exp, root);
+        }
+
+        [Test]
         public void OutterXmlTest()
         {
             var commonXmlNode2 = new CommonXmlNode
