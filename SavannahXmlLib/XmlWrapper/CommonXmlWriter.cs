@@ -12,13 +12,23 @@ namespace SavannahXmlLib.XmlWrapper
     /// </summary>
     public class CommonXmlWriter
     {
+        #region Fields
+
         private readonly XmlDocument xDocument = new XmlDocument();
         private readonly XmlProcessingInstruction xDeclaration;
+
+        #endregion
+
+        #region Properties
 
         /// <summary>
         /// Whether to ignore the comments for PrioritizeInnerXml.
         /// </summary>
         public bool IgnoreComments { get; set; } = true;
+
+        #endregion
+
+        #region Constructors
 
         /// <summary>
         /// Initialize the class.
@@ -35,6 +45,10 @@ namespace SavannahXmlLib.XmlWrapper
         {
             xDeclaration = xDocument.CreateProcessingInstruction("xml", declaration);
         }
+
+        #endregion
+
+        #region Member Methods
 
         /// <summary>
         /// Writes the XML to the specified file.
@@ -60,6 +74,10 @@ namespace SavannahXmlLib.XmlWrapper
             var data = Encoding.UTF8.GetBytes($"{declaration}\n{xml}\n");
             stream.Write(data, 0, data.Length);
         }
+
+        #endregion
+
+        #region Static Methods
 
         /// <summary>
         /// Convert PrioritizeInnerXml To regular XML text.
@@ -94,5 +112,7 @@ namespace SavannahXmlLib.XmlWrapper
 
             return ms;
         }
+
+        #endregion
     }
 }

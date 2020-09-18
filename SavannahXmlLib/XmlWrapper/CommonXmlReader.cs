@@ -15,14 +15,24 @@ namespace SavannahXmlLib.XmlWrapper
     /// </summary>
     public class CommonXmlReader
     {
+        #region Fields
+
         private readonly XmlDocument _document;
 
         private readonly XmlNamespaceManager _xmlNamespaceManager;
+
+        #endregion
+
+        #region Properties
 
         /// <summary>
         /// Get the xml declaration.
         /// </summary>
         public string Declaration { get; private set; }
+
+        #endregion
+
+        #region Constructors
 
         /// <summary>
         /// Initialize CommonXmlReader with the specified file.
@@ -51,23 +61,9 @@ namespace SavannahXmlLib.XmlWrapper
             Declaration = declaration;
         }
 
-        private static (XmlDocument xmlDocument, string declaration) Initialize(Stream stream, bool ignoreComments)
-        {
-            var readerSettings = new XmlReaderSettings
-            {
-                IgnoreComments = ignoreComments
-            };
-            using var reader = XmlReader.Create(stream, readerSettings);
+        #endregion
 
-            var xmlDocument = new XmlDocument();
-            xmlDocument.Load(reader);
-            var declaration = xmlDocument.ChildNodes
-                                .OfType<XmlDeclaration>()
-                                .FirstOrDefault();
-            var declarationText = declaration == null ? CommonXmlConstants.Utf8Declaration : declaration.InnerText;
-
-            return (xmlDocument, declarationText);
-        }
+        #region Member Methods
 
         /// <summary>
         /// Add the namespace.
@@ -123,7 +119,8 @@ namespace SavannahXmlLib.XmlWrapper
             var nodeList = ConvertXmlNodes(xmlNodes, isRemoveSpace);
             return (from node in nodeList
                     let text = node.InnerText
-                    where !string.IsNullOrEmpty(text) select text.Trim()).ToList();
+                    where !string.IsNullOrEmpty(text)
+                    select text.Trim()).ToList();
         }
 
         /// <summary>
@@ -178,6 +175,10 @@ namespace SavannahXmlLib.XmlWrapper
             return root;
         }
 
+        #endregion
+
+        #region Static Methods
+
         /// <summary>
         /// Parse XML from the Stream and returns all nodes but the root.
         /// </summary>
@@ -217,6 +218,40 @@ namespace SavannahXmlLib.XmlWrapper
             return commonXmlNode;
         }
 
+        /// <summary>
+        /// Convert the XmlNode array to the CommonXmlNode array.
+        /// </summary>
+        /// <param name="nodeList">The target XmlNode array.</param>
+        /// <param name="isRemoveSpace">Whether to clear indentation blanks.</param>
+        /// <returns>The converted CommonXmlNode object array</returns>
+        public static CommonXmlNode[] ConvertXmlNodes(IEnumerable<XmlNode> nodeList, bool isRemoveSpace = true)
+        {
+            var list = from node in nodeList select ConvertXmlNode(node, isRemoveSpace);
+            return list.ToArray();
+        }
+
+        #endregion
+
+        #region Private Static Methods
+
+        private static (XmlDocument xmlDocument, string declaration) Initialize(Stream stream, bool ignoreComments)
+        {
+            var readerSettings = new XmlReaderSettings
+            {
+                IgnoreComments = ignoreComments
+            };
+            using var reader = XmlReader.Create(stream, readerSettings);
+
+            var xmlDocument = new XmlDocument();
+            xmlDocument.Load(reader);
+            var declaration = xmlDocument.ChildNodes
+                                .OfType<XmlDeclaration>()
+                                .FirstOrDefault();
+            var declarationText = declaration == null ? CommonXmlConstants.Utf8Declaration : declaration.InnerText;
+
+            return (xmlDocument, declarationText);
+        }
+
         private static void ApplyInnerText(CommonXmlNode node)
         {
             if (node.NodeType != XmlNodeType.Tag)
@@ -232,18 +267,6 @@ namespace SavannahXmlLib.XmlWrapper
             }
 
             node.InnerText = string.Join("\n", sb);
-        }
-
-        /// <summary>
-        /// Convert the XmlNode array to the CommonXmlNode array.
-        /// </summary>
-        /// <param name="nodeList">The target XmlNode array.</param>
-        /// <param name="isRemoveSpace">Whether to clear indentation blanks.</param>
-        /// <returns>The converted CommonXmlNode object array</returns>
-        public static CommonXmlNode[] ConvertXmlNodes(IEnumerable<XmlNode> nodeList, bool isRemoveSpace = true)
-        {
-            var list = from node in nodeList select ConvertXmlNode(node, isRemoveSpace);
-            return list.ToArray();
         }
 
         private Dictionary<XmlNode, CommonXmlNode> CreateTable(XmlNode node, bool isRemoveSpace)
@@ -429,5 +452,7 @@ namespace SavannahXmlLib.XmlWrapper
             }
             return list;
         }
+
+        #endregion
     }
 }
