@@ -444,7 +444,7 @@ namespace SavannahXmlLibTests.XmlWrapper
             var exp = new CommonXmlNode
             {
                 TagName = "root",
-                InnerText = "aaaaaa\naa\naaaa",
+                InnerText = "       aaaaaa\naa\n  aaaa",
                 ChildNodes = new[]
                 {
                     new CommonXmlNode
