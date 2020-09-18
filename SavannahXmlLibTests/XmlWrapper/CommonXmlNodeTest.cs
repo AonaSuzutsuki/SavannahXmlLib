@@ -72,14 +72,17 @@ namespace SavannahXmlLibTests.XmlWrapper
                             new CommonXmlNode
                             {
                                 NodeType = XmlNodeType.Text,
-                                PrioritizeInnerXml = "Value"
+                                InnerText = "Value"
                             }
                         }
                     }
                 }
             };
 
+            var exp = "<root>\n  <ChildNode name=\"attr\">\n    Value\n  </ChildNode>\n</root>";
             var act = commonXmlNode2.ToString();
+
+            Assert.AreEqual(exp, act);
         }
 
         [Test]
@@ -566,7 +569,7 @@ namespace SavannahXmlLibTests.XmlWrapper
         }
 
         [Test]
-        public void AddBeforeChildTest2()
+        public void AddBeforeSameChildTest()
         {
             var root = new CommonXmlNode
             {
@@ -653,9 +656,12 @@ namespace SavannahXmlLibTests.XmlWrapper
                 }
             };
 
+            var exp = "<root>\n  <ChildNode name=\"attr\">\n    Value\n  </ChildNode>\n</root>";
+
             commonXmlNode2.ResolvePrioritizeInnerXml();
             var act = commonXmlNode2.ChildNodes.First().OutterXml;
-            Console.WriteLine(act);
+
+            Assert.AreEqual(exp, act);
         }
     }
 }
