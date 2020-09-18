@@ -120,6 +120,7 @@ namespace SavannahXmlLibTests.XmlWrapper
                             new CommonXmlNode
                             {
                                 TagName = "test",
+                                InnerText = "test\naaaa\nbbb",
                                 ChildNodes = new []
                                 {
                                     new CommonXmlNode

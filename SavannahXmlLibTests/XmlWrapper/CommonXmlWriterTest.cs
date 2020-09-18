@@ -305,6 +305,7 @@ namespace SavannahXmlLibTests.XmlWrapper
                     {
                         TagName = "vehicle",
                         NodeType = XmlNodeType.Tag,
+                        InnerText = "bbbbb\naaaaa\nccccc",
                         ChildNodes = new[]
                         {
                             new CommonXmlNode
@@ -350,6 +351,7 @@ namespace SavannahXmlLibTests.XmlWrapper
                     new CommonXmlNode
                     {
                         TagName = "test",
+                        InnerText = "test\naaaa\nbbb",
                         ChildNodes = new []
                         {
                             new CommonXmlNode
@@ -425,6 +427,7 @@ namespace SavannahXmlLibTests.XmlWrapper
                             new CommonXmlNode
                             {
                                 TagName = "test",
+                                InnerText = "test\naaaa\nbbb",
                                 ChildNodes = new []
                                 {
                                     new CommonXmlNode
