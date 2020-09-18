@@ -94,6 +94,12 @@ namespace SavannahXmlLibTests.XmlWrapper
                     {
                         TagName = "cov",
                         PrioritizeInnerXml = "<test>test<br />aaaa<br />bbb</test>"
+                    },
+                    new CommonXmlNode
+                    {
+                        TagName = CommonXmlNode.TextTagName,
+                        NodeType = XmlNodeType.Text,
+                        PrioritizeInnerXml = "value"
                     }
                 }
             };
@@ -142,6 +148,12 @@ namespace SavannahXmlLibTests.XmlWrapper
                                 }
                             }
                         }
+                    },
+                    new CommonXmlNode
+                    {
+                        TagName = CommonXmlNode.TextTagName,
+                        NodeType = XmlNodeType.Text,
+                        InnerText = "value"
                     }
                 }
             };
@@ -385,6 +397,265 @@ namespace SavannahXmlLibTests.XmlWrapper
             var resultTestNode = testReader.GetNode("/test/br");
 
             Assert.AreEqual(resultTestNode, testNode.ChildNodes.First());
+        }
+
+        [Test]
+        public void AddBeforeChildTest()
+        {
+            var textNode = new CommonXmlNode
+            {
+                TagName = CommonXmlNode.TextTagName,
+                NodeType = XmlNodeType.Text,
+                InnerText = "aaa"
+            };
+            var testNode = new CommonXmlNode
+            {
+                TagName = "test",
+                ChildNodes = new[]
+                {
+                    new CommonXmlNode
+                    {
+                        TagName = "br",
+                        Attributes = new List<AttributeInfo>
+                        {
+                            new AttributeInfo
+                            {
+                                Name = "attr",
+                                Value = "value"
+                            }
+                        }
+                    },
+                }
+            };
+
+            var root = new CommonXmlNode
+            {
+                TagName = "root",
+                ChildNodes = new[]
+                {
+                    new CommonXmlNode
+                    {
+                        TagName = "test"
+                    },
+                    textNode,
+                    new CommonXmlNode
+                    {
+                        TagName = "test",
+                        ChildNodes = new []
+                        {
+                            new CommonXmlNode
+                            {
+                                TagName = "br"
+                            },
+                        }
+                    }
+                }
+            };
+
+            var exp = new CommonXmlNode
+            {
+                TagName = "root",
+                ChildNodes = new[]
+                {
+                    new CommonXmlNode
+                    {
+                        TagName = "test"
+                    },
+                    testNode,
+                    textNode,
+                    new CommonXmlNode
+                    {
+                        TagName = "test",
+                        ChildNodes = new []
+                        {
+                            new CommonXmlNode
+                            {
+                                TagName = "br"
+                            },
+                        }
+                    }
+                }
+            };
+
+            root.AddBeforeChildElement(textNode, testNode);
+
+            Assert.AreEqual(exp, root);
+        }
+
+        [Test]
+        public void AddAfterChildTest()
+        {
+            var textNode = new CommonXmlNode
+            {
+                TagName = CommonXmlNode.TextTagName,
+                NodeType = XmlNodeType.Text,
+                InnerText = "aaa"
+            };
+            var testNode = new CommonXmlNode
+            {
+                TagName = "test",
+                ChildNodes = new[]
+                {
+                    new CommonXmlNode
+                    {
+                        TagName = "br",
+                        Attributes = new List<AttributeInfo>
+                        {
+                            new AttributeInfo
+                            {
+                                Name = "attr",
+                                Value = "value"
+                            }
+                        }
+                    },
+                }
+            };
+
+            var root = new CommonXmlNode
+            {
+                TagName = "root",
+                ChildNodes = new[]
+                {
+                    new CommonXmlNode
+                    {
+                        TagName = "test"
+                    },
+                    textNode,
+                    new CommonXmlNode
+                    {
+                        TagName = "test",
+                        ChildNodes = new []
+                        {
+                            new CommonXmlNode
+                            {
+                                TagName = "br"
+                            },
+                        }
+                    }
+                }
+            };
+
+            var exp = new CommonXmlNode
+            {
+                TagName = "root",
+                ChildNodes = new[]
+                {
+                    new CommonXmlNode
+                    {
+                        TagName = "test"
+                    },
+                    textNode,
+                    testNode,
+                    new CommonXmlNode
+                    {
+                        TagName = "test",
+                        ChildNodes = new []
+                        {
+                            new CommonXmlNode
+                            {
+                                TagName = "br"
+                            },
+                        }
+                    }
+                }
+            };
+
+            root.AddAfterChildElement(textNode, testNode);
+
+            Assert.AreEqual(exp, root);
+        }
+
+        [Test]
+        public void AddBeforeChildTest2()
+        {
+            var root = new CommonXmlNode
+            {
+                TagName = "root",
+                PrioritizeInnerXml = "<br />\naaaa\n<br />\nbbb\n<br />\nccc"
+            };
+            root.ResolvePrioritizeInnerXml();
+
+            var exp = new CommonXmlNode
+            {
+                TagName = "root",
+                ChildNodes = new[]
+                {
+                    new CommonXmlNode
+                    {
+                        TagName = "br"
+                    },
+                    new CommonXmlNode
+                    {
+                        TagName = "br"
+                    },
+                    new CommonXmlNode
+                    {
+                        NodeType = XmlNodeType.Text,
+                        TagName = CommonXmlNode.TextTagName,
+                        InnerText = "aaaa"
+                    },
+                    new CommonXmlNode
+                    {
+                        NodeType = XmlNodeType.Text,
+                        TagName = CommonXmlNode.TextTagName,
+                        InnerText = "bbb"
+                    },
+                    new CommonXmlNode
+                    {
+                        TagName = "br"
+                    },
+                    new CommonXmlNode
+                    {
+                        NodeType = XmlNodeType.Text,
+                        TagName = CommonXmlNode.TextTagName,
+                        InnerText = "ccc"
+                    }
+                }
+            };
+
+            var newNode = root.ChildNodes.ElementAt(2);
+            var target = root.ChildNodes.ElementAt(1);
+            root.RemoveChildElement(newNode);
+            root.AddBeforeChildElement(target, newNode);
+
+            Assert.AreEqual(exp, root);
+        }
+
+        [Test]
+        public void OutterXmlTest()
+        {
+            var commonXmlNode2 = new CommonXmlNode
+            {
+                TagName = "root",
+                ChildNodes = new CommonXmlNode[]
+                {
+                    new CommonXmlNode
+                    {
+                        NodeType = XmlNodeType.Tag,
+                        TagName = "ChildNode",
+                        Attributes = new AttributeInfo[]
+                        {
+                            new AttributeInfo
+                            {
+                                Name = "name",
+                                Value = "attr"
+                            }
+                        },
+                        ChildNodes = new CommonXmlNode[]
+                        {
+                            new CommonXmlNode
+                            {
+                                NodeType = XmlNodeType.Text,
+                                InnerText = "Value"
+                            }
+                        }
+                    }
+                }
+            };
+
+            commonXmlNode2.ResolvePrioritizeInnerXml();
+            var act = commonXmlNode2.ChildNodes.First().OutterXml;
+            Console.WriteLine(act);
         }
     }
 }

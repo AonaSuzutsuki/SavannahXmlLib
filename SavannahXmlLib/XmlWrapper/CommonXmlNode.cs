@@ -6,31 +6,11 @@ using System.Text;
 using System.Xml;
 using CommonCoreLib.Bool;
 using CommonExtensionLib.Extensions;
+using SavannahXmlLib.Extensions;
 using SavannahXmlLib.XmlWrapper;
 
 namespace SavannahXmlLib.XmlWrapper
 {
-    /// <summary>
-    /// XmlNode Type
-    /// </summary>
-    public enum XmlNodeType
-    {
-        /// <summary>
-        /// Tag
-        /// </summary>
-        Tag,
-
-        /// <summary>
-        /// Text
-        /// </summary>
-        Text,
-
-        /// <summary>
-        /// Comment
-        /// </summary>
-        Comment
-    }
-
     /// <summary>
     /// Represents an Xml node as a tree structure.
     /// </summary>
@@ -74,7 +54,7 @@ namespace SavannahXmlLib.XmlWrapper
         public IEnumerable<CommonXmlNode> ChildNodes
         {
             get => _childNodes;
-            set => _childNodes = ResolveChildrenParent(new List<CommonXmlNode>(value), this);
+            set => _childNodes = ResolveChildrenParent(new LinkedList<CommonXmlNode>(value), this);
         }
 
         /// <summary>
@@ -87,6 +67,8 @@ namespace SavannahXmlLib.XmlWrapper
         /// </summary>
         public string InnerXml => ToString(ChildNodes);
 
+        public string OutterXml => GenerateOutterXml(this);
+
         /// <summary>
         /// The High priority InnerXml.
         /// Used to force Xml to be rewritten.
@@ -95,8 +77,14 @@ namespace SavannahXmlLib.XmlWrapper
         #endregion
 
         #region Fields
+#if DEBUG
+        private Guid _guid = Guid.NewGuid();
+#endif
         private HashSet<AttributeInfo> _attributes = new HashSet<AttributeInfo>();
-        private List<CommonXmlNode> _childNodes = new List<CommonXmlNode>();
+        private LinkedList<CommonXmlNode> _childNodes = new LinkedList<CommonXmlNode>();
+        #endregion
+
+        #region Constructor
         #endregion
 
         #region Member Methods
@@ -193,7 +181,48 @@ namespace SavannahXmlLib.XmlWrapper
         /// <param name="node">The node to add</param>
         public void AddChildElement(CommonXmlNode node)
         {
-            _childNodes.Add(node);
+            _childNodes.AddLast(node);
+            node.Parent = this;
+        }
+
+        /// <summary>
+        /// Remove the element from children.
+        /// </summary>
+        /// <param name="node">The node to remove</param>
+        public void RemoveChildElement(CommonXmlNode node)
+        {
+            var listNode = _childNodes.Find(node, new CommonXmlNodeCompare());
+            if (listNode == null)
+                return;
+            _childNodes.Remove(listNode);
+        }
+
+        /// <summary>
+        /// Add the child element to before 1st argument node.
+        /// </summary>
+        /// <param name="node">Nodes to search.</param>
+        /// <param name="newNode">Nodes to be added</param>
+        public void AddBeforeChildElement(CommonXmlNode node, CommonXmlNode newNode)
+        {
+            var listNode = _childNodes.Find(node, new CommonXmlNodeCompare());
+            if (listNode == null)
+                return;
+            _childNodes.AddBefore(listNode, newNode);
+            newNode.Parent = this;
+        }
+
+        /// <summary>
+        /// Add the child element to after 1st argument node.
+        /// </summary>
+        /// <param name="node">Nodes to search.</param>
+        /// <param name="newNode">Nodes to be added</param>
+        public void AddAfterChildElement(CommonXmlNode node, CommonXmlNode newNode)
+        {
+            var listNode = _childNodes.Find(node, new CommonXmlNodeCompare());
+            if (listNode == null)
+                return;
+            _childNodes.AddAfter(listNode, newNode);
+            newNode.Parent = this;
         }
 
         /// <summary>
@@ -309,10 +338,18 @@ namespace SavannahXmlLib.XmlWrapper
 
             if (!string.IsNullOrEmpty(node.PrioritizeInnerXml))
             {
-                using var ms = CommonXmlWriter.ConvertInnerXmlToXmlText(node);
-                var cNode = CommonXmlReader.GetChildNodesFromStream(ms, ignoreComments);
-                node.ChildNodes = cNode;
-                node.PrioritizeInnerXml = null;
+                if (node.NodeType == XmlNodeType.Tag)
+                {
+                    using var ms = CommonXmlWriter.ConvertInnerXmlToXmlText(node);
+                    var cNode = CommonXmlReader.GetChildNodesFromStream(ms, ignoreComments);
+                    node.ChildNodes = cNode;
+                    node.PrioritizeInnerXml = null;
+                }
+                else
+                {
+                    node.InnerText = node.PrioritizeInnerXml;
+                    node.PrioritizeInnerXml = null;
+                }
             }
             else
             {
@@ -404,7 +441,7 @@ namespace SavannahXmlLib.XmlWrapper
             return node;
         }
 
-        private static List<CommonXmlNode> ResolveChildrenParent(List<CommonXmlNode> childNodes, CommonXmlNode parent)
+        private static LinkedList<CommonXmlNode> ResolveChildrenParent(LinkedList<CommonXmlNode> childNodes, CommonXmlNode parent)
         {
             foreach (var child in childNodes)
             {
@@ -412,6 +449,18 @@ namespace SavannahXmlLib.XmlWrapper
             }
 
             return childNodes;
+        }
+
+        private static string GenerateOutterXml(CommonXmlNode node)
+        {
+            if (node.Parent == null)
+                return string.Empty;
+
+            var indent = MakeSpace(node.IndentSize);
+            var str = node.ToString();
+            var innerXml = string.Join("", node.ToString().Split('\n').Select(item => $"{indent}{item}\n"));
+            var attr = node.Parent.Attributes.ToAttributesText(" ");
+            return $"<{node.Parent.TagName}{attr}>\n{innerXml}</{node.Parent.TagName}>";
         }
         #endregion
 
@@ -425,6 +474,8 @@ namespace SavannahXmlLib.XmlWrapper
         {
             if (obj == null || GetType() != obj.GetType())
                 return false;
+            if (this == obj)
+                return true;
 
             var element = (CommonXmlNode)obj;
             var collector = new BoolCollector();
