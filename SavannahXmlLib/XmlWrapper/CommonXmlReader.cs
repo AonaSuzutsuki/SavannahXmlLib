@@ -213,7 +213,25 @@ namespace SavannahXmlLib.XmlWrapper
                 ChildNodes = GetElements(node.ChildNodes, isRemoveSpace, hierarchy, table)
             };
             table?.Add(node, commonXmlNode);
+            ApplyInnerText(commonXmlNode);
             return commonXmlNode;
+        }
+
+        private static void ApplyInnerText(CommonXmlNode node)
+        {
+            if (node.NodeType != XmlNodeType.Tag)
+                return;
+
+            var sb = new List<string>();
+            foreach (var child in node.ChildNodes)
+            {
+                if (child.NodeType == XmlNodeType.Text)
+                    sb.Add(child.InnerText);
+
+                ApplyInnerText(child);
+            }
+
+            node.InnerText = string.Join("\n", sb);
         }
 
         /// <summary>
