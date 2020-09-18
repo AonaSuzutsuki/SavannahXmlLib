@@ -91,7 +91,7 @@ namespace SavannahXmlLib.XmlWrapper
         /// <param name="name">Attributes name.</param>
         /// <param name="xpath">XPath indicating the location of the attribute to be retrieved.</param>
         /// <param name="isContaisNoValue">Whether to include an empty value.</param>
-        /// <returns></returns>
+        /// <returns>Values of an attribute</returns>
         public IList<string> GetAttributes(string name, string xpath, bool isContaisNoValue = true)
         {
             var nodeList = ConvertXmlNodes(ConvertXmlNodeList(_document.SelectNodes(xpath, _xmlNamespaceManager)));
@@ -104,6 +104,19 @@ namespace SavannahXmlLib.XmlWrapper
                              where !string.IsNullOrEmpty(attr)
                              select attr).ToList());
             return cond.Invoke();
+        }
+
+        /// <summary>
+        /// Get the value of an attribute from the specified XPath.
+        /// </summary>
+        /// <param name="name">Attributes name.</param>
+        /// <param name="xpath">XPath indicating the location of the attribute to be retrieved.</param>
+        /// <param name="isContaisNoValue">Whether to include an empty value.</param>
+        /// <returns>The attribute.</returns>
+        public string GetAttribute(string name, string xpath, bool isContaisNoValue = true)
+        {
+            var attrs = GetAttributes(name, xpath, isContaisNoValue);
+            return attrs.FirstOrDefault();
         }
 
         /// <summary>

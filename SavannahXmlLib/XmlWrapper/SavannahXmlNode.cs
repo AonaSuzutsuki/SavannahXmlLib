@@ -441,6 +441,22 @@ namespace SavannahXmlLib.XmlWrapper
             return node;
         }
 
+        /// <summary>
+        /// Generate the text node.
+        /// </summary>
+        /// <param name="innerText">The inner text.</param>
+        /// <returns>The text node.</returns>
+        public static SavannahXmlNode CreateTextNode(string innerText)
+        {
+            var node = new SavannahXmlNode
+            {
+                NodeType = XmlNodeType.Text,
+                TagName = TextTagName,
+                InnerText = innerText
+            };
+            return node;
+        }
+
         private static LinkedList<SavannahXmlNode> ResolveChildrenParent(LinkedList<SavannahXmlNode> childNodes, SavannahXmlNode parent)
         {
             foreach (var child in childNodes)
