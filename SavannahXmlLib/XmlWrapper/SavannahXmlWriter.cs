@@ -10,7 +10,7 @@ namespace SavannahXmlLib.XmlWrapper
     /// <summary>
     /// It provides a set of functions for writing XML.
     /// </summary>
-    public class CommonXmlWriter
+    public class SavannahXmlWriter
     {
         #region Fields
 
@@ -33,7 +33,7 @@ namespace SavannahXmlLib.XmlWrapper
         /// <summary>
         /// Initialize the class.
         /// </summary>
-        public CommonXmlWriter() : this(CommonXmlConstants.Utf8Declaration)
+        public SavannahXmlWriter() : this(SavannahXmlConstants.Utf8Declaration)
         {
         }
 
@@ -41,7 +41,7 @@ namespace SavannahXmlLib.XmlWrapper
         /// Initialize the class with the specified declaration.
         /// </summary>
         /// <param name="declaration">Declaration to be written in XML</param>
-        public CommonXmlWriter(string declaration)
+        public SavannahXmlWriter(string declaration)
         {
             xDeclaration = xDocument.CreateProcessingInstruction("xml", declaration);
         }
@@ -55,7 +55,7 @@ namespace SavannahXmlLib.XmlWrapper
         /// </summary>
         /// <param name="path">Path of the file to be written</param>
         /// <param name="root">The root of the XML to be written</param>
-        public void Write(string path, CommonXmlNode root)
+        public void Write(string path, SavannahXmlNode root)
         {
             using var fs = new FileStream(path, FileMode.Create, FileAccess.ReadWrite, FileShare.Read);
             Write(fs, root);
@@ -66,7 +66,7 @@ namespace SavannahXmlLib.XmlWrapper
         /// </summary>
         /// <param name="stream">Stream to be written</param>
         /// <param name="root">The root of the XML to be written</param>
-        public void Write(Stream stream, CommonXmlNode root)
+        public void Write(Stream stream, SavannahXmlNode root)
         {
             root.ResolvePrioritizeInnerXml(IgnoreComments);
             var xml = root.ToString();
@@ -84,15 +84,15 @@ namespace SavannahXmlLib.XmlWrapper
         /// </summary>
         /// <param name="node">Target node</param>
         /// <returns>Stream written regular XML text.</returns>
-        public static Stream ConvertInnerXmlToXmlText(CommonXmlNode node)
+        public static Stream ConvertInnerXmlToXmlText(SavannahXmlNode node)
         {
             var lines = node.PrioritizeInnerXml.UnifiedBreakLine().Split('\n');
-            var spaceText = CommonXmlNode.MakeSpace(node.IndentSize);
+            var spaceText = SavannahXmlNode.MakeSpace(node.IndentSize);
             var converted = string.Join("\n", lines.Select(x => $"{spaceText}{x}"));
 
             var xml = $"\n{converted}\n";
             var xDocument = new XmlDocument();
-            var xDeclaration = xDocument.CreateProcessingInstruction("xml", CommonXmlConstants.Utf8Declaration);
+            var xDeclaration = xDocument.CreateProcessingInstruction("xml", SavannahXmlConstants.Utf8Declaration);
             var elem = xDocument.CreateElement("root");
             xDocument.AppendChild(xDeclaration);
             elem.InnerXml = xml;
