@@ -429,8 +429,7 @@ namespace SavannahXmlLib.XmlWrapper
         public static SavannahXmlNode CreateElement(string tagName, IEnumerable<AttributeInfo> attributeInfos,
             string innerXml)
         {
-            if (attributeInfos == null)
-                attributeInfos = new AttributeInfo[0];
+            attributeInfos ??= new AttributeInfo[0];
 
             var node = new SavannahXmlNode
             {
