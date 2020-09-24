@@ -335,6 +335,7 @@ namespace SavannahXmlLibTests.XmlWrapper
 
             var reader = new SavannahXmlReader(GetTestPath());
             var node = reader.GetAllNodes();
+            _ = reader.GetAllNodes();
 
             Assert.AreEqual(exp, node);
         }

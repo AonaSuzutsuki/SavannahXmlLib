@@ -423,6 +423,7 @@ namespace SavannahXmlLib.XmlWrapper
                 if (n is XmlElement)
                 {
                     var node = (XmlElement)n;
+                    node.SetAttribute("savannahxml.id", Guid.NewGuid().ToString());
                     var commonXmlNode = new SavannahXmlNode
                     {
                         NodeType = XmlNodeType.Tag,
