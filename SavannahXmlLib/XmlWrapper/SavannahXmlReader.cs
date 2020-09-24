@@ -92,10 +92,10 @@ namespace SavannahXmlLib.XmlWrapper
         /// <param name="xpath">XPath indicating the location of the attribute to be retrieved.</param>
         /// <param name="isContaisNoValue">Whether to include an empty value.</param>
         /// <returns>Values of an attribute</returns>
-        public IList<string> GetAttributes(string name, string xpath, bool isContaisNoValue = true)
+        public IEnumerable<string> GetAttributes(string name, string xpath, bool isContaisNoValue = true)
         {
             var nodeList = ConvertXmlNodes(ConvertXmlNodeList(_document.SelectNodes(xpath, _xmlNamespaceManager)));
-            var cond = Conditions.If<IList<string>>(() => isContaisNoValue)
+            var cond = Conditions.If<IEnumerable<string>>(() => isContaisNoValue)
                 .Then(() => (from node in nodeList
                              let attr = node.GetAttribute(name).Value
                              select attr).ToList())
@@ -125,7 +125,7 @@ namespace SavannahXmlLib.XmlWrapper
         /// <param name="xpath">XPath indicating the location of the value to be retrieved.</param>
         /// <param name="isRemoveSpace">Whether to clear indentation blanks.</param>
         /// <returns>Values</returns>
-        public IList<string> GetValues(string xpath, bool isRemoveSpace = true)
+        public IEnumerable<string> GetValues(string xpath, bool isRemoveSpace = true)
         {
             var xmlNode = _document.SelectNodes(xpath, _xmlNamespaceManager);
             var xmlNodes = ConvertXmlNodeList(xmlNode);
@@ -166,14 +166,14 @@ namespace SavannahXmlLib.XmlWrapper
         /// <param name="xpath">XPath indicating the location of the nodes to be retrieved.</param>
         /// <param name="isRemoveSpace">Whether to clear indentation blanks.</param>
         /// <returns>Nodes found. null is returned if not found.</returns>
-        public SavannahXmlNode[] GetNodes(string xpath, bool isRemoveSpace = true)
+        public IEnumerable<SavannahXmlNode> GetNodes(string xpath, bool isRemoveSpace = true)
         {
             var nodes = _document.SelectNodes(xpath, _xmlNamespaceManager);
             var nodeList = ConvertXmlNodeList(nodes);
 
             var table = CreateTable(nodeList.First(), isRemoveSpace);
 
-            return (from node in nodeList where table.ContainsKey(node) select table[node]).ToArray();
+            return (from node in nodeList where table.ContainsKey(node) select table[node]).ToList();
         }
 
         /// <summary>
