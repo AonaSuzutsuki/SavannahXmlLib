@@ -96,9 +96,11 @@ namespace SavannahXmlLibTests.XmlWrapper
             };
 
             var reader = new SavannahXmlReader(GetTestPath());
-            var node = reader.GetNode("/ServerSettings/property[@name='ServerName']");
+            var firstNode = reader.GetNode("/ServerSettings/property[@name='ServerName']");
+            var SecondNode = reader.GetNode("/ServerSettings/property[@name='ServerName']");
 
-            Assert.AreEqual(exp, node);
+            Assert.AreEqual(exp, firstNode);
+            Assert.AreEqual(exp, SecondNode);
         }
 
         [Test]
@@ -165,9 +167,11 @@ namespace SavannahXmlLibTests.XmlWrapper
             };
 
             var reader = new SavannahXmlReader(GetTestPath());
-            var node = reader.GetNodes("/ServerSettings/property[contains(@name, 'ServerName')]");
+            var firstNode = reader.GetNodes("/ServerSettings/property[contains(@name, 'ServerName')]");
+            var secondNode = reader.GetNodes("/ServerSettings/property[contains(@name, 'ServerName')]");
 
-            Assert.AreEqual(exp, node);
+            Assert.AreEqual(exp, firstNode);
+            Assert.AreEqual(exp, secondNode);
         }
 
         [Test]
@@ -335,7 +339,6 @@ namespace SavannahXmlLibTests.XmlWrapper
 
             var reader = new SavannahXmlReader(GetTestPath());
             var node = reader.GetAllNodes();
-            _ = reader.GetAllNodes();
 
             Assert.AreEqual(exp, node);
         }
