@@ -20,12 +20,11 @@ namespace SavannahXmlLib.XmlWrapper
 
         public const string TextTagName = "#text";
         public const string CommentTagName = "#comment";
+        public const int DefaultIndentSize = 2;
 
         #endregion
 
         #region Properties
-
-        public int IndentSize { get; set; } = 2;
 
         /// <summary>
         /// The type of this node.
@@ -65,9 +64,9 @@ namespace SavannahXmlLib.XmlWrapper
         /// <summary>
         /// InnerXml of this node.
         /// </summary>
-        public string InnerXml => ToString(ChildNodes);
+        public string InnerXml => ToString(ChildNodes, DefaultIndentSize);
 
-        public string OutterXml => GenerateOutterXml(this);
+        public string OutterXml => GenerateOutterXml(this, DefaultIndentSize);
 
         /// <summary>
         /// The High priority InnerXml.
@@ -77,9 +76,6 @@ namespace SavannahXmlLib.XmlWrapper
         #endregion
 
         #region Fields
-#if DEBUG
-        private Guid _guid = Guid.NewGuid();
-#endif
         private HashSet<AttributeInfo> _attributes = new HashSet<AttributeInfo>();
         private LinkedList<SavannahXmlNode> _childNodes = new LinkedList<SavannahXmlNode>();
         #endregion
@@ -253,7 +249,7 @@ namespace SavannahXmlLib.XmlWrapper
         /// <returns>String in XML format.</returns>
         public override string ToString()
         {
-            return ToString(this);
+            return ToString(this, DefaultIndentSize);
         }
 
         /// <summary>
@@ -261,12 +257,12 @@ namespace SavannahXmlLib.XmlWrapper
         /// </summary>
         /// <param name="commonXmlNodes">Enumerable xml nodes.</param>
         /// <returns>String in XML format.</returns>
-        public string ToString(IEnumerable<SavannahXmlNode> commonXmlNodes)
+        public string ToString(IEnumerable<SavannahXmlNode> commonXmlNodes, int indentSize)
         {
             var sb = new StringBuilder();
             foreach (var node in commonXmlNodes)
             {
-                sb.Append($"{ToString(node)}\n");
+                sb.Append($"{ToString(node, indentSize)}\n");
             }
             return sb.ToString();
         }
@@ -277,7 +273,7 @@ namespace SavannahXmlLib.XmlWrapper
         /// <param name="node">Target node.</param>
         /// <param name="space">Indent space size</param>
         /// <returns>String in XML format.</returns>
-        public string ToString(SavannahXmlNode node, int space = 0)
+        public static string ToString(SavannahXmlNode node, int indentSize, int space = 0)
         {
             var spaceText = MakeSpace(space);
 
@@ -291,10 +287,10 @@ namespace SavannahXmlLib.XmlWrapper
                 if (node.ChildNodes.Any())
                 {
                     sb.Append($"{spaceText}<{node.TagName}{attr}>\n");
-                    space += IndentSize;
+                    space += indentSize;
                     foreach (var childNode in node.ChildNodes)
                     {
-                        sb.Append($"{ToString(childNode, space)}\n");
+                        sb.Append($"{ToString(childNode, indentSize, space)}\n");
                     }
 
                     sb.Append($"{spaceText}</{node.TagName}>");
@@ -311,7 +307,7 @@ namespace SavannahXmlLib.XmlWrapper
             else
             {
                 sb.Append($"{spaceText}<!--\n");
-                sb.Append(ResolveInnerText(node, MakeSpace(space + IndentSize)));
+                sb.Append(ResolveInnerText(node, MakeSpace(space + indentSize)));
                 sb.Append($"\n{spaceText}-->");
             }
             
@@ -319,7 +315,7 @@ namespace SavannahXmlLib.XmlWrapper
             return sb.ToString();
         }
 
-        private string ResolveInnerText(SavannahXmlNode node, string spaceText)
+        private static string ResolveInnerText(SavannahXmlNode node, string spaceText)
         {
             var text = node.InnerText.UnifiedBreakLine();
             var lines = text.Split('\n');
@@ -466,12 +462,12 @@ namespace SavannahXmlLib.XmlWrapper
             return childNodes;
         }
 
-        private static string GenerateOutterXml(SavannahXmlNode node)
+        private static string GenerateOutterXml(SavannahXmlNode node, int indentSize)
         {
             if (node.Parent == null)
                 return string.Empty;
 
-            var indent = MakeSpace(node.IndentSize);
+            var indent = MakeSpace(indentSize);
             var str = node.ToString();
             var innerXml = string.Join("", node.ToString().Split('\n').Select(item => $"{indent}{item}\n"));
             var attr = node.Parent.Attributes.ToAttributesText(" ");

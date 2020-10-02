@@ -87,7 +87,7 @@ namespace SavannahXmlLib.XmlWrapper
         public static Stream ConvertInnerXmlToXmlText(SavannahXmlNode node)
         {
             var lines = node.PrioritizeInnerXml.UnifiedBreakLine().Split('\n');
-            var spaceText = SavannahXmlNode.MakeSpace(node.IndentSize);
+            var spaceText = SavannahXmlNode.MakeSpace(SavannahXmlNode.DefaultIndentSize);
             var converted = string.Join("\n", lines.Select(x => $"{spaceText}{x}"));
 
             var xml = $"\n{converted}\n";
@@ -102,7 +102,7 @@ namespace SavannahXmlLib.XmlWrapper
             var writer = new XmlTextWriter(ms, Encoding.Unicode)
             {
                 Formatting = Formatting.Indented,
-                Indentation = 2,
+                Indentation = SavannahXmlNode.DefaultIndentSize,
                 IndentChar = ' '
             };
             xDocument.WriteContentTo(writer);
