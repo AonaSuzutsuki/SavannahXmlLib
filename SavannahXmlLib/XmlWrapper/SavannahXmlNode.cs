@@ -6,35 +6,15 @@ using System.Text;
 using System.Xml;
 using CommonCoreLib.Bool;
 using CommonExtensionLib.Extensions;
+using SavannahXmlLib.Extensions;
 using SavannahXmlLib.XmlWrapper;
 
 namespace SavannahXmlLib.XmlWrapper
 {
     /// <summary>
-    /// XmlNode Type
-    /// </summary>
-    public enum XmlNodeType
-    {
-        /// <summary>
-        /// Tag
-        /// </summary>
-        Tag,
-
-        /// <summary>
-        /// Text
-        /// </summary>
-        Text,
-
-        /// <summary>
-        /// Comment
-        /// </summary>
-        Comment
-    }
-
-    /// <summary>
     /// Represents an Xml node as a tree structure.
     /// </summary>
-    public class CommonXmlNode
+    public class SavannahXmlNode
     {
         #region Constants
 
@@ -57,7 +37,7 @@ namespace SavannahXmlLib.XmlWrapper
         /// </summary>
         public string TagName { get; set; }
 
-        public CommonXmlNode Parent { get; internal set; }
+        public SavannahXmlNode Parent { get; internal set; }
 
         /// <summary>
         /// Enumerable attributes of this node.
@@ -71,10 +51,10 @@ namespace SavannahXmlLib.XmlWrapper
         /// <summary>
         /// Enumerable children of this node.
         /// </summary>
-        public IEnumerable<CommonXmlNode> ChildNodes
+        public IEnumerable<SavannahXmlNode> ChildNodes
         {
             get => _childNodes;
-            set => _childNodes = ResolveChildrenParent(new List<CommonXmlNode>(value), this);
+            set => _childNodes = ResolveChildrenParent(new LinkedList<SavannahXmlNode>(value), this);
         }
 
         /// <summary>
@@ -87,6 +67,8 @@ namespace SavannahXmlLib.XmlWrapper
         /// </summary>
         public string InnerXml => ToString(ChildNodes);
 
+        public string OutterXml => GenerateOutterXml(this);
+
         /// <summary>
         /// The High priority InnerXml.
         /// Used to force Xml to be rewritten.
@@ -95,8 +77,14 @@ namespace SavannahXmlLib.XmlWrapper
         #endregion
 
         #region Fields
+#if DEBUG
+        private Guid _guid = Guid.NewGuid();
+#endif
         private HashSet<AttributeInfo> _attributes = new HashSet<AttributeInfo>();
-        private List<CommonXmlNode> _childNodes = new List<CommonXmlNode>();
+        private LinkedList<SavannahXmlNode> _childNodes = new LinkedList<SavannahXmlNode>();
+        #endregion
+
+        #region Constructor
         #endregion
 
         #region Member Methods
@@ -164,8 +152,8 @@ namespace SavannahXmlLib.XmlWrapper
         /// <param name="attributeInfos">Enumerable attribute info to add</param>
         /// <param name="commonXmlNodes">Enumerable xml node to add</param>
         /// <returns>The node of the created tag.</returns>
-        public CommonXmlNode CreateChildElement(string tagName, IEnumerable<AttributeInfo> attributeInfos = null
-            , IEnumerable<CommonXmlNode> commonXmlNodes = null)
+        public SavannahXmlNode CreateChildElement(string tagName, IEnumerable<AttributeInfo> attributeInfos = null
+            , IEnumerable<SavannahXmlNode> commonXmlNodes = null)
         {
             var node = CreateElement(tagName, attributeInfos, commonXmlNodes);
             AddChildElement(node);
@@ -179,7 +167,7 @@ namespace SavannahXmlLib.XmlWrapper
         /// <param name="attributeInfos">Enumerable attribute info to add</param>
         /// <param name="innerXml">The inner xml to add</param>
         /// <returns>The node of the created tag.</returns>
-        public CommonXmlNode CreateChildElement(string tagName, IEnumerable<AttributeInfo> attributeInfos
+        public SavannahXmlNode CreateChildElement(string tagName, IEnumerable<AttributeInfo> attributeInfos
             , string innerXml)
         {
             var node = CreateElement(tagName, attributeInfos, innerXml);
@@ -191,30 +179,71 @@ namespace SavannahXmlLib.XmlWrapper
         /// Add the child element to this node.
         /// </summary>
         /// <param name="node">The node to add</param>
-        public void AddChildElement(CommonXmlNode node)
+        public void AddChildElement(SavannahXmlNode node)
         {
-            _childNodes.Add(node);
+            _childNodes.AddLast(node);
+            node.Parent = this;
         }
 
         /// <summary>
-        /// Create a CommonXmlReader object from the current node.
+        /// Remove the element from children.
         /// </summary>
-        /// <returns>The CommonXmlReader object. Returns null for text and comment nodes.</returns>
-        public CommonXmlReader GetReader()
+        /// <param name="node">The node to remove</param>
+        public void RemoveChildElement(SavannahXmlNode node)
+        {
+            var listNode = _childNodes.Find(node, new SavannahXmlNodeComparer());
+            if (listNode == null)
+                return;
+            _childNodes.Remove(listNode);
+        }
+
+        /// <summary>
+        /// Add the child element to before 1st argument node.
+        /// </summary>
+        /// <param name="node">Nodes to search.</param>
+        /// <param name="newNode">Nodes to be added</param>
+        public void AddBeforeChildElement(SavannahXmlNode node, SavannahXmlNode newNode)
+        {
+            var listNode = _childNodes.Find(node, new SavannahXmlNodeComparer());
+            if (listNode == null)
+                return;
+            _childNodes.AddBefore(listNode, newNode);
+            newNode.Parent = this;
+        }
+
+        /// <summary>
+        /// Add the child element to after 1st argument node.
+        /// </summary>
+        /// <param name="node">Nodes to search.</param>
+        /// <param name="newNode">Nodes to be added</param>
+        public void AddAfterChildElement(SavannahXmlNode node, SavannahXmlNode newNode)
+        {
+            var listNode = _childNodes.Find(node, new SavannahXmlNodeComparer());
+            if (listNode == null)
+                return;
+            _childNodes.AddAfter(listNode, newNode);
+            newNode.Parent = this;
+        }
+
+        /// <summary>
+        /// Create a SavannahXmlReader object from the current node.
+        /// </summary>
+        /// <returns>The SavannahXmlReader object. Returns null for text and comment nodes.</returns>
+        public SavannahXmlReader GetReader()
         {
             var type = NodeType;
             if (type == XmlNodeType.Text || type == XmlNodeType.Comment)
                 return null;
 
             var innerXml = ToString();
-            var outterXml = $"{CommonXmlConstants.Declaration}\n{innerXml}";
+            var outterXml = $"{SavannahXmlConstants.Declaration}\n{innerXml}";
 
             var data = Encoding.UTF8.GetBytes(outterXml);
             using var ms = new MemoryStream();
             ms.Write(data, 0, data.Length);
             ms.Position = 0;
 
-            var reader = new CommonXmlReader(ms);
+            var reader = new SavannahXmlReader(ms);
             return reader;
         }
 
@@ -232,7 +261,7 @@ namespace SavannahXmlLib.XmlWrapper
         /// </summary>
         /// <param name="commonXmlNodes">Enumerable xml nodes.</param>
         /// <returns>String in XML format.</returns>
-        public string ToString(IEnumerable<CommonXmlNode> commonXmlNodes)
+        public string ToString(IEnumerable<SavannahXmlNode> commonXmlNodes)
         {
             var sb = new StringBuilder();
             foreach (var node in commonXmlNodes)
@@ -248,7 +277,7 @@ namespace SavannahXmlLib.XmlWrapper
         /// <param name="node">Target node.</param>
         /// <param name="space">Indent space size</param>
         /// <returns>String in XML format.</returns>
-        public string ToString(CommonXmlNode node, int space = 0)
+        public string ToString(SavannahXmlNode node, int space = 0)
         {
             var spaceText = MakeSpace(space);
 
@@ -290,7 +319,7 @@ namespace SavannahXmlLib.XmlWrapper
             return sb.ToString();
         }
 
-        private string ResolveInnerText(CommonXmlNode node, string spaceText)
+        private string ResolveInnerText(SavannahXmlNode node, string spaceText)
         {
             var text = node.InnerText.UnifiedBreakLine();
             var lines = text.Split('\n');
@@ -303,16 +332,24 @@ namespace SavannahXmlLib.XmlWrapper
         /// </summary>
         /// <param name="ignoreComments">Whether to ignore the comments.</param>
         /// <param name="node">Target node. The current node is specified if it is null.</param>
-        public void ResolvePrioritizeInnerXml(bool ignoreComments = true, CommonXmlNode node = null)
+        public void ResolvePrioritizeInnerXml(bool ignoreComments = true, SavannahXmlNode node = null)
         {
             node ??= this;
 
             if (!string.IsNullOrEmpty(node.PrioritizeInnerXml))
             {
-                using var ms = CommonXmlWriter.ConvertInnerXmlToXmlText(node);
-                var cNode = CommonXmlReader.GetChildNodesFromStream(ms, ignoreComments);
-                node.ChildNodes = cNode;
-                node.PrioritizeInnerXml = null;
+                if (node.NodeType == XmlNodeType.Tag)
+                {
+                    using var ms = SavannahXmlWriter.ConvertInnerXmlToXmlText(node);
+                    var cNode = SavannahXmlReader.GetChildNodesFromStream(ms, ignoreComments);
+                    node.ChildNodes = cNode;
+                    node.PrioritizeInnerXml = null;
+                }
+                else
+                {
+                    node.InnerText = node.PrioritizeInnerXml;
+                    node.PrioritizeInnerXml = null;
+                }
             }
             else
             {
@@ -348,9 +385,9 @@ namespace SavannahXmlLib.XmlWrapper
         /// </summary>
         /// <param name="tagName">Tag name of root.</param>
         /// <returns>Root node.</returns>
-        public static CommonXmlNode CreateRoot(string tagName)
+        public static SavannahXmlNode CreateRoot(string tagName)
         {
-            var root = new CommonXmlNode
+            var root = new SavannahXmlNode
             {
                 TagName = tagName
             };
@@ -364,16 +401,16 @@ namespace SavannahXmlLib.XmlWrapper
         /// <param name="attributeInfos">Enumerable attribute infos</param>
         /// <param name="commonXmlNodes">Enumerable children nodes.</param>
         /// <returns>Xml node.</returns>
-        public static CommonXmlNode CreateElement(string tagName, IEnumerable<AttributeInfo> attributeInfos = null
-            , IEnumerable<CommonXmlNode> commonXmlNodes = null)
+        public static SavannahXmlNode CreateElement(string tagName, IEnumerable<AttributeInfo> attributeInfos = null
+            , IEnumerable<SavannahXmlNode> commonXmlNodes = null)
         {
             if (attributeInfos == null)
                 attributeInfos = new AttributeInfo[0];
 
             if (commonXmlNodes == null)
-                commonXmlNodes = new CommonXmlNode[0];
+                commonXmlNodes = new SavannahXmlNode[0];
 
-            var node = new CommonXmlNode
+            var node = new SavannahXmlNode
             {
                 TagName = tagName,
                 Attributes = attributeInfos,
@@ -389,13 +426,12 @@ namespace SavannahXmlLib.XmlWrapper
         /// <param name="attributeInfos">Enumerable attribute infos</param>
         /// <param name="innerXml">Internal XML represented in text format.</param>
         /// <returns>Xml node.</returns>
-        public static CommonXmlNode CreateElement(string tagName, IEnumerable<AttributeInfo> attributeInfos,
+        public static SavannahXmlNode CreateElement(string tagName, IEnumerable<AttributeInfo> attributeInfos,
             string innerXml)
         {
-            if (attributeInfos == null)
-                attributeInfos = new AttributeInfo[0];
+            attributeInfos ??= new AttributeInfo[0];
 
-            var node = new CommonXmlNode
+            var node = new SavannahXmlNode
             {
                 TagName = tagName,
                 Attributes = attributeInfos,
@@ -404,7 +440,23 @@ namespace SavannahXmlLib.XmlWrapper
             return node;
         }
 
-        private static List<CommonXmlNode> ResolveChildrenParent(List<CommonXmlNode> childNodes, CommonXmlNode parent)
+        /// <summary>
+        /// Generate the text node.
+        /// </summary>
+        /// <param name="innerText">The inner text.</param>
+        /// <returns>The text node.</returns>
+        public static SavannahXmlNode CreateTextNode(string innerText)
+        {
+            var node = new SavannahXmlNode
+            {
+                NodeType = XmlNodeType.Text,
+                TagName = TextTagName,
+                InnerText = innerText
+            };
+            return node;
+        }
+
+        private static LinkedList<SavannahXmlNode> ResolveChildrenParent(LinkedList<SavannahXmlNode> childNodes, SavannahXmlNode parent)
         {
             foreach (var child in childNodes)
             {
@@ -412,6 +464,18 @@ namespace SavannahXmlLib.XmlWrapper
             }
 
             return childNodes;
+        }
+
+        private static string GenerateOutterXml(SavannahXmlNode node)
+        {
+            if (node.Parent == null)
+                return string.Empty;
+
+            var indent = MakeSpace(node.IndentSize);
+            var str = node.ToString();
+            var innerXml = string.Join("", node.ToString().Split('\n').Select(item => $"{indent}{item}\n"));
+            var attr = node.Parent.Attributes.ToAttributesText(" ");
+            return $"<{node.Parent.TagName}{attr}>\n{innerXml}</{node.Parent.TagName}>";
         }
         #endregion
 
@@ -425,8 +489,10 @@ namespace SavannahXmlLib.XmlWrapper
         {
             if (obj == null || GetType() != obj.GetType())
                 return false;
+            if (this == obj)
+                return true;
 
-            var element = (CommonXmlNode)obj;
+            var element = (SavannahXmlNode)obj;
             var collector = new BoolCollector();
 
             collector.ChangeBool(TagName, TagName == element.TagName);
@@ -446,7 +512,7 @@ namespace SavannahXmlLib.XmlWrapper
             var hashCode = 2061855513;
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(TagName);
             hashCode = hashCode * -1521134295 + EqualityComparer<IEnumerable<AttributeInfo>>.Default.GetHashCode(Attributes);
-            hashCode = hashCode * -1521134295 + EqualityComparer<IEnumerable<CommonXmlNode>>.Default.GetHashCode(ChildNodes);
+            hashCode = hashCode * -1521134295 + EqualityComparer<IEnumerable<SavannahXmlNode>>.Default.GetHashCode(ChildNodes);
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(InnerText);
             return hashCode;
         }

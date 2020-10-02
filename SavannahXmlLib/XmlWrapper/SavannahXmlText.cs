@@ -6,7 +6,7 @@ namespace SavannahXmlLib.XmlWrapper
     /// <summary>
     /// This holds the Value of XML.
     /// </summary>
-    public class CommonXmlText
+    public class SavannahXmlText
     {
         /// <summary>
         /// String of XML values without tags
@@ -43,7 +43,7 @@ namespace SavannahXmlLib.XmlWrapper
         /// <returns>Equivalence as bool</returns>
         public override bool Equals(object obj)
         {
-            return obj is CommonXmlText text &&
+            return obj is SavannahXmlText text &&
                    Text == text.Text;
         }
     }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SavannahXmlLib.XmlWrapper
 {
-    public static class CommonXmlConstants
+    public static class SavannahXmlConstants
     {
         public static readonly string Utf8Declaration = "version=\"1.0\"";
         public static string Declaration => $"<?xml {Utf8Declaration} ?>";

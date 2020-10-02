@@ -51,12 +51,16 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="XmlWrapper\AttributeInfo.cs" />
-    <Compile Include="XmlWrapper\CommonXmlConstants.cs" />
-    <Compile Include="XmlWrapper\CommonXmlNode.cs" />
-    <Compile Include="XmlWrapper\CommonXmlReader.cs" />
-    <Compile Include="XmlWrapper\CommonXmlText.cs" />
-    <Compile Include="XmlWrapper\CommonXmlWriter.cs" />
-    <Compile Include="XmlWrapper\CommonXmlNodeExtension.cs" />
+    <Compile Include="XmlWrapper\SavannahXmlConstants.cs" />
+    <Compile Include="XmlWrapper\SavannahXmlNode.cs" />
+    <Compile Include="XmlWrapper\SavannahXmlReader.cs" />
+    <Compile Include="XmlWrapper\SavannahXmlText.cs" />
+    <Compile Include="XmlWrapper\SavannahXmlWriter.cs" />
+    <Compile Include="Extensions\SavannahXmlNodeExtensions.cs" />
+    <Compile Include="Extensions\LinkedListExtensions.cs" />
+    <Compile Include="XmlWrapper\SavannahXmlNodeComparer.cs" />
+    <Compile Include="XmlWrapper\XmlNodeType.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
