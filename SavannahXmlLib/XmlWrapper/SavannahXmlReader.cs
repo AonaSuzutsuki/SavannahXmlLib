@@ -94,13 +94,16 @@ namespace SavannahXmlLib.XmlWrapper
         /// <returns>Values of an attribute</returns>
         public IEnumerable<string> GetAttributes(string name, string xpath, bool isContaisNoValue = true)
         {
-            var nodeList = ConvertXmlNodes(ConvertXmlNodeList(_document.SelectNodes(xpath, _xmlNamespaceManager)));
+            var nodeList = ConvertXmlNodeList(_document.SelectNodes(xpath, _xmlNamespaceManager));
+            var table = CreateTable(nodeList.FirstOrDefault(), true);
             var cond = Conditions.If<IEnumerable<string>>(() => isContaisNoValue)
                 .Then(() => (from node in nodeList
-                             let attr = node.GetAttribute(name).Value
+                             let val = table.Get(node)
+                             let attr = val?.GetAttribute(name).Value
                              select attr).ToList())
                 .Else(() => (from node in nodeList
-                             let attr = node.GetAttribute(name).Value
+                             let val = table.Get(node)
+                             let attr = val?.GetAttribute(name).Value
                              where !string.IsNullOrEmpty(attr)
                              select attr).ToList());
             return cond.Invoke();
@@ -129,9 +132,10 @@ namespace SavannahXmlLib.XmlWrapper
         {
             var xmlNode = _document.SelectNodes(xpath, _xmlNamespaceManager);
             var xmlNodes = ConvertXmlNodeList(xmlNode);
-            var nodeList = ConvertXmlNodes(xmlNodes, isRemoveSpace);
-            return (from node in nodeList
-                    let text = node.InnerText
+            var table = CreateTable(xmlNodes.FirstOrDefault(), isRemoveSpace);
+            return (from node in xmlNodes
+                    let val = table.Get(node)
+                    let text = val?.InnerText
                     where !string.IsNullOrEmpty(text)
                     select text.Trim()).ToList();
         }
@@ -183,8 +187,9 @@ namespace SavannahXmlLib.XmlWrapper
         /// <returns>The root node.</returns>
         public SavannahXmlNode GetAllNodes(bool isRemoveSpace = true)
         {
-            var nodeList = _document.SelectSingleNode("/*", _xmlNamespaceManager);
-            var root = ConvertXmlNode(nodeList, isRemoveSpace);
+            var node = _document.SelectSingleNode("/*", _xmlNamespaceManager);
+            var table = CreateTable(node, isRemoveSpace);
+            var root = table.Get(node);
             return root;
         }
 
@@ -424,7 +429,7 @@ namespace SavannahXmlLib.XmlWrapper
                         Attributes = ConvertAttributeInfoArray(node.Attributes)
                     };
                     if (node.ChildNodes.Count > 0)
-                        commonXmlNode.ChildNodes = GetElements(node.ChildNodes, isRemoveSpace, hierarchy + 1).ToArray();
+                        commonXmlNode.ChildNodes = GetElements(node.ChildNodes, isRemoveSpace, hierarchy + 1, table).ToArray();
                     list.Add(commonXmlNode);
                     table?.Add(node, commonXmlNode);
                 }
