@@ -249,7 +249,12 @@ namespace SavannahXmlLib.XmlWrapper
         /// <returns>String in XML format.</returns>
         public override string ToString()
         {
-            return ToString(this, DefaultIndentSize);
+            return ToString(DefaultIndentSize);
+        }
+
+        public string ToString(int indentSize)
+        {
+            return ToString(this, indentSize);
         }
 
         /// <summary>

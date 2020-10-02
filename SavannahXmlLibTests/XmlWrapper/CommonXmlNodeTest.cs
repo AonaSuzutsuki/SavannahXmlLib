@@ -86,6 +86,44 @@ namespace SavannahXmlLibTests.XmlWrapper
         }
 
         [Test]
+        public void ToStringIndentTest()
+        {
+            var commonXmlNode2 = new SavannahXmlNode
+            {
+                TagName = "root",
+                ChildNodes = new SavannahXmlNode[]
+                {
+                    new SavannahXmlNode
+                    {
+                        NodeType = XmlNodeType.Tag,
+                        TagName = "ChildNode",
+                        Attributes = new AttributeInfo[]
+                        {
+                            new AttributeInfo
+                            {
+                                Name = "name",
+                                Value = "attr"
+                            }
+                        },
+                        ChildNodes = new SavannahXmlNode[]
+                        {
+                            new SavannahXmlNode
+                            {
+                                NodeType = XmlNodeType.Text,
+                                InnerText = "Value"
+                            }
+                        }
+                    }
+                }
+            };
+
+            var exp = "<root>\n    <ChildNode name=\"attr\">\n        Value\n    </ChildNode>\n</root>";
+            var act = commonXmlNode2.ToString(4);
+
+            Assert.AreEqual(exp, act);
+        }
+
+        [Test]
         public void PrioritizeInnerXmlTest()
         {
             var root = new SavannahXmlNode
