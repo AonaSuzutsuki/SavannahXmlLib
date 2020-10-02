@@ -489,5 +489,177 @@ namespace SavannahXmlLibTests.XmlWrapper
             var exp2 = "512";
             Assert.AreEqual(exp2, value2);
         }
+
+        [Test]
+        public void SpecifyIndentTest()
+        {
+            var exp = new SavannahXmlNode
+            {
+                NodeType = XmlNodeType.Tag,
+                TagName = "ServerSettings",
+                ChildNodes = new SavannahXmlNode[]
+                {
+                    new SavannahXmlNode
+                    {
+                        NodeType = XmlNodeType.Tag,
+                        TagName = "property",
+                        Attributes = new AttributeInfo[]
+                                {
+                                    new AttributeInfo
+                                    {
+                                        Name = "name",
+                                        Value = "ServerName"
+                                    },
+                                    new AttributeInfo
+                                    {
+                                        Name = "value",
+                                        Value = "My Game Host"
+                                    }
+                                },
+                        ChildNodes = new[]
+                        {
+                            new SavannahXmlNode
+                            {
+                                NodeType = XmlNodeType.Text,
+                                TagName = SavannahXmlNode.TextTagName,
+                                InnerText = "サーバー名を設定します。サーバーリストにはこの名前で表示されます。"
+                            }
+                        },
+                        InnerText = "サーバー名を設定します。サーバーリストにはこの名前で表示されます。"
+                    },
+                    new SavannahXmlNode
+                    {
+                        NodeType = XmlNodeType.Tag,
+                        TagName = "property",
+                        Attributes = new AttributeInfo[]
+                                {
+                                    new AttributeInfo
+                                    {
+                                        Name = "name",
+                                        Value = "ServerName2"
+                                    },
+                                    new AttributeInfo
+                                    {
+                                        Name = "value",
+                                        Value = "My Game Host"
+                                    }
+                                },
+                        ChildNodes = new[]
+                        {
+                            new SavannahXmlNode
+                            {
+                                NodeType = XmlNodeType.Text,
+                                TagName = SavannahXmlNode.TextTagName,
+                                InnerText = "サーバー名を設定します。サーバーリストにはこの名前で表示されます。\n    test"
+                            }
+                        },
+                        InnerText = "サーバー名を設定します。サーバーリストにはこの名前で表示されます。\n    test"
+                    },
+                    new SavannahXmlNode
+                    {
+                        NodeType = XmlNodeType.Tag,
+                        TagName = "property",
+                        Attributes = new AttributeInfo[]
+                                {
+                                    new AttributeInfo
+                                    {
+                                        Name = "name",
+                                        Value = "ServerDescription"
+                                    },
+                                    new AttributeInfo
+                                    {
+                                        Name = "value",
+                                        Value = "A 7 Days to Die server"
+                                    }
+                                },
+                        ChildNodes = new[]
+                        {
+                            new SavannahXmlNode
+                            {
+                                NodeType = XmlNodeType.Text,
+                                TagName = SavannahXmlNode.TextTagName,
+                                InnerText = "サーバーの説明を設定します。"
+                            }
+                        },
+                        InnerText = "サーバーの説明を設定します。"
+                    },
+                    new SavannahXmlNode
+                    {
+                        NodeType = XmlNodeType.Tag,
+                        TagName = "property",
+                        Attributes = new AttributeInfo[]
+                                {
+                                    new AttributeInfo
+                                    {
+                                        Name = "name",
+                                        Value = "ServerWebsiteURL"
+                                    },
+                                    new AttributeInfo
+                                    {
+                                        Name = "value",
+                                        Value = ""
+                                    }
+                                },
+                        ChildNodes = new[]
+                        {
+                            new SavannahXmlNode
+                            {
+                                NodeType = XmlNodeType.Text,
+                                TagName = SavannahXmlNode.TextTagName,
+                                InnerText = "サーバーのウェブサイトを設定します。"
+                            }
+                        },
+                        InnerText = "サーバーのウェブサイトを設定します。"
+                    },
+                    new SavannahXmlNode
+                    {
+                        NodeType = XmlNodeType.Tag,
+                        TagName = "property",
+                        Attributes = new AttributeInfo[]
+                        {
+                            new AttributeInfo
+                            {
+                                Name = "name",
+                                Value = "Nested"
+                            }
+                        },
+                        ChildNodes = new SavannahXmlNode[]
+                        {
+                            new SavannahXmlNode
+                            {
+                                NodeType = XmlNodeType.Tag,
+                                TagName = "property",
+                                Attributes = new AttributeInfo[]
+                                {
+                                    new AttributeInfo
+                                    {
+                                        Name = "name",
+                                        Value = "NestedElem"
+                                    }
+                                },
+                                ChildNodes = new[]
+                                {
+                                    new SavannahXmlNode
+                                    {
+                                        NodeType = XmlNodeType.Text,
+                                        TagName = SavannahXmlNode.TextTagName,
+                                        InnerText = "Value"
+                                    }
+                                },
+                                InnerText = "Value"
+                            }
+                        }
+                    }
+                }
+            };
+
+            var reader = new SavannahXmlReader(GetTestPath("Test_four_indent.xml"))
+            {
+                IndentSize = 4
+            };
+            var node = reader.GetAllNodes();
+
+            Assert.AreEqual(exp, node);
+        }
     }
 }

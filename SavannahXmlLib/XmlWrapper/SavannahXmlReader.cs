@@ -30,6 +30,8 @@ namespace SavannahXmlLib.XmlWrapper
         /// </summary>
         public string Declaration { get; private set; }
 
+        public int IndentSize { get; set; } = 2;
+
         #endregion
 
         #region Constructors
@@ -95,7 +97,7 @@ namespace SavannahXmlLib.XmlWrapper
         public IEnumerable<string> GetAttributes(string name, string xpath, bool isContaisNoValue = true)
         {
             var nodeList = ConvertXmlNodeList(_document.SelectNodes(xpath, _xmlNamespaceManager));
-            var table = CreateTable(nodeList.FirstOrDefault(), true);
+            var table = CreateTable(nodeList.FirstOrDefault(), IndentSize, true);
             var cond = Conditions.If<IEnumerable<string>>(() => isContaisNoValue)
                 .Then(() => (from node in nodeList
                              let val = table.Get(node)
@@ -132,7 +134,7 @@ namespace SavannahXmlLib.XmlWrapper
         {
             var xmlNode = _document.SelectNodes(xpath, _xmlNamespaceManager);
             var xmlNodes = ConvertXmlNodeList(xmlNode);
-            var table = CreateTable(xmlNodes.FirstOrDefault(), isRemoveSpace);
+            var table = CreateTable(xmlNodes.FirstOrDefault(), IndentSize, isRemoveSpace);
             return (from node in xmlNodes
                     let val = table.Get(node)
                     let text = val?.InnerText
@@ -175,7 +177,7 @@ namespace SavannahXmlLib.XmlWrapper
             var nodes = _document.SelectNodes(xpath, _xmlNamespaceManager);
             var nodeList = ConvertXmlNodeList(nodes);
 
-            var table = CreateTable(nodeList.First(), isRemoveSpace);
+            var table = CreateTable(nodeList.First(), IndentSize, isRemoveSpace);
 
             return (from node in nodeList where table.ContainsKey(node) select table[node]).ToList();
         }
@@ -188,7 +190,7 @@ namespace SavannahXmlLib.XmlWrapper
         public SavannahXmlNode GetAllNodes(bool isRemoveSpace = true)
         {
             var node = _document.SelectSingleNode("/*", _xmlNamespaceManager);
-            var table = CreateTable(node, isRemoveSpace);
+            var table = CreateTable(node, IndentSize, isRemoveSpace);
             var root = table.Get(node);
             return root;
         }
@@ -220,7 +222,7 @@ namespace SavannahXmlLib.XmlWrapper
         ///   It associates the generated SavannahXmlNode with the XmlNode.
         /// </param>
         /// <returns>The node.</returns>
-        public static SavannahXmlNode ConvertXmlNode(XmlNode node, bool isRemoveSpace = true, Dictionary<XmlNode, SavannahXmlNode> table = null)
+        public static SavannahXmlNode ConvertXmlNode(XmlNode node, int indentSize, bool isRemoveSpace = true, Dictionary<XmlNode, SavannahXmlNode> table = null)
         {
             var hierarchy = GetHierarchyFromParent(node);
             var commonXmlNode = new SavannahXmlNode
@@ -229,7 +231,7 @@ namespace SavannahXmlLib.XmlWrapper
                 TagName = node.Name,
                 InnerText = ResolveInnerText(node, isRemoveSpace).Text,
                 Attributes = ConvertAttributeInfoArray(node.Attributes),
-                ChildNodes = GetElements(node.ChildNodes, isRemoveSpace, hierarchy, table)
+                ChildNodes = GetElements(node.ChildNodes, isRemoveSpace, indentSize, hierarchy, table)
             };
             table?.Add(node, commonXmlNode);
             ApplyInnerText(commonXmlNode);
@@ -242,9 +244,9 @@ namespace SavannahXmlLib.XmlWrapper
         /// <param name="nodeList">The target XmlNode array.</param>
         /// <param name="isRemoveSpace">Whether to clear indentation blanks.</param>
         /// <returns>The converted SavannahXmlNode object array</returns>
-        public static SavannahXmlNode[] ConvertXmlNodes(IEnumerable<XmlNode> nodeList, bool isRemoveSpace = true)
+        public static SavannahXmlNode[] ConvertXmlNodes(IEnumerable<XmlNode> nodeList, int indentSize, bool isRemoveSpace = true)
         {
-            var list = from node in nodeList select ConvertXmlNode(node, isRemoveSpace);
+            var list = from node in nodeList select ConvertXmlNode(node, indentSize, isRemoveSpace);
             return list.ToArray();
         }
 
@@ -287,12 +289,12 @@ namespace SavannahXmlLib.XmlWrapper
             node.InnerText = string.Join("\n", sb);
         }
 
-        private static Dictionary<XmlNode, SavannahXmlNode> CreateTable(XmlNode node, bool isRemoveSpace)
+        private static Dictionary<XmlNode, SavannahXmlNode> CreateTable(XmlNode node, int indentSize, bool isRemoveSpace)
         {
             var root = GetRootNode(node);
 
             var table = new Dictionary<XmlNode, SavannahXmlNode>();
-            _ = ConvertXmlNode(root, isRemoveSpace, table);
+            _ = ConvertXmlNode(root, indentSize, isRemoveSpace, table);
 
             return table;
         }
@@ -408,13 +410,13 @@ namespace SavannahXmlLib.XmlWrapper
             return list;
         }
 
-        private static List<SavannahXmlNode> GetElements(XmlNodeList nodeList, bool isRemoveSpace, int hierarchy = 1, Dictionary<XmlNode, SavannahXmlNode> table = null)
+        private static List<SavannahXmlNode> GetElements(XmlNodeList nodeList, bool isRemoveSpace, int indentSize, int hierarchy = 1, Dictionary<XmlNode, SavannahXmlNode> table = null)
         {
             var list = new List<SavannahXmlNode>();
             if (nodeList.Count <= 0)
                 return list;
 
-            var space = 2 * hierarchy;
+            var space = indentSize * hierarchy;
 
             foreach (var n in nodeList)
             {
@@ -429,7 +431,7 @@ namespace SavannahXmlLib.XmlWrapper
                         Attributes = ConvertAttributeInfoArray(node.Attributes)
                     };
                     if (node.ChildNodes.Count > 0)
-                        commonXmlNode.ChildNodes = GetElements(node.ChildNodes, isRemoveSpace, hierarchy + 1, table).ToArray();
+                        commonXmlNode.ChildNodes = GetElements(node.ChildNodes, isRemoveSpace, indentSize, hierarchy + 1, table).ToArray();
                     list.Add(commonXmlNode);
                     table?.Add(node, commonXmlNode);
                 }
