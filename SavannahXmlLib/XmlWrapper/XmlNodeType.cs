@@ -18,6 +18,11 @@
         /// <summary>
         /// Comment
         /// </summary>
-        Comment
+        Comment,
+
+        /// <summary>
+        /// CDATA
+        /// </summary>
+        CDATA,
     }
 }

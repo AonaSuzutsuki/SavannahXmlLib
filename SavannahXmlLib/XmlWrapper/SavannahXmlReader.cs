@@ -450,6 +450,17 @@ namespace SavannahXmlLib.XmlWrapper
                         list.Add(commonXmlNode);
                         table?.Add(node, commonXmlNode);
                     }
+                    else if (node.NodeType == System.Xml.XmlNodeType.CDATA)
+                    {
+                        var commonXmlNode = new SavannahXmlNode
+                        {
+                            NodeType = XmlNodeType.CDATA,
+                            TagName = node.Name,
+                            InnerText = ResolveInnerText(node, isRemoveSpace, space).Text
+                        };
+                        list.Add(commonXmlNode);
+                        table?.Add(node, commonXmlNode);
+                    }
                     else
                     {
                         var commonXmlNode = new SavannahXmlNode

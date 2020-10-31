@@ -20,6 +20,7 @@ namespace SavannahXmlLib.XmlWrapper
 
         public const string TextTagName = "#text";
         public const string CommentTagName = "#comment";
+        public const string CdataTagName = "#cdata-section";
         public const int DefaultIndentSize = 2;
 
         #endregion
@@ -308,6 +309,12 @@ namespace SavannahXmlLib.XmlWrapper
             else if (node.NodeType == XmlNodeType.Text)
             {
                 sb.Append(ResolveInnerText(node, spaceText));
+            }
+            else if (node.NodeType == XmlNodeType.CDATA)
+            {
+                sb.Append($"{spaceText}<![CDATA[\n");
+                sb.Append(ResolveInnerText(node, MakeSpace(space)));
+                sb.Append($"\n{spaceText}]]>");
             }
             else
             {

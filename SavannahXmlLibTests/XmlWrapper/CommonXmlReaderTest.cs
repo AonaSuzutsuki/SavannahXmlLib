@@ -661,5 +661,36 @@ namespace SavannahXmlLibTests.XmlWrapper
 
             Assert.AreEqual(exp, node);
         }
+
+        [Test]
+        public void ReadCdataTest()
+        {
+            var reader = new SavannahXmlReader(CommonXmlReaderTest.GetTestPath("Cdata.xml"));
+            var root = reader.GetAllNodes();
+
+            var exp = new SavannahXmlNode
+            {
+                TagName = "root",
+                ChildNodes = new[]
+                {
+                    new SavannahXmlNode
+                    {
+                        TagName = "tag",
+                        InnerText = "",
+                        ChildNodes = new[]
+                        {
+                            new SavannahXmlNode
+                            {
+                                NodeType = XmlNodeType.CDATA,
+                                TagName = SavannahXmlNode.CdataTagName,
+                                InnerText = "  <?xml version=\"1.0\"?>\n  <document>\n      doc.\n  </document>",
+                            }
+                        }
+                    }
+                }
+            };
+
+            Assert.AreEqual(exp, root);
+        }
     }
 }

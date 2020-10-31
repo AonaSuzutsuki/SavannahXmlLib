@@ -3,6 +3,7 @@ using System.IO;
 using NUnit.Framework;
 using SavannahXmlLib.XmlWrapper;
 using CommonExtensionLib.Extensions;
+using System.Text;
 
 namespace SavannahXmlLibTests.XmlWrapper
 {
@@ -472,6 +473,41 @@ namespace SavannahXmlLibTests.XmlWrapper
             var act = reader.GetAllNodes();
 
             Assert.AreEqual(exp, act);
+        }
+
+        [Test]
+        public void WriteCdataTest()
+        {
+            var root = new SavannahXmlNode
+            {
+                TagName = "root",
+                ChildNodes = new []
+                {
+                    new SavannahXmlNode
+                    {
+                        TagName = "tag",
+                        InnerText = "",
+                        ChildNodes = new[]
+                        {
+                            new SavannahXmlNode
+                            {
+                                NodeType = XmlNodeType.CDATA,
+                                TagName = SavannahXmlNode.CdataTagName,
+                                InnerText = "  <?xml version=\"1.0\"?>\n  <document>\n      doc.\n  </document>",
+                            }
+                        }
+                    }
+                }
+            };
+
+            var ms = new MemoryStream();
+            var writer = new SavannahXmlWriter();
+            writer.Write(ms, root);
+            ms.Position = 0;
+            var xml = new StreamReader(ms).ReadToEnd();
+            var exp = File.ReadAllText(CommonXmlReaderTest.GetTestPath("Cdata.xml"));
+
+            Assert.AreEqual(exp, xml);
         }
     }
 }
