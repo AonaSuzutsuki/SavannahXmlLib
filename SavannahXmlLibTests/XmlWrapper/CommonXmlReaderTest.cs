@@ -665,7 +665,7 @@ namespace SavannahXmlLibTests.XmlWrapper
         [Test]
         public void ReadCdataTest()
         {
-            var reader = new SavannahXmlReader(CommonXmlReaderTest.GetTestPath("Cdata.xml"));
+            var reader = new SavannahXmlReader(GetTestPath("Cdata.xml"));
             var root = reader.GetAllNodes();
 
             var exp = new SavannahXmlNode
