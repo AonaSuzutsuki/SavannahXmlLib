@@ -106,6 +106,18 @@ namespace SavannahXmlLib.XmlWrapper
                 _attributes.Add(info);
         }
 
+        public void ChangeAttribute(string name, string value)
+        {
+            var attr = new AttributeInfo { Name = name, Value = value };
+            ChangeAttribute(attr);
+        }
+
+        public void ChangeAttribute(AttributeInfo target)
+        {
+            RemoveAttribute(target.Name);
+            AppendAttribute(target);
+        }
+
         /// <summary>
         /// Get the attribute from this node.
         /// </summary>
