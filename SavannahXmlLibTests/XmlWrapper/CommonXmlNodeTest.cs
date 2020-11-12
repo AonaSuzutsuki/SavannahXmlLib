@@ -702,5 +702,54 @@ namespace SavannahXmlLibTests.XmlWrapper
 
             Assert.AreEqual(exp, act);
         }
+
+        [Test]
+        public void AppendAttributeTest()
+        {
+            var itemNode = SavannahXmlNode.CreateElement("item");
+            var exp = SavannahXmlNode.CreateElement("item", new[] { new AttributeInfo
+            {
+                Name = "attr",
+                Value = "value"
+            } });
+
+            itemNode.AppendAttribute("attr", "value");
+
+            Assert.AreEqual(exp, itemNode);
+        }
+
+        [Test]
+        public void RemoveAttributeTest()
+        {
+            var itemNode = SavannahXmlNode.CreateElement("item", new[] { new AttributeInfo
+            {
+                Name = "attr",
+                Value = "value"
+            } });
+            var exp = SavannahXmlNode.CreateElement("item");
+
+            itemNode.RemoveAttribute("attr");
+
+            Assert.AreEqual(exp, itemNode);
+        }
+
+        [Test]
+        public void ChangeAttributeTest()
+        {
+            var itemNode = SavannahXmlNode.CreateElement("item", new[] { new AttributeInfo
+            {
+                Name = "attr",
+                Value = "value"
+            } });
+            var exp = SavannahXmlNode.CreateElement("item", new[] { new AttributeInfo
+            {
+                Name = "attr",
+                Value = "value2"
+            } });
+
+            itemNode.ChangeAttribute("attr", "value2");
+
+            Assert.AreEqual(exp, itemNode);
+        }
     }
 }
