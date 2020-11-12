@@ -44,8 +44,8 @@ namespace SavannahXmlLib.XmlWrapper
         /// </summary>
         public IEnumerable<AttributeInfo> Attributes
         {
-            get => _attributes;
-            set => _attributes = new HashSet<AttributeInfo>(value);
+            get => _attributes.Values;
+            set => _attributes = value.ToDictionary(info => info.Name);
         }
 
         /// <summary>
@@ -77,7 +77,7 @@ namespace SavannahXmlLib.XmlWrapper
         #endregion
 
         #region Fields
-        private HashSet<AttributeInfo> _attributes = new HashSet<AttributeInfo>();
+        private Dictionary<string, AttributeInfo> _attributes = new Dictionary<string, AttributeInfo>();
         private LinkedList<SavannahXmlNode> _childNodes = new LinkedList<SavannahXmlNode>();
         #endregion
 
@@ -102,20 +102,16 @@ namespace SavannahXmlLib.XmlWrapper
         /// <param name="info">AttributeInfo to be added</param>
         public void AppendAttribute(AttributeInfo info)
         {
-            if (!_attributes.Contains(info))
-                _attributes.Add(info);
+            if (!_attributes.ContainsKey(info.Name))
+                _attributes.Add(info.Name, info);
         }
 
         public void ChangeAttribute(string name, string value)
         {
             var attr = new AttributeInfo { Name = name, Value = value };
-            ChangeAttribute(attr);
-        }
-
-        public void ChangeAttribute(AttributeInfo target)
-        {
-            RemoveAttribute(target.Name);
-            AppendAttribute(target);
+            if (!_attributes.ContainsKey(name))
+                return;
+            _attributes[name] = attr;
         }
 
         /// <summary>
@@ -125,11 +121,8 @@ namespace SavannahXmlLib.XmlWrapper
         /// <returns>The value of the attribute</returns>
         public AttributeInfo GetAttribute(string name)
         {
-            foreach (var attributeInfo in _attributes)
-            {
-                if (attributeInfo.Name == name)
-                    return attributeInfo;
-            }
+            if (_attributes.ContainsKey(name))
+                return _attributes[name];
             return new AttributeInfo();
         }
 
@@ -139,19 +132,8 @@ namespace SavannahXmlLib.XmlWrapper
         /// <param name="name">The name of the attribute to be removed</param>
         public void RemoveAttribute(string name)
         {
-            var attr = GetAttribute(name);
-            if (_attributes.Contains(attr))
-                _attributes.Remove(attr);
-        }
-
-        /// <summary>
-        /// Remove the attribute from this node.
-        /// </summary>
-        /// <param name="info">The AttributeInfo to be removed</param>
-        public void RemoveAttribute(AttributeInfo info)
-        {
-            if (_attributes.Contains(info))
-                _attributes.Remove(info);
+            if (_attributes.ContainsKey(name))
+                _attributes.Remove(name);
         }
 
         /// <summary>
