@@ -2,14 +2,14 @@
 
 namespace SavannahXmlLib.XmlWrapper
 {
-    public class SavannahXmlNodeComparer : IEqualityComparer<SavannahXmlNode>
+    public class SavannahNodeComparer : IEqualityComparer<AbstractSavannahXmlNode>
     {
-        public bool Equals(SavannahXmlNode x, SavannahXmlNode y)
+        public bool Equals(AbstractSavannahXmlNode x, AbstractSavannahXmlNode y)
         {
             return x == y;
         }
 
-        public int GetHashCode(SavannahXmlNode obj)
+        public int GetHashCode(AbstractSavannahXmlNode obj)
         {
             return obj.GetHashCode();
         }
