@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Xml;
 using CommonExtensionLib.Extensions;
+using SavannahXmlLib.XmlWrapper.Nodes;
 
 namespace SavannahXmlLib.XmlWrapper
 {

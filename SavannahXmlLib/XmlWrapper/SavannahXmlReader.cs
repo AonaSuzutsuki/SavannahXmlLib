@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using System.Xml;
 using CommonCoreLib.CommonLinq;
 using CommonExtensionLib.Extensions;
+using SavannahXmlLib.XmlWrapper.Nodes;
 
 namespace SavannahXmlLib.XmlWrapper
 {

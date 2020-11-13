@@ -1,6 +1,7 @@
 ﻿using System;
 using NUnit.Framework;
 using SavannahXmlLib.XmlWrapper;
+using SavannahXmlLib.XmlWrapper.Nodes;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;

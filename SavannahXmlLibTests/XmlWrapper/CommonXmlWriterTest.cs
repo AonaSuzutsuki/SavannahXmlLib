@@ -2,6 +2,7 @@
 using System.IO;
 using NUnit.Framework;
 using SavannahXmlLib.XmlWrapper;
+using SavannahXmlLib.XmlWrapper.Nodes;
 using CommonExtensionLib.Extensions;
 using System.Text;
 

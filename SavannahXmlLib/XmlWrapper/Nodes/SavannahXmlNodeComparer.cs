@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace SavannahXmlLib.XmlWrapper
+namespace SavannahXmlLib.XmlWrapper.Nodes
 {
     public class SavannahNodeComparer : IEqualityComparer<AbstractSavannahXmlNode>
     {
