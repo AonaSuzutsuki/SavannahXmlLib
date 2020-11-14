@@ -231,7 +231,7 @@ namespace SavannahXmlLib.XmlWrapper
             var commonXmlNode = new SavannahTagNode
             {
                 TagName = node.Name,
-                InnerText = ResolveInnerText(node, isRemoveSpace).Text,
+                InnerText = ResolveInnerText(node, isRemoveSpace),
                 Attributes = ConvertAttributeInfoArray(node.Attributes),
                 ChildNodes = GetElements(node.ChildNodes, isRemoveSpace, indentSize, hierarchy, table)
             };
@@ -362,20 +362,14 @@ namespace SavannahXmlLib.XmlWrapper
             return 0;
         }
 
-        private static SavannahXmlText ResolveInnerText(XmlNode node, bool isRemoveSpace, int space = 0)
+        private static string ResolveInnerText(XmlNode node, bool isRemoveSpace, int space = 0)
         {
             var xml = node.InnerXml;
-            var xmlText = new SavannahXmlText
-            {
-                Xml = xml.Replace("&#xD;&#xA;", "&#xD;").Replace("&#xD;", "&#xA;").Replace("&#xA;", "\n")
-            };
-
             if (xml.Contains("<") || xml.Contains(">"))
-                return xmlText;
+                return string.Empty;
 
-            xmlText.Text = Conditions.IfElse(isRemoveSpace, () => RemoveSpace(node.InnerText, space, true),
+            return Conditions.IfElse(isRemoveSpace, () => RemoveSpace(node.InnerText, space, true),
                 () => node.InnerText).UnifiedBreakLine();
-            return xmlText;
         }
 
         private static IEnumerable<XmlNode> ConvertXmlNodeList(XmlNodeList nodeList)
@@ -428,7 +422,7 @@ namespace SavannahXmlLib.XmlWrapper
                     var commonXmlNode = new SavannahTagNode
                     {
                         TagName = node.Name,
-                        InnerText = ResolveInnerText(node, isRemoveSpace).Text,
+                        InnerText = ResolveInnerText(node, isRemoveSpace),
                         Attributes = ConvertAttributeInfoArray(node.Attributes)
                     };
                     if (node.ChildNodes.Count > 0)
@@ -445,7 +439,7 @@ namespace SavannahXmlLib.XmlWrapper
                         var commonXmlNode = new SavannahCommentNode
                         {
                             TagName = node.Name,
-                            InnerText = ResolveInnerText(node, isRemoveSpace).Text
+                            InnerText = ResolveInnerText(node, isRemoveSpace)
                         };
                         list.Add(commonXmlNode);
                         table?.Add(node, commonXmlNode);
@@ -455,7 +449,7 @@ namespace SavannahXmlLib.XmlWrapper
                         var commonXmlNode = new SavannahCdataNode
                         {
                             TagName = node.Name,
-                            InnerText = ResolveInnerText(node, isRemoveSpace, space).Text
+                            InnerText = ResolveInnerText(node, isRemoveSpace, space)
                         };
                         list.Add(commonXmlNode);
                         table?.Add(node, commonXmlNode);
@@ -465,7 +459,7 @@ namespace SavannahXmlLib.XmlWrapper
                         var commonXmlNode = new SavannahTextNode
                         {
                             TagName = node.Name,
-                            InnerText = ResolveInnerText(node, isRemoveSpace, space).Text
+                            InnerText = ResolveInnerText(node, isRemoveSpace, space)
                         };
                         list.Add(commonXmlNode);
                         table?.Add(node, commonXmlNode);

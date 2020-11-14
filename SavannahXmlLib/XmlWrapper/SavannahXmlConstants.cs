@@ -11,8 +11,8 @@ namespace SavannahXmlLib.XmlWrapper
         public static readonly string Utf8Declaration = "version=\"1.0\"";
         public static string Declaration => $"<?xml {Utf8Declaration} ?>";
 
-        public const string TextTagName = "#text";
-        public const string CommentTagName = "#comment";
-        public const string CdataTagName = "#cdata-section";
+        public static string TextTagName = "#text";
+        public static string CommentTagName = "#comment";
+        public static string CdataTagName = "#cdata-section";
     }
 }

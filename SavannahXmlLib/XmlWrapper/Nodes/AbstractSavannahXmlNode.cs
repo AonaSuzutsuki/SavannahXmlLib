@@ -9,7 +9,7 @@ namespace SavannahXmlLib.XmlWrapper.Nodes
 {
     public abstract class AbstractSavannahXmlNode
     {
-        public const int DefaultIndentSize = 2;
+        public static int DefaultIndentSize = 2;
 
         /// <summary>
         /// The name of this node.
