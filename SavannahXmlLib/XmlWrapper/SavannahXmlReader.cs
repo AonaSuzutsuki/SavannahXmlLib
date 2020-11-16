@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using System.Xml;
 using CommonCoreLib.CommonLinq;
 using CommonExtensionLib.Extensions;
+using SavannahXmlLib.Extensions;
 using SavannahXmlLib.XmlWrapper.Nodes;
 
 namespace SavannahXmlLib.XmlWrapper
@@ -373,35 +374,15 @@ namespace SavannahXmlLib.XmlWrapper
         }
 
         private static IEnumerable<XmlNode> ConvertXmlNodeList(XmlNodeList nodeList)
-        {
-            if (nodeList == null)
-                return null;
-
-            var list = new List<XmlNode>(nodeList.Count);
-            foreach (var node in nodeList)
-            {
-                if (node is XmlNode xmlNode)
-                    list.Add(xmlNode);
-            }
-
-            return list;
-        }
+            => nodeList.ToGeneric<XmlNode>();
 
         private static IEnumerable<AttributeInfo> ConvertAttributeInfoArray(XmlAttributeCollection collection)
         {
-            if (collection == null)
-                return null;
-
-            var list = new List<AttributeInfo>(collection.Count);
-            foreach (var attr in collection)
+            var list = collection.ToGeneric<XmlAttribute>()?.Select(attr => new AttributeInfo
             {
-                if (attr is XmlAttribute attribute)
-                    list.Add(new AttributeInfo
-                    {
-                        Name = attribute.Name,
-                        Value = attribute.Value
-                    });
-            }
+                Name = attr.Name,
+                Value = attr.Value
+            }).ToList();
 
             return list;
         }

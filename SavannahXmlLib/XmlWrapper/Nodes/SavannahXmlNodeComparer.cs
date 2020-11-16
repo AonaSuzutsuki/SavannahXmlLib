@@ -2,7 +2,7 @@
 
 namespace SavannahXmlLib.XmlWrapper.Nodes
 {
-    public class SavannahNodeComparer : IEqualityComparer<AbstractSavannahXmlNode>
+    public class SavannahXmlNodeComparer : IEqualityComparer<AbstractSavannahXmlNode>
     {
         public bool Equals(AbstractSavannahXmlNode x, AbstractSavannahXmlNode y)
         {

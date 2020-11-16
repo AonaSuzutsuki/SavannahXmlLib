@@ -151,7 +151,7 @@ namespace SavannahXmlLib.XmlWrapper.Nodes
         /// <param name="node">The node to remove</param>
         public void RemoveChildElement(AbstractSavannahXmlNode node)
         {
-            var listNode = _childNodes.Find(node, new SavannahNodeComparer());
+            var listNode = _childNodes.Find(node, new SavannahXmlNodeComparer());
             if (listNode == null)
                 return;
             _childNodes.Remove(listNode);
@@ -164,7 +164,7 @@ namespace SavannahXmlLib.XmlWrapper.Nodes
         /// <param name="newNode">Nodes to be added</param>
         public void AddBeforeChildElement(AbstractSavannahXmlNode node, AbstractSavannahXmlNode newNode)
         {
-            var listNode = _childNodes.Find(node, new SavannahNodeComparer());
+            var listNode = _childNodes.Find(node, new SavannahXmlNodeComparer());
             if (listNode == null)
                 return;
             _childNodes.AddBefore(listNode, newNode);
@@ -178,7 +178,7 @@ namespace SavannahXmlLib.XmlWrapper.Nodes
         /// <param name="newNode">Nodes to be added</param>
         public void AddAfterChildElement(AbstractSavannahXmlNode node, AbstractSavannahXmlNode newNode)
         {
-            var listNode = _childNodes.Find(node, new SavannahNodeComparer());
+            var listNode = _childNodes.Find(node, new SavannahXmlNodeComparer());
             if (listNode == null)
                 return;
             _childNodes.AddAfter(listNode, newNode);
