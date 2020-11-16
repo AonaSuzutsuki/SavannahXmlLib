@@ -62,6 +62,7 @@
     <Compile Include="XmlWrapper\Nodes\SavannahCommentNode.cs" />
     <Compile Include="XmlWrapper\Nodes\SavannahTagNode.cs" />
     <Compile Include="XmlWrapper\Nodes\AttributeInfo.cs" />
+    <Compile Include="Extensions\EnumerableExtensions.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
