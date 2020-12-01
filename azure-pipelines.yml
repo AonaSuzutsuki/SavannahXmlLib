@@ -13,6 +13,8 @@ variables:
   solution: '**/*.sln'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Debug'
+  openCover: 'packages\OpenCover.4.7.922\tools\OpenCover.Console.exe'
+  nunitConsole: 'packages\NUnit.ConsoleRunner.3.11.1\tools\nunit3-console.exe'
   # disable.coverage.autogenerate: 'true'
 
 steps:
@@ -28,26 +30,16 @@ steps:
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
 
-# - task: VSTest@2
-#   inputs:
-#     platform: '$(buildPlatform)'
-#     configuration: '$(buildConfiguration)'
-
 - task: VSTest@2
   inputs:
-    testSelector: 'testAssemblies'
-    testAssemblyVer2: |
-      **\*test*.dll
-      !**\*TestAdapter.dll
-      !**\obj\**
-    searchFolder: '$(System.DefaultWorkingDirectory)'
+    platform: '$(buildPlatform)'
+    configuration: '$(buildConfiguration)'
 
 - task: CmdLine@2
   displayName: "NUnit & OpenCover"
   inputs:
     script: |
-      packages\OpenCover.4.7.922\tools\OpenCover.Console.exe -register:user -target:"packages\NUnit.ConsoleRunner.3.11.1\tools\nunit3-console.exe" -targetargs:"SavannahXmlLibTests.dll" -targetdir:"SavannahXmlLibTests\bin\Debug" -output:"coverage.xml"
-      # packages\NUnit.ConsoleRunner.3.11.1\tools\nunit3-console.exe SavannahXmlLibTests\bin\Release\SavannahXmlLibTests.dll
+      $(openCover) -register:user -target:"$(nunitConsole)" -targetargs:"SavannahXmlLibTests.dll /noshadow" -targetdir:"SavannahXmlLibTests\bin\Debug" -output:"coverage.xml"
 
 - task: PublishTestResults@2
   displayName: "Publish unit test result"
