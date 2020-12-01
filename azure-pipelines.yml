@@ -33,6 +33,7 @@ steps:
 #     configuration: '$(buildConfiguration)'
     
 - task: CmdLine@2
+  displayName: "NUnit & OpenCover"
   inputs:
     script: |
       packages\OpenCover.4.7.922\tools\OpenCover.Console.exe -register:user -target:"packages\NUnit.ConsoleRunner.3.11.1\tools\nunit3-console.exe" -targetargs:"SavannahXmlLibTests\bin\Release\SavannahXmlLibTests.dll" -output:"coverage.xml"
@@ -47,11 +48,13 @@ steps:
     failTaskOnFailedTests: false
 
 - task: reportgenerator@4
+  condition: always()
   inputs:
     reports: 'coverage.xml'
     targetdir: 'coveragereport'
 
 - task: PublishCodeCoverageResults@1
+  condition: always()
   inputs:
     codeCoverageTool: 'Cobertura'
     summaryFileLocation: 'coveragereport\Coberuta.xml'
