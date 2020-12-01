@@ -42,7 +42,7 @@ steps:
       -returntargetcode
       -hideskipped:All
       -output:"coverage.xml"
-      -filter:"+[SavannahXmlLib*]*"
+      -filter:"+[SavannahXmlLib]*"
 - task: PublishTestResults@2
   displayName: "Publish unit test result"
   condition: always()
@@ -63,3 +63,14 @@ steps:
     codeCoverageTool: 'Cobertura'
     summaryFileLocation: 'coveragereport\Cobertura.xml'
     reportDirectory: 'coveragereport\'
+
+- task: PublishPipelineArtifact@1
+  inputs:
+    targetPath: '$(Pipeline.Workspace)'
+
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    ArtifactName: 'drop'
+    publishLocation: 'Container'
+    publishLocation: 'pipeline'
