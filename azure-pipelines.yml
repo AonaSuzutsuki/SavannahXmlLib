@@ -13,7 +13,7 @@ variables:
   solution: '**/*.sln'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Debug'
-  disable.coverage.autogenerate: 'true'
+  # disable.coverage.autogenerate: 'true'
 
 steps:
 - task: NuGetToolInstaller@1
@@ -37,7 +37,7 @@ steps:
   displayName: "NUnit & OpenCover"
   inputs:
     script: |
-      packages\OpenCover.4.7.922\tools\OpenCover.Console.exe -register:user -target:"packages\NUnit.ConsoleRunner.3.11.1\tools\nunit3-console.exe" -targetargs:"SavannahXmlLibTests\bin\Debug\SavannahXmlLibTests.dll" -output:"coverage.xml"
+      packages\OpenCover.4.7.922\tools\OpenCover.Console.exe -register:user -target:"packages\NUnit.ConsoleRunner.3.11.1\tools\nunit3-console.exe" -targetargs:"SavannahXmlLibTests.dll" -targetdir:"SavannahXmlLibTests\bin\Debug" -output:"coverage.xml"
       # packages\NUnit.ConsoleRunner.3.11.1\tools\nunit3-console.exe SavannahXmlLibTests\bin\Release\SavannahXmlLibTests.dll
 
 - task: PublishTestResults@2
