@@ -58,4 +58,4 @@ steps:
   inputs:
     codeCoverageTool: 'Cobertura'
     summaryFileLocation: 'coveragereport\Cobertura.xml'
-    reportDirectory: 'coveragereport'
+    reportDirectory: 'coveragereport\'
