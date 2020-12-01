@@ -35,7 +35,7 @@ steps:
   inputs:
     script: >
       $(openCover)
-      -register:user
+      -register:Path64
       -target:"$(nunitConsole)"
       -targetargs:"SavannahXmlLibTests.dll"
       -targetdir:"SavannahXmlLibTests\bin\Debug"
@@ -65,6 +65,7 @@ steps:
     reportDirectory: 'coveragereport\'
 
 - task: PublishPipelineArtifact@1
+  condition: always()
   inputs:
     targetPath: '$(Build.ArtifactStagingDirectory)'
     publishLocation: 'pipeline'
