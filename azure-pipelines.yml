@@ -15,7 +15,7 @@ variables:
   buildConfiguration: 'Debug'
   openCover: 'packages\OpenCover.4.7.922\tools\OpenCover.Console.exe'
   nunitConsole: 'packages\NUnit.ConsoleRunner.3.11.1\tools\nunit3-console.exe'
-  # disable.coverage.autogenerate: 'true'
+  disable.coverage.autogenerate: 'true'
 
 steps:
 - task: NuGetToolInstaller@1
@@ -64,13 +64,8 @@ steps:
     summaryFileLocation: 'coveragereport\Cobertura.xml'
     reportDirectory: 'coveragereport\'
 
-- task: PublishPipelineArtifact@1
-  condition: always()
-  inputs:
-    targetPath: '$(Pipeline.Workspace)'
-- task: PublishBuildArtifacts@1
-  condition: always()
-  inputs:
-    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-    ArtifactName: 'drop'
-    publishLocation: 'Container'
+
+# - task: PublishPipelineArtifact@1
+#   condition: always()
+#   inputs:
+#     targetPath: '$(Pipeline.Workspace)'
