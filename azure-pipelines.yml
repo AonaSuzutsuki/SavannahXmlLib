@@ -34,8 +34,7 @@ steps:
   displayName: "NUnit & OpenCover"
   inputs:
     script: |
-      $(openCover) -register:user -target:"$(nunitConsole)" -targetargs:"SavannahXmlLibTests.dll" -targetdir:"SavannahXmlLibTests\bin\Debug" -output:"coverage.xml"
-      dir SavannahXmlLibTests\bin\Debug
+      $(openCover) -register:user -target:"$(nunitConsole)" -targetargs:"SavannahXmlLibTests.dll" -targetdir:"SavannahXmlLibTests\bin\Debug" -output:"coverage.xml" -filter:"+[SavannahXmlLib]*"
 - task: PublishTestResults@2
   displayName: "Publish unit test result"
   condition: always()
