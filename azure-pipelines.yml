@@ -40,4 +40,5 @@ steps:
 - task: PublishTestResults@2
   inputs:
     testResultsFormat: 'NUnit'
-    testResultsFiles: 'TestResult.xml'
+    testResultsFiles: '**/TestResult.xml'
+    failTaskOnFailedTests: false
