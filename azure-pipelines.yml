@@ -38,6 +38,8 @@ steps:
       packages\NUnit.ConsoleRunner.3.11.1\tools\nunit3-console.exe SavannahXmlLibTests\bin\Release\SavannahXmlLibTests.dll
 
 - task: PublishTestResults@2
+  displayName: "Publish unit test result"
+  condition: always()
   inputs:
     testResultsFormat: 'NUnit'
     testResultsFiles: '**/TestResult.xml'
