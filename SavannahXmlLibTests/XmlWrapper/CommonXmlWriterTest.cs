@@ -2,7 +2,9 @@
 using System.IO;
 using NUnit.Framework;
 using SavannahXmlLib.XmlWrapper;
+using SavannahXmlLib.XmlWrapper.Nodes;
 using CommonExtensionLib.Extensions;
+using System.Text;
 
 namespace SavannahXmlLibTests.XmlWrapper
 {
@@ -12,12 +14,12 @@ namespace SavannahXmlLibTests.XmlWrapper
         [Test]
         public void WriteTest()
         {
-            var root = new SavannahXmlNode
+            var root = new SavannahTagNode
             {
                 TagName = "ServerSettings",
-                ChildNodes = new SavannahXmlNode[]
+                ChildNodes = new[]
                 {
-                    new SavannahXmlNode
+                    new SavannahTagNode
                     {
                         TagName = "property",
                         Attributes = new AttributeInfo[]
@@ -35,15 +37,13 @@ namespace SavannahXmlLibTests.XmlWrapper
                                 },
                         ChildNodes = new []
                         {
-                            new SavannahXmlNode
+                            new SavannahTextNode
                             {
-                                TagName = SavannahXmlNode.TextTagName,
-                                NodeType = XmlNodeType.Text,
                                 InnerText = "サーバー名を設定します。サーバーリストにはこの名前で表示されます。"
                             }
                         }
                     },
-                    new SavannahXmlNode
+                    new SavannahTagNode
                     {
                         TagName = "property",
                         Attributes = new AttributeInfo[]
@@ -61,15 +61,13 @@ namespace SavannahXmlLibTests.XmlWrapper
                                 },
                         ChildNodes = new []
                         {
-                            new SavannahXmlNode
+                            new SavannahTextNode
                             {
-                                TagName = SavannahXmlNode.TextTagName,
-                                NodeType = XmlNodeType.Text,
                                 InnerText = "サーバー名を設定します。サーバーリストにはこの名前で表示されます。\n    test"
                             }
                         }
                     },
-                    new SavannahXmlNode
+                    new SavannahTagNode
                     {
                         TagName = "property",
                         Attributes = new AttributeInfo[]
@@ -87,15 +85,13 @@ namespace SavannahXmlLibTests.XmlWrapper
                                 },
                         ChildNodes = new []
                         {
-                            new SavannahXmlNode
+                            new SavannahTextNode
                             {
-                                TagName = SavannahXmlNode.TextTagName,
-                                NodeType = XmlNodeType.Text,
                                 InnerText = "サーバーの説明を設定します。"
                             }
                         }
                     },
-                    new SavannahXmlNode
+                    new SavannahTagNode
                     {
                         TagName = "property",
                         Attributes = new AttributeInfo[]
@@ -113,15 +109,13 @@ namespace SavannahXmlLibTests.XmlWrapper
                                 },
                         ChildNodes = new []
                         {
-                            new SavannahXmlNode
+                            new SavannahTextNode
                             {
-                                TagName = SavannahXmlNode.TextTagName,
-                                NodeType = XmlNodeType.Text,
                                 InnerText = "サーバーのウェブサイトを設定します。"
                             }
                         }
                     },
-                    new SavannahXmlNode
+                    new SavannahTagNode
                     {
                         TagName = "property",
                         Attributes = new AttributeInfo[]
@@ -132,9 +126,9 @@ namespace SavannahXmlLibTests.XmlWrapper
                                 Value = "Nested"
                             }
                         },
-                        ChildNodes = new SavannahXmlNode[]
+                        ChildNodes = new[]
                         {
-                            new SavannahXmlNode
+                            new SavannahTagNode
                             {
                                 TagName = "property",
                                 Attributes = new AttributeInfo[]
@@ -147,10 +141,8 @@ namespace SavannahXmlLibTests.XmlWrapper
                                 },
                                 ChildNodes = new []
                                 {
-                                    new SavannahXmlNode
+                                    new SavannahTextNode
                                     {
-                                        TagName = SavannahXmlNode.TextTagName,
-                                        NodeType = XmlNodeType.Text,
                                         InnerText = "Value"
                                     }
                                 }
@@ -176,31 +168,27 @@ namespace SavannahXmlLibTests.XmlWrapper
         [Test]
         public void WriteTest2()
         {
-            var root = new SavannahXmlNode
+            var root = new SavannahTagNode
             {
                 TagName = "root",
                 InnerText = "aaaaa",
                 ChildNodes = new[]
                 {
-                    new SavannahXmlNode
+                    new SavannahTextNode
                     {
-                        TagName = SavannahXmlNode.TextTagName,
-                        NodeType = XmlNodeType.Text,
                         InnerText = "bbbbb"
                     }
                 }
             };
 
-            var exp = new SavannahXmlNode
+            var exp = new SavannahTagNode
             {
                 TagName = "root",
                 InnerText = "bbbbb",
                 ChildNodes = new[]
                 {
-                    new SavannahXmlNode
+                    new SavannahTextNode
                     {
-                        TagName = SavannahXmlNode.TextTagName,
-                        NodeType = XmlNodeType.Text,
                         InnerText = "bbbbb"
                     }
                 }
@@ -224,100 +212,84 @@ namespace SavannahXmlLibTests.XmlWrapper
         [Test]
         public void WriteTest3()
         {
-            var root = new SavannahXmlNode
+            var root = new SavannahTagNode
             {
                 TagName = "root",
                 ChildNodes = new[]
                 {
-                    new SavannahXmlNode
+                    new SavannahTagNode
                     {
                         TagName = "test",
-                        NodeType = XmlNodeType.Tag,
                         ChildNodes = new[]
                         {
-                            new SavannahXmlNode
+                            new SavannahTagNode
                             {
                                 TagName = "test",
-                                NodeType = XmlNodeType.Tag,
                                 ChildNodes = new[]
                                 {
-                                    new SavannahXmlNode
+                                    new SavannahTextNode
                                     {
-                                        TagName = SavannahXmlNode.TextTagName,
-                                        NodeType = XmlNodeType.Text,
                                         InnerText = "bbbbb\naaaaa\nccccc"
                                     }
                                 }
                             }
                         }
                     },
-                    new SavannahXmlNode
+                    new SavannahTagNode
                     {
                         TagName = "vehicle",
-                        NodeType = XmlNodeType.Tag,
-                        ChildNodes = new[]
+                        ChildNodes = new AbstractSavannahXmlNode[]
                         {
-                            new SavannahXmlNode
+                            new SavannahTextNode
                             {
-                                TagName = SavannahXmlNode.TextTagName,
-                                NodeType = XmlNodeType.Text,
                                 InnerText = "bbbbb\naaaaa\nccccc"
                             },
-                            new SavannahXmlNode
+                            new SavannahTagNode
                             {
                                 TagName = "br",
-                                NodeType = XmlNodeType.Tag
                             }
                         }
                     }
                 }
             };
 
-            var exp = new SavannahXmlNode
+            var exp = new SavannahTagNode
             {
                 TagName = "root",
                 ChildNodes = new[]
                 {
-                    new SavannahXmlNode
+                    new SavannahTagNode
                     {
                         TagName = "test",
-                        NodeType = XmlNodeType.Tag,
                         ChildNodes = new[]
                         {
-                            new SavannahXmlNode
+                            new SavannahTagNode
                             {
                                 TagName = "test",
-                                NodeType = XmlNodeType.Tag,
                                 InnerText = "bbbbb\naaaaa\nccccc",
                                 ChildNodes = new[]
                                 {
-                                    new SavannahXmlNode
+                                    new SavannahTextNode
                                     {
-                                        TagName = SavannahXmlNode.TextTagName,
-                                        NodeType = XmlNodeType.Text,
                                         InnerText = "bbbbb\naaaaa\nccccc"
                                     }
                                 }
                             }
                         }
                     },
-                    new SavannahXmlNode
+                    new SavannahTagNode
                     {
                         TagName = "vehicle",
-                        NodeType = XmlNodeType.Tag,
                         InnerText = "bbbbb\naaaaa\nccccc",
-                        ChildNodes = new[]
+                        ChildNodes = new AbstractSavannahXmlNode[]
                         {
-                            new SavannahXmlNode
+                            new SavannahTextNode
                             {
-                                TagName = SavannahXmlNode.TextTagName,
-                                NodeType = XmlNodeType.Text,
                                 InnerText = "bbbbb\naaaaa\nccccc"
                             },
-                            new SavannahXmlNode
+                            new SavannahTagNode
                             {
                                 TagName = "br",
-                                NodeType = XmlNodeType.Tag
                             }
                         }
                     }
@@ -338,46 +310,40 @@ namespace SavannahXmlLibTests.XmlWrapper
         [Test]
         public void WriteTestPrioritizeInnerXml()
         {
-            var root = new SavannahXmlNode
+            var root = new SavannahTagNode
             {
                 TagName = "root"
             };
 
-            var exp = new SavannahXmlNode
+            var exp = new SavannahTagNode
             {
                 TagName = "root",
                 ChildNodes = new []
                 {
-                    new SavannahXmlNode
+                    new SavannahTagNode
                     {
                         TagName = "test",
                         InnerText = "test\naaaa\nbbb",
-                        ChildNodes = new []
+                        ChildNodes = new AbstractSavannahXmlNode[]
                         {
-                            new SavannahXmlNode
+                            new SavannahTextNode
                             {
-                                TagName = SavannahXmlNode.TextTagName,
-                                NodeType = XmlNodeType.Text,
                                 InnerText = "test"
                             },
-                            new SavannahXmlNode
+                            new SavannahTagNode
                             {
                                 TagName = "br"
                             },
-                            new SavannahXmlNode
+                            new SavannahTextNode
                             {
-                                TagName = SavannahXmlNode.TextTagName,
-                                NodeType = XmlNodeType.Text,
                                 InnerText = "aaaa"
                             },
-                            new SavannahXmlNode
+                            new SavannahTagNode
                             {
                                 TagName = "br"
                             },
-                            new SavannahXmlNode
+                            new SavannahTextNode
                             {
-                                TagName = SavannahXmlNode.TextTagName,
-                                NodeType = XmlNodeType.Text,
                                 InnerText = "bbb"
                             }
                         }
@@ -401,12 +367,12 @@ namespace SavannahXmlLibTests.XmlWrapper
         [Test]
         public void WriteTestPrioritizeInnerXml2()
         {
-            var root = new SavannahXmlNode
+            var root = new SavannahTagNode
             {
                 TagName = "root",
                 ChildNodes = new []
                 {
-                    new SavannahXmlNode
+                    new SavannahTagNode
                     {
                         TagName = "cov",
                         PrioritizeInnerXml = "<test>test<br />aaaa<br />bbb</test>"
@@ -414,46 +380,40 @@ namespace SavannahXmlLibTests.XmlWrapper
                 }
             };
 
-            var exp = new SavannahXmlNode
+            var exp = new SavannahTagNode
             {
                 TagName = "root",
                 ChildNodes = new[]
                 {
-                    new SavannahXmlNode
+                    new SavannahTagNode
                     {
                         TagName = "cov",
                         ChildNodes = new []
                         {
-                            new SavannahXmlNode
+                            new SavannahTagNode
                             {
                                 TagName = "test",
                                 InnerText = "test\naaaa\nbbb",
-                                ChildNodes = new []
+                                ChildNodes = new AbstractSavannahXmlNode[]
                                 {
-                                    new SavannahXmlNode
+                                    new SavannahTextNode
                                     {
-                                        TagName = SavannahXmlNode.TextTagName,
-                                        NodeType = XmlNodeType.Text,
                                         InnerText = "test"
                                     },
-                                    new SavannahXmlNode
+                                    new SavannahTagNode
                                     {
                                         TagName = "br"
                                     },
-                                    new SavannahXmlNode
+                                    new SavannahTextNode
                                     {
-                                        TagName = SavannahXmlNode.TextTagName,
-                                        NodeType = XmlNodeType.Text,
                                         InnerText = "aaaa"
                                     },
-                                    new SavannahXmlNode
+                                    new SavannahTagNode
                                     {
                                         TagName = "br"
                                     },
-                                    new SavannahXmlNode
+                                    new SavannahTextNode
                                     {
-                                        TagName = SavannahXmlNode.TextTagName,
-                                        NodeType = XmlNodeType.Text,
                                         InnerText = "bbb"
                                     }
                                 }
@@ -472,6 +432,39 @@ namespace SavannahXmlLibTests.XmlWrapper
             var act = reader.GetAllNodes();
 
             Assert.AreEqual(exp, act);
+        }
+
+        [Test]
+        public void WriteCdataTest()
+        {
+            var root = new SavannahTagNode
+            {
+                TagName = "root",
+                ChildNodes = new []
+                {
+                    new SavannahTagNode
+                    {
+                        TagName = "tag",
+                        InnerText = "",
+                        ChildNodes = new[]
+                        {
+                            new SavannahCdataNode
+                            {
+                                InnerText = "  <?xml version=\"1.0\"?>\n  <document>\n      doc.\n  </document>",
+                            }
+                        }
+                    }
+                }
+            };
+
+            var ms = new MemoryStream();
+            var writer = new SavannahXmlWriter();
+            writer.Write(ms, root);
+            ms.Position = 0;
+            var xml = new StreamReader(ms).ReadToEnd();
+            var exp = File.ReadAllText(CommonXmlReaderTest.GetTestPath("Cdata.xml"));
+
+            Assert.AreEqual(exp, xml);
         }
     }
 }

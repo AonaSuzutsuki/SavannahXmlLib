@@ -7,6 +7,8 @@ using System.Text.RegularExpressions;
 using System.Xml;
 using CommonCoreLib.CommonLinq;
 using CommonExtensionLib.Extensions;
+using SavannahXmlLib.Extensions;
+using SavannahXmlLib.XmlWrapper.Nodes;
 
 namespace SavannahXmlLib.XmlWrapper
 {
@@ -101,11 +103,13 @@ namespace SavannahXmlLib.XmlWrapper
             var cond = Conditions.If<IEnumerable<string>>(() => isContaisNoValue)
                 .Then(() => (from node in nodeList
                              let val = table.Get(node)
-                             let attr = val?.GetAttribute(name).Value
+                             where val is SavannahTagNode
+                             let attr = ((SavannahTagNode)val)?.GetAttribute(name).Value
                              select attr).ToList())
                 .Else(() => (from node in nodeList
                              let val = table.Get(node)
-                             let attr = val?.GetAttribute(name).Value
+                             where val is SavannahTagNode
+                             let attr = ((SavannahTagNode)val)?.GetAttribute(name).Value
                              where !string.IsNullOrEmpty(attr)
                              select attr).ToList());
             return cond.Invoke();
@@ -160,7 +164,7 @@ namespace SavannahXmlLib.XmlWrapper
         /// <param name="xpath">XPath indicating the location of the node to be retrieved.</param>
         /// <param name="isRemoveSpace">Whether to clear indentation blanks.</param>
         /// <returns>The node found. null is returned if not found.</returns>
-        public SavannahXmlNode GetNode(string xpath, bool isRemoveSpace = true)
+        public AbstractSavannahXmlNode GetNode(string xpath, bool isRemoveSpace = true)
         {
             var node = GetNodes(xpath, isRemoveSpace)?.First();
             return node;
@@ -172,7 +176,7 @@ namespace SavannahXmlLib.XmlWrapper
         /// <param name="xpath">XPath indicating the location of the nodes to be retrieved.</param>
         /// <param name="isRemoveSpace">Whether to clear indentation blanks.</param>
         /// <returns>Nodes found. null is returned if not found.</returns>
-        public IEnumerable<SavannahXmlNode> GetNodes(string xpath, bool isRemoveSpace = true)
+        public IEnumerable<AbstractSavannahXmlNode> GetNodes(string xpath, bool isRemoveSpace = true)
         {
             var nodes = _document.SelectNodes(xpath, _xmlNamespaceManager);
             var nodeList = ConvertXmlNodeList(nodes);
@@ -187,11 +191,11 @@ namespace SavannahXmlLib.XmlWrapper
         /// </summary>
         /// <param name="isRemoveSpace">Whether to clear indentation blanks.</param>
         /// <returns>The root node.</returns>
-        public SavannahXmlNode GetAllNodes(bool isRemoveSpace = true)
+        public SavannahTagNode GetAllNodes(bool isRemoveSpace = true)
         {
             var node = _document.SelectSingleNode("/*", _xmlNamespaceManager);
             var table = CreateTable(node, IndentSize, isRemoveSpace);
-            var root = table.Get(node);
+            var root = table.Get(node) as SavannahTagNode;
             return root;
         }
 
@@ -205,7 +209,7 @@ namespace SavannahXmlLib.XmlWrapper
         /// <param name="stream">Target stream.</param>
         /// <param name="ignoreComments">Whether to ignore the comments.</param>
         /// <returns>Enumerable xml nodes.</returns>
-        public static IEnumerable<SavannahXmlNode> GetChildNodesFromStream(Stream stream, bool ignoreComments)
+        public static IEnumerable<AbstractSavannahXmlNode> GetChildNodesFromStream(Stream stream, bool ignoreComments)
         {
             var reader = new SavannahXmlReader(stream, ignoreComments);
             var _node = reader.GetAllNodes();
@@ -222,14 +226,13 @@ namespace SavannahXmlLib.XmlWrapper
         ///   It associates the generated SavannahXmlNode with the XmlNode.
         /// </param>
         /// <returns>The node.</returns>
-        public static SavannahXmlNode ConvertXmlNode(XmlNode node, int indentSize, bool isRemoveSpace = true, Dictionary<XmlNode, SavannahXmlNode> table = null)
+        public static AbstractSavannahXmlNode ConvertXmlNode(XmlNode node, int indentSize, bool isRemoveSpace = true, Dictionary<XmlNode, AbstractSavannahXmlNode> table = null)
         {
             var hierarchy = GetHierarchyFromParent(node);
-            var commonXmlNode = new SavannahXmlNode
+            var commonXmlNode = new SavannahTagNode
             {
-                NodeType = XmlNodeType.Tag,
                 TagName = node.Name,
-                InnerText = ResolveInnerText(node, isRemoveSpace).Text,
+                InnerText = ResolveInnerText(node, isRemoveSpace),
                 Attributes = ConvertAttributeInfoArray(node.Attributes),
                 ChildNodes = GetElements(node.ChildNodes, isRemoveSpace, indentSize, hierarchy, table)
             };
@@ -244,7 +247,7 @@ namespace SavannahXmlLib.XmlWrapper
         /// <param name="nodeList">The target XmlNode array.</param>
         /// <param name="isRemoveSpace">Whether to clear indentation blanks.</param>
         /// <returns>The converted SavannahXmlNode object array</returns>
-        public static SavannahXmlNode[] ConvertXmlNodes(IEnumerable<XmlNode> nodeList, int indentSize, bool isRemoveSpace = true)
+        public static AbstractSavannahXmlNode[] ConvertXmlNodes(IEnumerable<XmlNode> nodeList, int indentSize, bool isRemoveSpace = true)
         {
             var list = from node in nodeList select ConvertXmlNode(node, indentSize, isRemoveSpace);
             return list.ToArray();
@@ -272,28 +275,28 @@ namespace SavannahXmlLib.XmlWrapper
             return (xmlDocument, declarationText);
         }
 
-        private static void ApplyInnerText(SavannahXmlNode node)
+        private static void ApplyInnerText(AbstractSavannahXmlNode node)
         {
-            if (node.NodeType != XmlNodeType.Tag)
-                return;
-
-            var sb = new List<string>();
-            foreach (var child in node.ChildNodes)
+            if (node is SavannahTagNode tagNode)
             {
-                if (child.NodeType == XmlNodeType.Text)
-                    sb.Add(child.InnerText);
+                var sb = new List<string>();
+                foreach (var child in tagNode.ChildNodes)
+                {
+                    if (child is SavannahTextNode textNode)
+                        sb.Add(textNode.InnerText);
 
-                ApplyInnerText(child);
+                    ApplyInnerText(child);
+                }
+
+                tagNode.InnerText = string.Join("\n", sb);
             }
-
-            node.InnerText = string.Join("\n", sb);
         }
 
-        private static Dictionary<XmlNode, SavannahXmlNode> CreateTable(XmlNode node, int indentSize, bool isRemoveSpace)
+        private static Dictionary<XmlNode, AbstractSavannahXmlNode> CreateTable(XmlNode node, int indentSize, bool isRemoveSpace)
         {
             var root = GetRootNode(node);
 
-            var table = new Dictionary<XmlNode, SavannahXmlNode>();
+            var table = new Dictionary<XmlNode, AbstractSavannahXmlNode>();
             _ = ConvertXmlNode(root, indentSize, isRemoveSpace, table);
 
             return table;
@@ -360,59 +363,33 @@ namespace SavannahXmlLib.XmlWrapper
             return 0;
         }
 
-        private static SavannahXmlText ResolveInnerText(XmlNode node, bool isRemoveSpace, int space = 0)
+        private static string ResolveInnerText(XmlNode node, bool isRemoveSpace, int space = 0)
         {
             var xml = node.InnerXml;
-            var xmlText = new SavannahXmlText
-            {
-                Xml = xml.Replace("&#xD;&#xA;", "&#xD;").Replace("&#xD;", "&#xA;").Replace("&#xA;", "\n")
-            };
-
             if (xml.Contains("<") || xml.Contains(">"))
-                return xmlText;
+                return string.Empty;
 
-            xmlText.Text = Conditions.IfElse(isRemoveSpace, () => RemoveSpace(node.InnerText, space, true),
+            return Conditions.IfElse(isRemoveSpace, () => RemoveSpace(node.InnerText, space, true),
                 () => node.InnerText).UnifiedBreakLine();
-            return xmlText;
         }
 
         private static IEnumerable<XmlNode> ConvertXmlNodeList(XmlNodeList nodeList)
-        {
-            if (nodeList == null)
-                return null;
-
-            var list = new List<XmlNode>(nodeList.Count);
-            foreach (var node in nodeList)
-            {
-                if (node is XmlNode xmlNode)
-                    list.Add(xmlNode);
-            }
-
-            return list;
-        }
+            => nodeList.ToGeneric<XmlNode>();
 
         private static IEnumerable<AttributeInfo> ConvertAttributeInfoArray(XmlAttributeCollection collection)
         {
-            if (collection == null)
-                return null;
-
-            var list = new List<AttributeInfo>(collection.Count);
-            foreach (var attr in collection)
+            var list = collection.ToGeneric<XmlAttribute>()?.Select(attr => new AttributeInfo
             {
-                if (attr is XmlAttribute attribute)
-                    list.Add(new AttributeInfo
-                    {
-                        Name = attribute.Name,
-                        Value = attribute.Value
-                    });
-            }
+                Name = attr.Name,
+                Value = attr.Value
+            }).ToList();
 
             return list;
         }
 
-        private static List<SavannahXmlNode> GetElements(XmlNodeList nodeList, bool isRemoveSpace, int indentSize, int hierarchy = 1, Dictionary<XmlNode, SavannahXmlNode> table = null)
+        private static List<AbstractSavannahXmlNode> GetElements(XmlNodeList nodeList, bool isRemoveSpace, int indentSize, int hierarchy = 1, Dictionary<XmlNode, AbstractSavannahXmlNode> table = null)
         {
-            var list = new List<SavannahXmlNode>();
+            var list = new List<AbstractSavannahXmlNode>();
             if (nodeList.Count <= 0)
                 return list;
 
@@ -423,11 +400,10 @@ namespace SavannahXmlLib.XmlWrapper
                 if (n is XmlElement)
                 {
                     var node = (XmlElement)n;
-                    var commonXmlNode = new SavannahXmlNode
+                    var commonXmlNode = new SavannahTagNode
                     {
-                        NodeType = XmlNodeType.Tag,
                         TagName = node.Name,
-                        InnerText = ResolveInnerText(node, isRemoveSpace).Text,
+                        InnerText = ResolveInnerText(node, isRemoveSpace),
                         Attributes = ConvertAttributeInfoArray(node.Attributes)
                     };
                     if (node.ChildNodes.Count > 0)
@@ -441,22 +417,30 @@ namespace SavannahXmlLib.XmlWrapper
                     var node = (XmlCharacterData)n;
                     if (node.NodeType == System.Xml.XmlNodeType.Comment)
                     {
-                        var commonXmlNode = new SavannahXmlNode
+                        var commonXmlNode = new SavannahCommentNode
                         {
-                            NodeType = XmlNodeType.Comment,
                             TagName = node.Name,
-                            InnerText = ResolveInnerText(node, isRemoveSpace).Text
+                            InnerText = ResolveInnerText(node, isRemoveSpace)
+                        };
+                        list.Add(commonXmlNode);
+                        table?.Add(node, commonXmlNode);
+                    }
+                    else if (node.NodeType == System.Xml.XmlNodeType.CDATA)
+                    {
+                        var commonXmlNode = new SavannahCdataNode
+                        {
+                            TagName = node.Name,
+                            InnerText = ResolveInnerText(node, isRemoveSpace, space)
                         };
                         list.Add(commonXmlNode);
                         table?.Add(node, commonXmlNode);
                     }
                     else
                     {
-                        var commonXmlNode = new SavannahXmlNode
+                        var commonXmlNode = new SavannahTextNode
                         {
-                            NodeType = XmlNodeType.Text,
                             TagName = node.Name,
-                            InnerText = ResolveInnerText(node, isRemoveSpace, space).Text
+                            InnerText = ResolveInnerText(node, isRemoveSpace, space)
                         };
                         list.Add(commonXmlNode);
                         table?.Add(node, commonXmlNode);
