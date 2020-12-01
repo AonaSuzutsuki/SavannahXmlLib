@@ -57,5 +57,5 @@ steps:
   condition: always()
   inputs:
     codeCoverageTool: 'Cobertura'
-    summaryFileLocation: 'coveragereport\Coberuta.xml'
+    summaryFileLocation: 'coveragereport\Cobertura.xml'
     reportDirectory: 'coveragereport'
