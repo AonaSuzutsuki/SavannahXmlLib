@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Xml;
 using CommonExtensionLib.Extensions;
+using SavannahXmlLib.XmlWrapper.Nodes;
 
 namespace SavannahXmlLib.XmlWrapper
 {
@@ -55,7 +56,7 @@ namespace SavannahXmlLib.XmlWrapper
         /// </summary>
         /// <param name="path">Path of the file to be written</param>
         /// <param name="root">The root of the XML to be written</param>
-        public void Write(string path, SavannahXmlNode root)
+        public void Write(string path, SavannahTagNode root)
         {
             using var fs = new FileStream(path, FileMode.Create, FileAccess.ReadWrite, FileShare.Read);
             Write(fs, root);
@@ -66,7 +67,7 @@ namespace SavannahXmlLib.XmlWrapper
         /// </summary>
         /// <param name="stream">Stream to be written</param>
         /// <param name="root">The root of the XML to be written</param>
-        public void Write(Stream stream, SavannahXmlNode root)
+        public void Write(Stream stream, SavannahTagNode root)
         {
             root.ResolvePrioritizeInnerXml(IgnoreComments);
             var xml = root.ToString();
@@ -84,10 +85,10 @@ namespace SavannahXmlLib.XmlWrapper
         /// </summary>
         /// <param name="node">Target node</param>
         /// <returns>Stream written regular XML text.</returns>
-        public static Stream ConvertInnerXmlToXmlText(SavannahXmlNode node)
+        public static Stream ConvertInnerXmlToXmlText(SavannahTagNode node)
         {
             var lines = node.PrioritizeInnerXml.UnifiedBreakLine().Split('\n');
-            var spaceText = SavannahXmlNode.MakeSpace(SavannahXmlNode.DefaultIndentSize);
+            var spaceText = AbstractSavannahXmlNode.MakeSpace(AbstractSavannahXmlNode.DefaultIndentSize);
             var converted = string.Join("\n", lines.Select(x => $"{spaceText}{x}"));
 
             var xml = $"\n{converted}\n";
@@ -102,7 +103,7 @@ namespace SavannahXmlLib.XmlWrapper
             var writer = new XmlTextWriter(ms, Encoding.Unicode)
             {
                 Formatting = Formatting.Indented,
-                Indentation = SavannahXmlNode.DefaultIndentSize,
+                Indentation = AbstractSavannahXmlNode.DefaultIndentSize,
                 IndentChar = ' '
             };
             xDocument.WriteContentTo(writer);

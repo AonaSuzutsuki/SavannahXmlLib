@@ -73,6 +73,7 @@
     <Compile Include="XmlWrapper\CommonXmlNodeTest.cs" />
     <Compile Include="XmlWrapper\CommonXmlReaderTest.cs" />
     <Compile Include="XmlWrapper\CommonXmlWriterTest.cs" />
+    <Compile Include="Extensions\EnumerableExtensionsTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -99,6 +100,9 @@
     <Content Include="TestData\Test_four_indent.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Extensions\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

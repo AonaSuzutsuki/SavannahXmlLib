@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using SavannahXmlLib.XmlWrapper;
+using SavannahXmlLib.XmlWrapper.Nodes;
 
 namespace SavannahXmlLib.Extensions
 {
