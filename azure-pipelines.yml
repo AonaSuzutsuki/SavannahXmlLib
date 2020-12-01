@@ -30,17 +30,12 @@ steps:
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
 
-- task: VSTest@2
-  inputs:
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
-
 - task: CmdLine@2
   displayName: "NUnit & OpenCover"
   inputs:
     script: |
-      $(openCover) -register:user -target:"$(nunitConsole)" -targetargs:"SavannahXmlLibTests\bin\Debug\SavannahXmlLibTests.dll" -targetdir:"SavannahXmlLib\bin\Debug" -output:"coverage.xml"
-
+      $(openCover) -register:user -target:"$(nunitConsole)" -targetargs:"SavannahXmlLibTests.dll" -targetdir:"SavannahXmlLibTests\bin\Debug" -output:"coverage.xml"
+      dir SavannahXmlLibTests\bin\Debug
 - task: PublishTestResults@2
   displayName: "Publish unit test result"
   condition: always()
