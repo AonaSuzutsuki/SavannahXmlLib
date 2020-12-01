@@ -27,8 +27,17 @@ steps:
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
 
-- task: VSTest@2
-  inputs:
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
+# - task: VSTest@2
+#   inputs:
+#     platform: '$(buildPlatform)'
+#     configuration: '$(buildConfiguration)'
     
+- task: CmdLine@2
+  inputs:
+    script: |
+      ./packages/NUnit.ConsoleRunner.3.11.1/tools/nunit3-console.exe ./SavannahXmlLibTests/bin/Debug/SavannahXmlLibTests.dll
+
+- task: PublishTestResults@2
+  inputs:
+    testResultsFormat: 'NUnit'
+    testResultsFiles: 'TestResult.xml'
