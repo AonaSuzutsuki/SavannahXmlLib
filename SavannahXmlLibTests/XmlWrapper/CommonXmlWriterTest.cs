@@ -462,7 +462,7 @@ namespace SavannahXmlLibTests.XmlWrapper
             writer.Write(ms, root);
             ms.Position = 0;
             var xml = new StreamReader(ms).ReadToEnd();
-            var exp = File.ReadAllText(CommonXmlReaderTest.GetTestPath("Cdata.xml"));
+            var exp = File.ReadAllText(CommonXmlReaderTest.GetTestPath("Cdata.xml")).UnifiedBreakLine();
 
             Assert.AreEqual(exp, xml);
         }
