@@ -55,14 +55,14 @@ steps:
   condition: always()
   inputs:
     reports: '**\coverage.xml'
-    targetdir: 'coveragereport'
+    targetdir: 'CoverageReport'
 
 - task: PublishCodeCoverageResults@1
   condition: always()
   inputs:
     codeCoverageTool: 'Cobertura'
-    summaryFileLocation: 'coveragereport\Cobertura.xml'
-    reportDirectory: 'coveragereport\'
+    summaryFileLocation: 'CoverageReport\Cobertura.xml'
+    reportDirectory: 'CoverageReport'
 
 
 # - task: PublishPipelineArtifact@1
