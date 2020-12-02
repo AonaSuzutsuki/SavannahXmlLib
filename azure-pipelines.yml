@@ -4,7 +4,7 @@
 # https://docs.microsoft.com/azure/devops/pipelines/apps/windows/dot-net
 
 trigger:
-- main
+- master
 
 pool:
   vmImage: 'windows-latest'
@@ -40,7 +40,6 @@ steps:
       -targetargs:"SavannahXmlLibTests.dll"
       -targetdir:"SavannahXmlLibTests\bin\Debug"
       -returntargetcode
-      -hideskipped:All
       -output:"coverage.xml"
       -filter:"+[SavannahXmlLib]*"
 - task: PublishTestResults@2
