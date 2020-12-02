@@ -42,6 +42,7 @@ steps:
       -returntargetcode
       -output:"coverage.xml"
       -filter:"+[SavannahXmlLib]*"
+
 - task: PublishTestResults@2
   displayName: "Publish unit test result"
   condition: always()
