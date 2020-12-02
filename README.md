@@ -9,3 +9,11 @@ The ToString method allows you to generate InnerXml, output unformatted XML in a
 
 # How to use
 https://github.com/AonaSuzutsuki/SavannahXmlLib/wiki
+
+
+# Special Thanks 
+NUnit:                          Copyright (c) 2019 Charlie Poole, Rob Prouse  
+Moq:                            Copyright (c) 2007, Clarius Consulting, Manas Technology Solutions, InSTEDD  
+OpenCover:                      Copyright (c) 2011-2019 Shaun Wilde  
+
+This software includes the work that is distributed in the Apache License 2.0
