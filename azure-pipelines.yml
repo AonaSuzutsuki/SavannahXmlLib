@@ -38,7 +38,7 @@ steps:
       -register:Path64
       -target:"$(nunitConsole)"
       -targetargs:"SavannahXmlLibTests.dll"
-      -targetdir:"SavannahXmlLibTests\bin\Debug"
+      -targetdir:"SavannahXmlLibTests\bin\$(buildConfiguration)"
       -returntargetcode
       -output:"coverage.xml"
       -filter:"+[SavannahXmlLib]*"
