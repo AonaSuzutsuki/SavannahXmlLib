@@ -12,7 +12,7 @@ pool:
 variables:
   solution: '**/*.sln'
   buildPlatform: 'Any CPU'
-  buildConfiguration: 'Debug'
+  buildConfiguration: 'Release'
   openCover: 'packages\OpenCover.4.7.922\tools\OpenCover.Console.exe'
   nunitConsole: 'packages\NUnit.ConsoleRunner.3.11.1\tools\nunit3-console.exe'
   disable.coverage.autogenerate: 'true'
