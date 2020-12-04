@@ -74,6 +74,8 @@
     <Compile Include="XmlWrapper\CommonXmlReaderTest.cs" />
     <Compile Include="XmlWrapper\CommonXmlWriterTest.cs" />
     <Compile Include="Extensions\EnumerableExtensionsTest.cs" />
+    <Compile Include="Extensions\LinkedListExtensionsTest.cs" />
+    <Compile Include="Extensions\SavannahXmlNodeExtensionsTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
