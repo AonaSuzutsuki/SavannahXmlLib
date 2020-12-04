@@ -415,39 +415,31 @@ namespace SavannahXmlLib.XmlWrapper
                 if (n is XmlCharacterData)
                 {
                     var node = (XmlCharacterData)n;
-                    if (node.NodeType == System.Xml.XmlNodeType.Comment)
-                    {
-                        var commonXmlNode = new SavannahCommentNode
-                        {
-                            TagName = node.Name,
-                            InnerText = ResolveInnerText(node, isRemoveSpace)
-                        };
-                        list.Add(commonXmlNode);
-                        table?.Add(node, commonXmlNode);
-                    }
-                    else if (node.NodeType == System.Xml.XmlNodeType.CDATA)
-                    {
-                        var commonXmlNode = new SavannahCdataNode
-                        {
-                            TagName = node.Name,
-                            InnerText = ResolveInnerText(node, isRemoveSpace, space)
-                        };
-                        list.Add(commonXmlNode);
-                        table?.Add(node, commonXmlNode);
-                    }
-                    else
-                    {
-                        var commonXmlNode = new SavannahTextNode
-                        {
-                            TagName = node.Name,
-                            InnerText = ResolveInnerText(node, isRemoveSpace, space)
-                        };
-                        list.Add(commonXmlNode);
-                        table?.Add(node, commonXmlNode);
-                    }
+                    var commonXmlNode = ConvertXmlCharacterData(node, isRemoveSpace, space);
+                    list.Add(commonXmlNode);
+                    table?.Add(node, commonXmlNode);
                 }
             }
             return list;
+        }
+
+        private static AbstractSavannahXmlNode ConvertXmlCharacterData(XmlCharacterData node, bool isRemoveSpace, int space)
+        {
+            static T CreateCharacterNode<T>(XmlCharacterData node, Func<string> resolveInnerText) where T: AbstractSavannahXmlNode, new()
+            {
+                return new T
+                {
+                    TagName = node.Name,
+                    InnerText = resolveInnerText()
+                };
+            }
+
+            return node.NodeType switch
+            {
+                XmlNodeType.Comment => CreateCharacterNode<SavannahCommentNode>(node, () => ResolveInnerText(node, isRemoveSpace)),
+                XmlNodeType.CDATA => CreateCharacterNode<SavannahCdataNode>(node, () => ResolveInnerText(node, isRemoveSpace, space)),
+                _ => CreateCharacterNode<SavannahTextNode>(node, () => ResolveInnerText(node, isRemoveSpace, space))
+            };
         }
 
         #endregion
