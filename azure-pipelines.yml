@@ -13,8 +13,6 @@ variables:
   solution: '**/*.sln'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
-  openCover: 'packages\OpenCover.4.7.922\tools\OpenCover.Console.exe'
-  nunitConsole: 'packages\NUnit.ConsoleRunner.3.11.1\tools\nunit3-console.exe'
   disable.coverage.autogenerate: 'true'
 
 steps:
@@ -30,37 +28,19 @@ steps:
     nugetConfigPath: './nuget.config'
 
 - task: CmdLine@2
+  displayName: "dotnet build"
   inputs:
     script: dotnet build --configuration $(buildConfiguration)
 
 - task: DotNetCoreCLI@2
+  displayName: "dotnet test"
   inputs:
     command: 'test'
     projects: '**/*.csproj'
     arguments: '--logger trx /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura'
     publishTestResults: false
 
-# - task: VSBuild@1
-#   inputs:
-#     solution: '$(solution)'
-#     platform: '$(buildPlatform)'
-#     configuration: '$(buildConfiguration)'
-
-# - task: CmdLine@2
-#   displayName: "NUnit & OpenCover"
-#   inputs:
-#     script: >
-#       $(openCover)
-#       -register:Path64
-#       -target:"$(nunitConsole)"
-#       -targetargs:"SavannahXmlLibTests.dll"
-#       -targetdir:"SavannahXmlLibTests\bin\$(buildConfiguration)"
-#       -returntargetcode
-#       -output:"coverage.xml"
-#       -filter:"+[SavannahXmlLib]*"
-
 - task: PublishTestResults@2
-  displayName: "Publish unit test result"
   condition: always()
   inputs:
     testResultsFormat: 'VSTest'
