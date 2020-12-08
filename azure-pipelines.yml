@@ -15,7 +15,7 @@ variables:
   buildConfiguration: 'Release'
   openCover: 'packages\OpenCover.4.7.922\tools\OpenCover.Console.exe'
   nunitConsole: 'packages\NUnit.ConsoleRunner.3.11.1\tools\nunit3-console.exe'
-  disable.coverage.autogenerate: 'true'
+  #disable.coverage.autogenerate: 'true'
 
 steps:
 - task: NuGetToolInstaller@1
@@ -29,18 +29,9 @@ steps:
     feedsToUse: 'config'
     nugetConfigPath: './nuget.config'
 
-# - task: DotNetCoreCLI@2
-#   inputs:
-#     command: 'restore'
-#     projects: '**/*.csproj'
-#     restoreArguments: '-s ./'
-#     feedsToUse: 'config'
-#     nugetConfigPath: './nuget.config'
-
-- task: DotNetCoreCLI@2
+- task: CmdLine@2
   inputs:
-    command: 'build'
-    projects: '**/*.csproj'
+    script: dotnet build --configuration $(buildConfiguration)
 
 - task: DotNetCoreCLI@2
   inputs:
