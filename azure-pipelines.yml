@@ -37,44 +37,49 @@ steps:
 #     feedsToUse: 'config'
 #     nugetConfigPath: './nuget.config'
 
-- task: VSBuild@1
+- task: DotNetCoreCLI@2
   inputs:
-    solution: '$(solution)'
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
+    command: 'build'
+    projects: '**/*.csproj'
 
-- task: CmdLine@2
-  displayName: "NUnit & OpenCover"
+- task: DotNetCoreCLI@2
   inputs:
-    script: >
-      $(openCover)
-      -register:Path64
-      -target:"$(nunitConsole)"
-      -targetargs:"SavannahXmlLibTests.dll"
-      -targetdir:"SavannahXmlLibTests\bin\$(buildConfiguration)"
-      -returntargetcode
-      -output:"coverage.xml"
-      -filter:"+[SavannahXmlLib]*"
+    command: 'test'
+    projects: '**/*.csproj'
+    arguments: '--logger trx /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura'
+    publishTestResults: false
+
+# - task: VSBuild@1
+#   inputs:
+#     solution: '$(solution)'
+#     platform: '$(buildPlatform)'
+#     configuration: '$(buildConfiguration)'
+
+# - task: CmdLine@2
+#   displayName: "NUnit & OpenCover"
+#   inputs:
+#     script: >
+#       $(openCover)
+#       -register:Path64
+#       -target:"$(nunitConsole)"
+#       -targetargs:"SavannahXmlLibTests.dll"
+#       -targetdir:"SavannahXmlLibTests\bin\$(buildConfiguration)"
+#       -returntargetcode
+#       -output:"coverage.xml"
+#       -filter:"+[SavannahXmlLib]*"
 
 - task: PublishTestResults@2
   displayName: "Publish unit test result"
   condition: always()
   inputs:
-    testResultsFormat: 'NUnit'
-    testResultsFiles: '**\TestResult.xml'
-    failTaskOnFailedTests: false
-
-- task: reportgenerator@4
-  condition: always()
-  inputs:
-    reports: '**\coverage.xml'
-    targetdir: 'CoverageReport'
+    testResultsFormat: 'VSTest'
+    testResultsFiles: '**/*.trx'
 
 - task: PublishCodeCoverageResults@1
   condition: always()
   inputs:
     codeCoverageTool: 'Cobertura'
-    summaryFileLocation: 'CoverageReport\Cobertura.xml'
+    summaryFileLocation: 'coverage.cobertura.xml'
     reportDirectory: 'CoverageReport'
 
 
