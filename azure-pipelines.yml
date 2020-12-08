@@ -18,19 +18,14 @@ variables:
   disable.coverage.autogenerate: 'true'
 
 steps:
-- task: NuGetToolInstaller@1
-
-# - task: NuGetCommand@2
-#   inputs:
-#     restoreSolution: '$(solution)'
-#     nugetConfigPath: 'nuget.config'
-
 - task: DotNetCoreCLI@2
   inputs:
     command: 'restore'
     projects: '**/*.csproj'
+    restoreArguments: '-s ./'
     feedsToUse: 'config'
     nugetConfigPath: './nuget.config'
+    restoreDirectory: './'
 
 - task: VSBuild@1
   inputs:
