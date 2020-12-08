@@ -13,7 +13,7 @@ variables:
   solution: '**/*.sln'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
-  # disable.coverage.autogenerate: 'true'
+  disable.coverage.autogenerate: 'true'
 
 steps:
 - task: NuGetToolInstaller@1
@@ -46,11 +46,16 @@ steps:
     testResultsFormat: 'VSTest'
     testResultsFiles: '**/*.trx'
 
+- task: reportgenerator@4
+  inputs:
+    reports: '**/coverage.cobertura.xml'
+    targetdir: 'CoverageReport'
+    reporttypes: 'HtmlInline_AzurePipelines'
+
 - task: PublishCodeCoverageResults@1
-  condition: always()
   inputs:
     codeCoverageTool: 'Cobertura'
-    summaryFileLocation: 'SavannahXmlLibStandardTests/coverage.cobertura.xml'
+    summaryFileLocation: '**/coverage.cobertura.xml'
     reportDirectory: 'CoverageReport'
 
 
