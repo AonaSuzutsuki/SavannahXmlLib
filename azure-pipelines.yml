@@ -70,7 +70,7 @@ steps:
   condition: always()
   inputs:
     codeCoverageTool: 'Cobertura'
-    summaryFileLocation: 'coverage.cobertura.xml'
+    summaryFileLocation: 'SavannahXmlLibStandardTests/coverage.cobertura.xml'
     reportDirectory: 'CoverageReport'
 
 
