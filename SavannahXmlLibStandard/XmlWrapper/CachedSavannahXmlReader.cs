@@ -40,7 +40,9 @@ namespace SavannahXmlLib.XmlWrapper
             if (_savannahCache.ContainsKey(node))
                 return _savannahCache;
 
-            return base.CreateTable(node, indentSize, isRemoveSpace);
+            var table = base.CreateTable(node, indentSize, isRemoveSpace);
+            _savannahCache = table;
+            return table;
         }
     }
 }
