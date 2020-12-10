@@ -98,7 +98,7 @@ namespace SavannahXmlLib.XmlWrapper
         /// <returns>Values of an attribute</returns>
         public IEnumerable<string> GetAttributes(string name, string xpath, bool isContaisNoValue = true)
         {
-            var nodeList = ConvertXmlNodeList(_document.SelectNodes(xpath, _xmlNamespaceManager));
+            var nodeList = ConvertXmlNodeList(SelectNodes(xpath));
             var table = CreateTable(nodeList.FirstOrDefault(), IndentSize, true);
             var cond = Conditions.If<IEnumerable<string>>(() => isContaisNoValue)
                 .Then(() => (from node in nodeList
@@ -136,7 +136,7 @@ namespace SavannahXmlLib.XmlWrapper
         /// <returns>Values</returns>
         public IEnumerable<string> GetValues(string xpath, bool isRemoveSpace = true)
         {
-            var xmlNode = _document.SelectNodes(xpath, _xmlNamespaceManager);
+            var xmlNode = SelectNodes(xpath);
             var xmlNodes = ConvertXmlNodeList(xmlNode);
             var table = CreateTable(xmlNodes.FirstOrDefault(), IndentSize, isRemoveSpace);
             return (from node in xmlNodes
@@ -178,7 +178,7 @@ namespace SavannahXmlLib.XmlWrapper
         /// <returns>Nodes found. null is returned if not found.</returns>
         public IEnumerable<AbstractSavannahXmlNode> GetNodes(string xpath, bool isRemoveSpace = true)
         {
-            var nodes = _document.SelectNodes(xpath, _xmlNamespaceManager);
+            var nodes = SelectNodes(xpath);
             var nodeList = ConvertXmlNodeList(nodes);
 
             var table = CreateTable(nodeList.First(), IndentSize, isRemoveSpace);
@@ -193,7 +193,7 @@ namespace SavannahXmlLib.XmlWrapper
         /// <returns>The root node.</returns>
         public SavannahTagNode GetAllNodes(bool isRemoveSpace = true)
         {
-            var node = _document.SelectSingleNode("/*", _xmlNamespaceManager);
+            var node = ConvertXmlNodeList(SelectNodes("/*")).FirstOrDefault();
             var table = CreateTable(node, IndentSize, isRemoveSpace);
             var root = table.Get(node) as SavannahTagNode;
             return root;
@@ -255,6 +255,29 @@ namespace SavannahXmlLib.XmlWrapper
 
         #endregion
 
+        #region Protected Methods
+
+        protected virtual XmlNodeList SelectNodes(string xpath)
+        {
+            return _document.SelectNodes(xpath, _xmlNamespaceManager);
+        }
+
+        protected virtual Dictionary<XmlNode, AbstractSavannahXmlNode> CreateTable(XmlNode node, int indentSize, bool isRemoveSpace)
+        {
+            var table = new Dictionary<XmlNode, AbstractSavannahXmlNode>();
+            CreateTable(table, node, indentSize, isRemoveSpace);
+
+            return table;
+        }
+
+        protected virtual void CreateTable(Dictionary<XmlNode, AbstractSavannahXmlNode> table, XmlNode node, int indentSize, bool isRemoveSpace)
+        {
+            var root = GetRootNode(node);
+            _ = ConvertXmlNode(root, indentSize, isRemoveSpace, table);
+        }
+
+        #endregion
+
         #region Private Static Methods
 
         private static (XmlDocument xmlDocument, string declaration) Initialize(Stream stream, bool ignoreComments)
@@ -290,16 +313,6 @@ namespace SavannahXmlLib.XmlWrapper
 
                 tagNode.InnerText = string.Join("\n", sb);
             }
-        }
-
-        private static Dictionary<XmlNode, AbstractSavannahXmlNode> CreateTable(XmlNode node, int indentSize, bool isRemoveSpace)
-        {
-            var root = GetRootNode(node);
-
-            var table = new Dictionary<XmlNode, AbstractSavannahXmlNode>();
-            _ = ConvertXmlNode(root, indentSize, isRemoveSpace, table);
-
-            return table;
         }
 
         private static XmlNode GetRootNode(XmlNode node, XmlNode prev = null)
@@ -425,7 +438,7 @@ namespace SavannahXmlLib.XmlWrapper
 
         private static AbstractSavannahXmlNode ConvertXmlCharacterData(XmlCharacterData node, bool isRemoveSpace, int space)
         {
-            static T CreateCharacterNode<T>(XmlCharacterData node, Func<string> resolveInnerText) where T: AbstractSavannahXmlNode, new()
+            static T CreateCharacterNode<T>(XmlCharacterData node, Func<string> resolveInnerText) where T : AbstractSavannahXmlNode, new()
             {
                 return new T
                 {
