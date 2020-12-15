@@ -265,7 +265,8 @@ namespace SavannahXmlLib.XmlWrapper
         protected virtual Dictionary<XmlNode, AbstractSavannahXmlNode> CreateTable(XmlNode node, int indentSize, bool isRemoveSpace)
         {
             var table = new Dictionary<XmlNode, AbstractSavannahXmlNode>();
-            CreateTable(table, node, indentSize, isRemoveSpace);
+            if (node != null)
+                CreateTable(table, node, indentSize, isRemoveSpace);
 
             return table;
         }
