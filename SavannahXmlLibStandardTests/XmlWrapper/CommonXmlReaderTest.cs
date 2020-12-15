@@ -65,6 +65,19 @@ namespace SavannahXmlLibTests.XmlWrapper
         }
 
         [Test]
+        public void GetValuesNotContainsTest()
+        {
+            var reader = new SavannahXmlReader(GetTestPath());
+            var attributes = reader.GetValues("/ServerSettings/test");
+
+            var exp = new List<string>
+            {
+            };
+
+            CollectionAssert.AreEqual(exp, attributes);
+        }
+
+        [Test]
         public void GetNodeTest()
         {
             var exp = new SavannahTagNode
