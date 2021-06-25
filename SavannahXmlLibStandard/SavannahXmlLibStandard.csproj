@@ -4,15 +4,16 @@
     <TargetFrameworks>netstandard2.1;net48</TargetFrameworks>
     <LangVersion>latest</LangVersion>
     <Authors>Aona Suzutsuki</Authors>
-    <AssemblyVersion>1.0.3.3</AssemblyVersion>
-    <FileVersion>1.0.3.3</FileVersion>
+    <AssemblyVersion>1.0.4.4</AssemblyVersion>
+    <FileVersion>1.0.4.4</FileVersion>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <RootNamespace>SavannahXmlLib</RootNamespace>
     <AssemblyName>SavannahXmlLib</AssemblyName>
     <Company>Kimama Lab.</Company>
     <Copyright>Copyright © AonaSuzutsuki 2020</Copyright>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>1.0.2</Version>
+    <Version>1.0.3</Version>
+    <Description>Xml wrapper library for SavannahManager.</Description>
   </PropertyGroup>
 
   <ItemGroup>
