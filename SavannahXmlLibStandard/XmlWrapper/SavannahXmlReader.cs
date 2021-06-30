@@ -179,7 +179,10 @@ namespace SavannahXmlLib.XmlWrapper
         public IEnumerable<AbstractSavannahXmlNode> GetNodes(string xpath, bool isRemoveSpace = true)
         {
             var nodes = SelectNodes(xpath);
-            var nodeList = ConvertXmlNodeList(nodes);
+            var nodeList = ConvertXmlNodeList(nodes).ToList();
+
+            if (!nodeList.Any())
+                return null;
 
             var table = CreateTable(nodeList.First(), IndentSize, isRemoveSpace);
 
