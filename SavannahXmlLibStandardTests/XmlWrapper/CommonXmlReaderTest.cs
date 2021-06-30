@@ -115,6 +115,41 @@ namespace SavannahXmlLibTests.XmlWrapper
         }
 
         [Test]
+        public void GetNodeNotFoundTest()
+        {
+            var exp = new SavannahTagNode
+            {
+                TagName = "property",
+                Attributes = new List<AttributeInfo>
+                {
+                    new AttributeInfo
+                    {
+                        Name = "name",
+                        Value = "ServerName"
+                    },
+                    new AttributeInfo
+                    {
+                        Name = "value",
+                        Value = "My Game Host"
+                    }
+                },
+                ChildNodes = new[]
+                {
+                    new SavannahTextNode
+                    {
+                        InnerText = "サーバー名を設定します。サーバーリストにはこの名前で表示されます。"
+                    }
+                },
+                InnerText = "サーバー名を設定します。サーバーリストにはこの名前で表示されます。"
+            };
+
+            var reader = new SavannahXmlReader(GetTestPath());
+            var firstNode = reader.GetNode("/ServerSettings/properties[@name='ServerName']");
+
+            Assert.IsNull(firstNode);
+        }
+
+        [Test]
         public void GetNodesTest()
         {
             var exp = new AbstractSavannahXmlNode[]
