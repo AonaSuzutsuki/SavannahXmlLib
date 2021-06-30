@@ -155,7 +155,7 @@ namespace SavannahXmlLib.XmlWrapper
         public string GetValue(string xpath, bool isRemoveSpace = true)
         {
             var values = GetValues(xpath, isRemoveSpace);
-            return values.Any() ? values.First() : string.Empty;
+            return values.Any() ? values.First() : null;
         }
 
         /// <summary>

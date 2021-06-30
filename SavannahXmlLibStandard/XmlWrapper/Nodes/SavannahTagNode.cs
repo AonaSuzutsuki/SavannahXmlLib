@@ -92,7 +92,7 @@ namespace SavannahXmlLib.XmlWrapper.Nodes
         {
             if (_attributes.ContainsKey(name))
                 return _attributes[name];
-            return new AttributeInfo();
+            return null;
         }
 
         /// <summary>
